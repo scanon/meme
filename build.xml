@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="KBaseMeme" basedir="." default="build">
+    <property name="src.dir" value="${basedir}/src" />
+    <property name="test.dir" value="${basedir}/test" />
+    <property name="web.dir" value="${basedir}/WebContent" />
+    <property name="build.dir" value="${basedir}/build" />
+    <property name="dist.dir" value="${basedir}/dist" />
+    <property name="server.lib" value="${basedir}/lib" />
+    <property name="name" value="KBaseMeme" />
+
+    <path id="project-classpath">
+
+    	<!--  here give path for jar repository -->
+    	<fileset dir="${server.lib}">
+    		<include name="*.jar" />
+    	</fileset>
+    	<pathelement path="${build.dir}" />
+    </path>
+
+    <target name="build" depends="compile,compile-test" description="build project, but first compile it">
+         <war destfile="${dist.dir}/${name}.war"
+             webxml="${web.dir}/WEB-INF/web.xml">
+             <lib dir="${basedir}/lib"/>
+             <classes dir="${build.dir}/classes" />
+	     <fileset dir="${web.dir}">
+	       <include name="**/*.*"/>
+	     </fileset>
+        </war>
+        <copy todir="${web.dir}/WEB-INF/classes" >
+            <fileset dir="${src.dir}" excludes="*/.java"/>
+        </copy>
+        <!-- <exec executable="cp ${basedir}/${src.dir}/us/kbase/networks/core/ecoli_correspondence ${basedir}/${web.dir}/WEB-INF/classes/us/kbase/networks/core/" /> -->
+    </target>
+
+    <target name="compile" description="Compile java files and place them webContents/web-inf/">
+    	<mkdir dir="${build.dir}/classes"/>
+        <javac destdir="${build.dir}/classes" failonerror="true" includeantruntime="false">
+            <src path="${src.dir}"/>
+            <classpath refid="project-classpath"/>
+        </javac>
+	<copy todir="${build.dir}/classes">
+	  <fileset dir="${src.dir}" includes="**/*.properties"/>
+	</copy>
+    </target>
+
+    <target name="compile-test" description="Compile java test files">
+    	<mkdir dir="${build.dir}/classes"/>
+        <javac destdir="${build.dir}/classes" failonerror="true" includeantruntime="false">
+            <src path="${test.dir}"/>
+            <classpath refid="project-classpath"/>
+        </javac>
+    </target>
+
+    <target name="clean">
+    	 <delete dir="${build.dir}" failonerror="true"/>
+    </target>
+</project>
