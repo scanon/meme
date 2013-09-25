@@ -60,8 +60,8 @@ then
     rm $WAR_FILE
 fi
 cd $WAR_DIR
-#zip -r $WAR_FILE WEB-INF
-tar -zcf $WAR_FILE WEB-INF
+zip -r $WAR_FILE WEB-INF
+#tar -zcf $WAR_FILE WEB-INF
 cd ..
 rm -rf $WAR_DIR
 

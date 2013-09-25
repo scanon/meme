@@ -6,7 +6,7 @@ CURR_DIR = $(shell pwd)
 SERVICE_NAME = $(shell basename $(CURR_DIR))
 TARGET_DIR = $(TARGET)/services/$(SERVICE_NAME)
 SERVLET_CLASS = us.kbase.kbasememe.KbasememeServer
-TARGET_PORT = 7373
+TARGET_PORT = 7049
 THREADPOOL_SIZE = 20
 
 default: compile
