@@ -198,16 +198,18 @@ public class KbasememeServerImpl {
 		boolean backFreqLine = false;
 		boolean sitesSection = false;
 		int asterisksLineCounter = 0;
-		String cumulativeOutput = null;
+		String cumulativeOutput = "";
+		List<String> trainingSet = new ArrayList<String>();
 		String motifDataLine = "starting value";
-		String line = null;;
-	//	for(String line = br.readLine(); line != null; line = br.readLine())
+		String line = "";
 		try {
 			BufferedReader br = new BufferedReader(new FileReader(memeOutputFile));
 			while ((line = br.readLine()) != null) {
 				cumulativeOutput += line+"\n";
 				if (!trainingSetSection) {
-					if (line.contains("TRAINING SET")){
+					if (line.matches("^MEME version.*")){
+						motifCollection.setVersionMeme(line);
+					} else if (line.contains("TRAINING SET")){
 						trainingSetSection = true;
 					} else {}
 				} else {
@@ -215,9 +217,14 @@ public class KbasememeServerImpl {
 						if (line.contains("DATAFILE=")) {
 							motifCollection.setInputDatafile(line.substring(10));
 						} else if (line.contains("ALPHABET=")) {
-							motifCollection.setInputDatafile(line.substring(10));
+							motifCollection.setAlphabetMeme(line.substring(10));
+						} else if (line.contains("********************************************************************************")|| line.matches("")) {
+							//skip line
 						} else if (line.contains("COMMAND LINE SUMMARY")) {
 							commandLineSection = true;
+							motifCollection.setTrainingSetMeme(trainingSet);
+						} else {
+							trainingSet.add(line);
 						}
 					} else {
 						if (!motifSection) {
@@ -298,13 +305,17 @@ public class KbasememeServerImpl {
 								motifDataLine = line;
 							//	System.out.println("Motif found: "+motifDataLine);
 							} else if (line
-									.contains("-------------             ----- ---------            ------------------------")) {
+									.matches("^Sequence name.*Start.*P-value.*Site.*")) {
 								sitesSection = true;
 							} else if (line
 									.contains("--------------------------------------------------------------------------------")) {
 								sitesSection = false;
 							} else if (sitesSection) {
+								if (line.matches("^-------------.*")){
+									//skip line
+								} else {
 								sites.add(line);
+								}
 							} else if (line.contains("SUMMARY OF MOTIFS")){
 								break;
 							}

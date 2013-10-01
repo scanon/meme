@@ -60,13 +60,15 @@ public class KbasememeClientTest {
 
 	@Test
 	public final void testKbasememeClient() throws MalformedURLException {
-		KbasememeClient client = new KbasememeClient("http://localhost:1111");
+//		KbasememeClient client = new KbasememeClient("http://140.221.84.195:7049");
+		KbasememeClient client = new KbasememeClient("http://127.0.0.1:1111");
 		assertNotNull(client);
 	}
 
 	@Test
 	public final void testSearchMotifsFromSequencesWithMeme() throws Exception {
-		KbasememeClient client = new KbasememeClient("http://localhost:1111");
+//		KbasememeClient client = new KbasememeClient("http://140.221.84.195:7049");
+		KbasememeClient client = new KbasememeClient("http://127.0.0.1:1111");
 		MotifCollectionMeme result = client.searchMotifsFromSequencesWithMeme(testSequenceSet, "oops", 2, 14, 24, 0, 0, 0, 1, 0);
 
 		assertEquals(Integer.valueOf("0"),result.getSeedMeme());
@@ -116,9 +118,13 @@ public class KbasememeClientTest {
 		GetObjectParams params = new GetObjectParams().withType("SequenceSet").withId(id).withWorkspace(WSUtil.workspaceName).withAuth(WSUtil.authToken().toString());   
 		GetObjectOutput output = WSUtil.wsClient().getObject(params);
 		SequenceSet input = UObject.transform(output.getData(), SequenceSet.class);
-		KbasememeClient client = new KbasememeClient("http://localhost:1111");
-		MotifCollectionMeme result = client.searchMotifsFromSequencesWithMeme(input, "oops", 2, 14, 24, 0, 0, 0, 1, 0);
+//		KbasememeClient client = new KbasememeClient("http://140.221.84.195:7049");
+		KbasememeClient client = new KbasememeClient("http://127.0.0.1:1111");
 
+		MotifCollectionMeme result = client.searchMotifsFromSequencesWithMeme(input, "oops", 2, 14, 24, 0, 0, 0, 1, 0);
+//Write result to WS
+		WSUtil.saveObject(result.getKbaseMotifCollectionMemeId(), result, false);
+		
 		assertEquals(Integer.valueOf("0"),result.getSeedMeme());
 		assertEquals(Integer.valueOf("1"),result.getSeqfracMeme());
 		assertEquals("+",result.getStrandsMeme());
@@ -162,7 +168,9 @@ public class KbasememeClientTest {
 
 	@Test
 	public final void testCompareMotifsWithTomtom() throws Exception {
-		KbasememeClient client = new KbasememeClient("http://localhost:1111");
+//		KbasememeClient client = new KbasememeClient("http://140.221.84.195:7049");
+		KbasememeClient client = new KbasememeClient("http://127.0.0.1:1111");
+
 		motifCollection = client.searchMotifsFromSequencesWithMeme(testSequenceSet, "oops", 2, 14, 24, 0, 0, 0, 1, 0);
 //		String distTomtom = new String("pearson".getBytes("UTF-8"), "ISO-8859-1");
 		String distTomtom = "pearson";
@@ -181,7 +189,9 @@ public class KbasememeClientTest {
 
 	@Test
 	public final void testFindSitesByMotifCollectionWithMast() throws Exception {
-		KbasememeClient client = new KbasememeClient("http://localhost:1111");
+//		KbasememeClient client = new KbasememeClient("http://140.221.84.195:7049");
+		KbasememeClient client = new KbasememeClient("http://127.0.0.1:1111");
+
 		motifCollection = client.searchMotifsFromSequencesWithMeme(testSequenceSet, "oops", 2, 14, 24, 0, 0, 0, 1, 0);
 		List<HitMast> result = client.findSitesByMotifCollectionWithMast(motifCollection, testSequenceSet, 0.0005);
 		assertNotNull(result);
@@ -201,7 +211,9 @@ public class KbasememeClientTest {
 		GetObjectParams params = new GetObjectParams().withType("SequenceSet").withId(id).withWorkspace(WSUtil.workspaceName).withAuth(WSUtil.authToken().toString());   
 		GetObjectOutput output = WSUtil.wsClient().getObject(params);
 		SequenceSet input = UObject.transform(output.getData(), SequenceSet.class);
-		KbasememeClient client = new KbasememeClient("http://localhost:1111");
+//		KbasememeClient client = new KbasememeClient("http://140.221.84.195:7049");
+		KbasememeClient client = new KbasememeClient("http://127.0.0.1:1111");
+
 		motifCollection = client.searchMotifsFromSequencesWithMeme(testSequenceSet, "oops", 2, 14, 24, 0, 0, 0, 1, 0);
 		List<HitMast> result = client.findSitesByMotifCollectionWithMast(motifCollection, input, 0.0005);
 		assertNotNull(result);

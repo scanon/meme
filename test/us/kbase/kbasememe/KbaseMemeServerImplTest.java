@@ -333,6 +333,7 @@ public class KbaseMemeServerImplTest {
 //		String modMeme = new String("oops".getBytes("UTF-8"), "ISO-8859-1");
 		String modMeme = "oops";
 		MotifCollectionMeme result = KbasememeServerImpl.searchMotifsFromSequencesWithMeme(testSequenceSet, modMeme, 2, 14, 24, 0, 0, 0, 1, 0);
+		displayCollection(result);
 
 		assertEquals(Integer.valueOf("0"),result.getSeedMeme());
 		assertEquals(Integer.valueOf("1"),result.getSeqfracMeme());
@@ -539,6 +540,66 @@ public class KbaseMemeServerImplTest {
 //		WSUtil.saveObject(id, testSequenceSet, false);
 		String result = KbasememeServerImpl.formatSequence(sequence);
 		assertEquals("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\nttt",result);
+	}
+	
+	public static void displayCollection(MotifCollectionMeme collection) {
+		System.out.println("KBase collection ID = "+collection.getKbaseMotifCollectionMemeId());
+		System.out.println("timestamp = "+collection.getTimestamp());
+		System.out.println("versionMeme = "+collection.getVersionMeme());
+		System.out.println("inputDatafile = "+collection.getInputDatafile());
+		System.out.println("alphabetMeme = "+collection.getAlphabetMeme());
+		System.out.println("trainingSetMeme = "+collection.getTrainingSetMeme().toString());
+		System.out.println("commandLineMeme = "+collection.getCommandLineMeme());
+		System.out.println("modMeme = "+collection.getModMeme());
+		System.out.println("nmotifsMeme = "+collection.getNmotifsMeme());
+		System.out.println("evtMeme = "+collection.getEvtMeme());
+		System.out.println("objectFunctionMeme = "+collection.getObjectFunctionMeme());
+		System.out.println("minwMeme = "+collection.getMinwMeme());
+		System.out.println("maxwMeme = "+collection.getMaxwMeme());
+		System.out.println("minicMeme = "+collection.getMinicMeme());
+		System.out.println("wgMeme = "+collection.getWgMeme());
+		System.out.println("wsMeme = "+collection.getWsMeme());
+		System.out.println("endgapsMeme = "+collection.getEndgapsMeme());
+		System.out.println("minsitesMeme = "+collection.getMinsitesMeme());
+		System.out.println("maxsitesMeme = "+collection.getMaxsitesMeme());
+		System.out.println("wnsitesMeme = "+collection.getWnsitesMeme());
+		System.out.println("probMeme = "+collection.getProbMeme());
+		System.out.println("spmapMeme = "+collection.getSpmapMeme());
+		System.out.println("spfuzzMeme = "+collection.getSpfuzzMeme());
+		System.out.println("substringMeme = "+collection.getSubstringMeme());
+		System.out.println("branchingMeme = "+collection.getBranchingMeme());
+		System.out.println("wbranchMeme = "+collection.getWbranchMeme());
+		System.out.println("priorMeme = "+collection.getPriorMeme());
+		System.out.println("bMeme = "+collection.getBMeme());
+		System.out.println("maxiterMeme = "+collection.getMaxiterMeme());
+		System.out.println("distanceMeme = "+collection.getDistanceMeme());
+		System.out.println("nMeme = "+collection.getNMeme());
+		System.out.println("nCapMeme = "+collection.getNCapMeme());
+		System.out.println("strandsMeme = "+collection.getStrandsMeme());
+		System.out.println("seedMeme = "+collection.getSeedMeme());
+		System.out.println("seqfracMeme = "+collection.getSeqfracMeme());
+		System.out.println("letterFreqMeme = "+collection.getLetterFreqMeme());
+		System.out.println("bgFreqMeme = "+collection.getBgFreqMeme());
+		System.out.println("\n"+collection.getCollectionMemeOutput()+"\n");
+		for (MotifMeme motif : collection.getMotifs()){
+			System.out.println("\n"+motif.getMotifMemeOutput()+"\n");
+			System.out.println("\tkbaseMotifMemeId = "+motif.getKbaseMotifMemeId());
+			System.out.println("\tmotifName = "+motif.getMotifName());
+			System.out.println("\tmotifWidthMeme = "+motif.getMotifWidthMeme());
+			System.out.println("\tmotifSitesMeme = "+motif.getMotifSitesMeme());
+			System.out.println("\tmotifLlrMeme = "+motif.getMotifLlrMeme());
+			System.out.println("\tmotifEvalueMeme = "+motif.getMotifEvalueMeme());
+			for (SiteMeme site : motif.getSites()){
+				System.out.println("\t\tkbaseMotifMemeId = "+site.getKbaseMotifMemeId());
+				System.out.println("\t\tsiteSequenceName = "+site.getSiteSequenceName());
+				System.out.println("\t\tsiteStart = "+site.getSiteStart());
+				System.out.println("\t\tsitePvalue = "+site.getSitePvalue());
+				System.out.println("\t\tsiteLeftFlank = "+site.getSiteLeftFlank());
+				System.out.println("\t\tsiteSequence = "+site.getSiteSequence());
+				System.out.println("\t\tsiteRightFlank = "+site.getSiteRightFlank());
+			}
+		}
+		
 	}
 
 
