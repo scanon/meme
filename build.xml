@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="KBaseMeme" basedir="." default="build">
+<project name="Meme" basedir="." default="build">
     <property name="src.dir" value="${basedir}/src" />
     <property name="test.dir" value="${basedir}/test" />
     <property name="web.dir" value="${basedir}/WebContent" />
     <property name="build.dir" value="${basedir}/build" />
     <property name="dist.dir" value="${basedir}/dist" />
     <property name="server.lib" value="${basedir}/lib" />
-    <property name="name" value="KBaseMeme" />
+    <property name="name" value="MEME" />
 
     <path id="project-classpath">
 

@@ -1,0 +1,20 @@
+module GeneralTypes
+{
+	/* Represents a particular sequence from sequence set
+		string sequence_id - sequence identifier,  must be unique in SequenceSet
+		string sequence - nucleotide sequence 
+	*/
+	typedef structure{
+		string sequence_id;
+		string sequence;
+	} Sequence;
+	
+	/* Represents set of sequences
+		string sequence_set_id - identifier of sequence set
+		list<Sequence> sequences - sequences
+	*/
+	typedef structure{
+		string sequence_set_id;
+		list<Sequence> sequences;
+	} SequenceSet;
+};

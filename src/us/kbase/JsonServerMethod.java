@@ -9,8 +9,6 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface JsonServerMethod {
 	String rpc();
-
 	boolean tuple() default false;
-
 	boolean authOptional() default false;
 }

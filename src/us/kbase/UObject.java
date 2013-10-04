@@ -11,29 +11,28 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 
 public class UObject {
-	private static ObjectMapper mapper = new ObjectMapper()
-			.withModule(new JacksonTupleModule());
-
+	private static ObjectMapper mapper = new ObjectMapper().withModule(new JacksonTupleModule());
+	
 	public static boolean isList(Object obj) {
 		return obj instanceof List;
 	}
-
+	
 	public static <T> List<T> asList(Object obj) {
-		return (List<T>) obj;
+		return (List<T>)obj;
 	}
-
+	
 	public static boolean isMap(Object obj) {
 		return obj instanceof Map;
 	}
-
+	
 	public static <T> Map<String, T> asMap(Object obj) {
-		return (Map<String, T>) obj;
+		return (Map<String, T>)obj;
 	}
-
+	
 	public static boolean isInteger(Object obj) {
 		return obj instanceof Integer;
 	}
-
+	
 	public static boolean isString(Object obj) {
 		return obj instanceof String;
 	}
@@ -47,11 +46,10 @@ public class UObject {
 	}
 
 	public static <T> T asScalar(Object obj) {
-		return (T) obj;
+		return (T)obj;
 	}
 
-	public static <T> T transform(Object obj, Class<T> retType)
-			throws JsonProcessingException {
+	public static <T> T transform(Object obj, Class<T> retType) throws JsonProcessingException {
 		try {
 			StringWriter sw = new StringWriter();
 			mapper.writeValue(sw, obj);
@@ -63,8 +61,7 @@ public class UObject {
 		}
 	}
 
-	public static <T> T transform(Object obj, TypeReference<T> retType)
-			throws JsonProcessingException {
+	public static <T> T transform(Object obj, TypeReference<T> retType) throws JsonProcessingException {
 		try {
 			StringWriter sw = new StringWriter();
 			mapper.writeValue(sw, obj);
@@ -75,7 +72,7 @@ public class UObject {
 			throw new IllegalStateException(ex);
 		}
 	}
-
+	
 	public static JsonNode asJsonTree(Object obj) {
 		try {
 			StringWriter sw = new StringWriter();

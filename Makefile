@@ -5,7 +5,7 @@ TARGET ?= $(KB_TOP)
 CURR_DIR = $(shell pwd)
 SERVICE_NAME = $(shell basename $(CURR_DIR))
 TARGET_DIR = $(TARGET)/services/$(SERVICE_NAME)
-SERVLET_CLASS = us.kbase.kbasememe.KbasememeServer
+SERVLET_CLASS = us.kbase.meme.MemeServer
 TARGET_PORT = 7049
 THREADPOOL_SIZE = 20
 
