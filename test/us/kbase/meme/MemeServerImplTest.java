@@ -69,18 +69,6 @@ public class MemeServerImplTest {
 		Runtime.getRuntime().exec("rm " + fakeJobId);
 	}
 
-	@Test
-	public void testGetKbaseId() {
-		String input = "MemeRunResult";
-		String result = MemeServerImpl.getKbaseId(input);
-		assertEquals("KBase.MemeRunResult.",result.replaceAll("\\d", ""));
-		input = "MemeMotif";
-		result = MemeServerImpl.getKbaseId(input);
-		assertEquals("KBase.MemeMotif.",result.replaceAll("\\d", ""));
-		input = "MemeSite";
-		result = MemeServerImpl.getKbaseId(input);
-		assertEquals("KBase.MemeSite.",result.replaceAll("\\d", ""));
-	}
 	
 	@Test
 	public void testGenerateMemeInput() throws IOException {
@@ -256,7 +244,7 @@ public class MemeServerImplTest {
 	}
 
 	@Test
-	public void testGenerateMotifMeme() {
+	public void testGenerateMotifMeme() throws Exception {
 		List<MemeMotif> motifs = new ArrayList<MemeMotif>();
 		List<String> sites = new ArrayList<String>();
 		sites.add("393587                      134  1.52e-10 ACTGGTTTTG TCACGATTTTCAGGACATTCGTGA CCGCGTTGGC");
@@ -281,7 +269,7 @@ public class MemeServerImplTest {
 	}
 
 	@Test
-	public void testParseMemeOutput() {
+	public void testParseMemeOutput() throws Exception {
 		String testOutputFile = "test/mem_12345.txt";
 
 		MemeRunResult result = MemeServerImpl.parseMemeOutput(testOutputFile);

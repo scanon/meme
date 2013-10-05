@@ -18,6 +18,7 @@ import us.kbase.UObject;
 import us.kbase.auth.AuthUser;
 import us.kbase.generaltypes.Sequence;
 import us.kbase.generaltypes.SequenceSet;
+import us.kbase.idserverapi.IdserverapiClient;
 import us.kbase.util.WSUtil;
 import us.kbase.workspaceservice.GetObjectOutput;
 import us.kbase.workspaceservice.GetObjectParams;
@@ -25,8 +26,10 @@ import us.kbase.workspaceservice.GetObjectParams;
 public class MemeServerImpl {
 	private static Integer jobId = 0;
 	private static final String WORK_DIRECTORY = "."; 
+	private static final String ID_SERVICE_URL = "http://kbase.us/services/idserver";
 	private static Pattern spacePattern = Pattern.compile("[\\n\\t ]");
-	private static Date date = new Date(); 
+	private static Date date = new Date();
+	
 	
 	public static void cleanUpOnStart () {
 		try {
@@ -182,7 +185,7 @@ public class MemeServerImpl {
 		}
 	}
 
-	protected static MemeRunResult parseMemeOutput(String memeOutputFile) {
+	protected static MemeRunResult parseMemeOutput(String memeOutputFile) throws Exception {
 		MemeRunResult memeRunResult = new MemeRunResult();
 		List<MemeMotif> motifs = new ArrayList<MemeMotif>();
 		List<String> sites = new ArrayList<String>();
@@ -326,7 +329,7 @@ public class MemeServerImpl {
 	}
 
 	protected static void generateMemeMotif(String motifDataLine,
-			String cumulativeOutput, List<String> sites, List<MemeMotif> motifs) {
+			String cumulativeOutput, List<String> sites, List<MemeMotif> motifs) throws Exception {
 		MemeMotif motif = new MemeMotif();
 		motif.setId(getKbaseId(MemeMotif.class.getSimpleName()));
 		motif.setRawOutput(cumulativeOutput);
@@ -478,7 +481,7 @@ public class MemeServerImpl {
 		memeRunResult.setEvt(line.substring(line.indexOf("evt=") + 4));
 	}
 
-	public static TomtomRunResult compareMotifsWithTomtom(MemePSPM query, MemePSPMCollection target, TomtomRunParameters params) throws UnsupportedEncodingException {
+	public static TomtomRunResult compareMotifsWithTomtom(MemePSPM query, MemePSPMCollection target, TomtomRunParameters params) throws Exception {
 				
 		MemePSPMCollection queryCol = makePSPMCollection(query);
 		TomtomRunResult result = compareMotifsWithTomtomByCollection(queryCol, target, "", params);
@@ -502,7 +505,7 @@ public class MemeServerImpl {
 		return returnVal;
 	}
 	
-	public static TomtomRunResult compareMotifsWithTomtomByCollection(MemePSPMCollection query, MemePSPMCollection target, String pspmId, TomtomRunParameters params) throws UnsupportedEncodingException {
+	public static TomtomRunResult compareMotifsWithTomtomByCollection(MemePSPMCollection query, MemePSPMCollection target, String pspmId, TomtomRunParameters params) throws Exception {
 		TomtomRunResult result = new TomtomRunResult();
 		String distTomtom = new String(params.getDist().getBytes("ISO-8859-1"), "UTF-8");// MAGIC!
 		String jobId = getJobId();
@@ -553,7 +556,7 @@ public class MemeServerImpl {
 		return returnVal;
 	}
 	
-	public static MemePSPMCollection getPspmCollectionFromMemeResult (MemeRunResult memeRunResult){
+	public static MemePSPMCollection getPspmCollectionFromMemeResult (MemeRunResult memeRunResult) throws Exception{
 		MemePSPMCollection returnVal = new MemePSPMCollection();
 		returnVal.setId(getKbaseId("MemePSPMCollection"));
 		returnVal.setTimestamp(String.valueOf(date.getTime()));
@@ -594,7 +597,7 @@ public class MemeServerImpl {
 		return returnVal;
 	}
 	
-	protected static MemePSPM generateMemePSPM (MemeMotif motif, String alphabet){
+	protected static MemePSPM generateMemePSPM (MemeMotif motif, String alphabet) throws Exception{
 		MemePSPM returnVal = new MemePSPM();
 		returnVal.setId(getKbaseId("MemePSPM"));
 		returnVal.setSourceId(motif.getId());
@@ -736,7 +739,7 @@ public class MemeServerImpl {
 		return commandLine;
 	}
 	
-	protected static TomtomRunResult parseTomtomOutput(String tomtomOutputFile, TomtomRunParameters params) {
+	protected static TomtomRunResult parseTomtomOutput(String tomtomOutputFile, TomtomRunParameters params) throws Exception {
 		TomtomRunResult returnVal = new TomtomRunResult();
 		returnVal.setId(getKbaseId(TomtomRunResult.class.getSimpleName()));
 		returnVal.setTimestamp(String.valueOf(date.getTime()));
@@ -782,7 +785,7 @@ public class MemeServerImpl {
 		return result;
 	}
 	
-	public static MastRunResult findSitesWithMastByCollection(MemePSPMCollection query, SequenceSet target, String pspmId, Double mt){
+	public static MastRunResult findSitesWithMastByCollection(MemePSPMCollection query, SequenceSet target, String pspmId, Double mt) throws Exception{
 		MastRunResult returnVal = new MastRunResult();
 		returnVal.setId(getKbaseId(MastRunResult.class.getSimpleName()));
 		returnVal.setTimestamp(String.valueOf(date.getTime()));
@@ -842,7 +845,7 @@ public class MemeServerImpl {
 		
 	}
 	
-	public static MastRunResult findSitesWithMast (MemePSPM query, SequenceSet target, Double mt){
+	public static MastRunResult findSitesWithMast (MemePSPM query, SequenceSet target, Double mt) throws Exception{
 
 		MemePSPMCollection queryCol = makePSPMCollection(query);
 		MastRunResult returnVal = findSitesWithMastByCollection(queryCol, target, "", mt);
@@ -910,22 +913,24 @@ public class MemeServerImpl {
 		return result;
 	}
 	
-	public static String getKbaseId(String entityType) {
+	public static String getKbaseId(String entityType) throws Exception {
 		String returnVal = null;
-		if (entityType.contains("MemeRunResult")) {
-			returnVal = "KBase.MemeRunResult." + String.valueOf(System.currentTimeMillis());
-		} else if (entityType.contains("MemeMotif")) {
-			returnVal = "KBase.MemeMotif." + String.valueOf(System.currentTimeMillis());
-		} else if (entityType.contains("MemeSite")) {
-			returnVal = "KBase.MemeSite." + String.valueOf(System.currentTimeMillis());
-		} else if (entityType.contains("MemePSPMCollection")) {
-			returnVal = "KBase.MemePSPMCollection." + String.valueOf(System.currentTimeMillis());
-		} else if (entityType.contains("MemePSPM")) {
-			returnVal = "KBase.MemePSPM." + String.valueOf(System.currentTimeMillis());
-		} else if (entityType.contains("TomtomRunResult")) {
-			returnVal = "KBase.TomtomRunResult." + String.valueOf(System.currentTimeMillis());
-		} else if (entityType.contains("MastRunResult")) {
-			returnVal = "KBase.MastRunResult." + String.valueOf(System.currentTimeMillis());
+		IdserverapiClient idClient = new IdserverapiClient(ID_SERVICE_URL);
+		
+		if (entityType.equals("MemeRunResult")) {
+			returnVal = "kb|memerunresult." + idClient.allocateIdRange("memerunresult", 1).toString();
+		} else if (entityType.equals("MemeMotif")) {
+			returnVal = "kb|mememotif." + idClient.allocateIdRange("mememotif", 1).toString();
+		} else if (entityType.equals("MemeSite")) {
+			returnVal = "kb|memesite." + idClient.allocateIdRange("memesite", 1).toString();
+		} else if (entityType.equals("MemePSPMCollection")) {
+			returnVal = "kb|memepspmcollection." + idClient.allocateIdRange("memepspmcollection", 1).toString();
+		} else if (entityType.equals("MemePSPM")) {
+			returnVal = "kb|memepspm." + idClient.allocateIdRange("memepspm", 1).toString();
+		} else if (entityType.equals("TomtomRunResult")) {
+			returnVal = "kb|tomtomrunresult." + idClient.allocateIdRange("tomtomrunresult", 1).toString();
+		} else if (entityType.equals("MastRunResult")) {
+			returnVal = "kb|mastrunresult." + idClient.allocateIdRange("mastrunresult", 1).toString();
 		} else {
 		}
 		return returnVal;

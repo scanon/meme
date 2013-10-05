@@ -21,6 +21,8 @@ public class MemeClientTest {
 	
 	private SequenceSet testSequenceSet = new SequenceSet();
 	private MemeRunResult memeRunResult = new MemeRunResult();
+//	private String serverUrl = "http://140.221.84.195:7049";
+	private String serverUrl = "http://127.0.0.1:1111";
 
 	@Before
 	public void setUp() throws Exception {
@@ -62,8 +64,7 @@ public class MemeClientTest {
 
 	@Test
 	public final void testKbasememeClient() throws Exception {
-//		KbasememeClient client = new KbasememeClient("http://140.221.84.195:7049");
-		MemeClient client = new MemeClient("http://127.0.0.1:1111", "aktest", "1475rokegi");
+		MemeClient client = new MemeClient(serverUrl, "aktest", "1475rokegi");
 		client.setAuthAllowedForHttp(true);
 //    	WSUtil.saveObject(testSequenceSet.getSequenceSetId(), testSequenceSet, false);
 		assertNotNull(client);
@@ -71,8 +72,7 @@ public class MemeClientTest {
 
 	@Test
 	public final void testSearchMotifsFromSequencesWithMeme() throws Exception {
-//		KbasememeClient client = new KbasememeClient("http://140.221.84.195:7049");
-		MemeClient client = new MemeClient("http://127.0.0.1:1111", "aktest", "1475rokegi");
+		MemeClient client = new MemeClient(serverUrl, "aktest", "1475rokegi");
 		client.setAuthAllowedForHttp(true);
 		
 		//set params
@@ -137,8 +137,7 @@ public class MemeClientTest {
 		GetObjectParams objectParams = new GetObjectParams().withType("SequenceSet").withId(id).withWorkspace(WSUtil.workspaceName).withAuth(WSUtil.authToken().toString());   
 		GetObjectOutput output = WSUtil.wsClient().getObject(objectParams);
 		SequenceSet input = UObject.transform(output.getData(), SequenceSet.class);
-//		KbasememeClient client = new KbasememeClient("http://140.221.84.195:7049");
-		MemeClient client = new MemeClient("http://127.0.0.1:1111", "aktest", "1475rokegi");
+		MemeClient client = new MemeClient(serverUrl, "aktest", "1475rokegi");
 		client.setAuthAllowedForHttp(true);
 		
 /*		System.out.println(input.getSequenceSetId());
@@ -204,8 +203,7 @@ public class MemeClientTest {
 
 	@Test
 	public final void testCompareMotifsWithTomtomByCollection() throws Exception {
-//		KbasememeClient client = new KbasememeClient("http://140.221.84.195:7049");
-		MemeClient client = new MemeClient("http://127.0.0.1:1111", "aktest", "1475rokegi");
+		MemeClient client = new MemeClient(serverUrl, "aktest", "1475rokegi");
 		client.setAuthAllowedForHttp(true);
 		
 		//set params
@@ -246,8 +244,7 @@ public class MemeClientTest {
 
 	@Test
 	public final void testCompareMotifsWithTomtomByCollectionFromWs() throws Exception {
-//		KbasememeClient client = new KbasememeClient("http://140.221.84.195:7049");
-		MemeClient client = new MemeClient("http://127.0.0.1:1111", "aktest", "1475rokegi");
+		MemeClient client = new MemeClient(serverUrl, "aktest", "1475rokegi");
 		client.setAuthAllowedForHttp(true);
 		
 		
@@ -279,8 +276,7 @@ public class MemeClientTest {
 	
 	@Test
 	public final void testFindSitesByMotifCollectionWithMast() throws Exception {
-//		KbasememeClient client = new KbasememeClient("http://140.221.84.195:7049");
-		MemeClient client = new MemeClient("http://127.0.0.1:1111", "aktest", "1475rokegi");
+		MemeClient client = new MemeClient(serverUrl, "aktest", "1475rokegi");
 		client.setAuthAllowedForHttp(true);
 
 		//set params
@@ -313,8 +309,7 @@ public class MemeClientTest {
 	public final void testFindSitesByMotifCollectionWsWithMast() throws Exception {
 		String seqId = "KBase.SequenceSet.12345";
 		String pspmCollectionId = "KBase.MemePSPMCollection.1380921747486";
-//		KbasememeClient client = new KbasememeClient("http://140.221.84.195:7049");
-		MemeClient client = new MemeClient("http://127.0.0.1:1111", "aktest", "1475rokegi");
+		MemeClient client = new MemeClient(serverUrl, "aktest", "1475rokegi");
 		client.setAuthAllowedForHttp(true);
 		
 		String resultId = client.findSitesWithMastByCollectionFromWs("AKtest", pspmCollectionId, seqId, "", 0.0005);
@@ -338,8 +333,7 @@ public class MemeClientTest {
 	@Test
 	public final void testGetPspmCollectionFromMemeResultFromWs() throws Exception {
 		String id = "KBase.MemeRunResult.1380917552760";
-//		KbasememeClient client = new KbasememeClient("http://140.221.84.195:7049");
-		MemeClient client = new MemeClient("http://127.0.0.1:1111", "aktest", "1475rokegi");
+		MemeClient client = new MemeClient(serverUrl, "aktest", "1475rokegi");
 		client.setAuthAllowedForHttp(true);
 		
 		String resultId = client.getPspmCollectionFromMemeResultFromWs("AKtest", id);
@@ -356,8 +350,7 @@ public class MemeClientTest {
 	@Test
 	public final void testGetPspmCollectionFromMemeResult() throws Exception {
 		String id = "KBase.MemeRunResult.1380917552760";
-//		KbasememeClient client = new KbasememeClient("http://140.221.84.195:7049");
-		MemeClient client = new MemeClient("http://127.0.0.1:1111", "aktest", "1475rokegi");
+		MemeClient client = new MemeClient(serverUrl, "aktest", "1475rokegi");
 		client.setAuthAllowedForHttp(true);
 
 		GetObjectParams memeParams = new GetObjectParams().withType("MemeRunResult").withId(id).withWorkspace(WSUtil.workspaceName).withAuth(WSUtil.authToken().toString());   
