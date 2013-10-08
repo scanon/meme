@@ -1,6 +1,6 @@
 #Directories with compiled source
 /bin
-/dist
+#/dist
 /src-old
 /lib-old
 /.settings

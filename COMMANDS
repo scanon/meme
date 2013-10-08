@@ -1,0 +1,2 @@
+#group-name	meme	MEME
+#command-set	scripts/(.*).pl	meme

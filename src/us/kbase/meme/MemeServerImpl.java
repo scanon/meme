@@ -527,14 +527,14 @@ public class MemeServerImpl {
 		}
 		finally {
 			//Clean up
-			try {
+/*			try {
 				Runtime.getRuntime().exec("rm " + firstInputFile);
 				Runtime.getRuntime().exec("rm " + secondInputFile);
 				Runtime.getRuntime().exec("rm " + outputFileName);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}
+			}*/
 		}
 		return result;
 		

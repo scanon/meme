@@ -1,0 +1,2400 @@
+package Bio::KBase::meme::memeImpl;
+use strict;
+use Bio::KBase::Exceptions;
+# Use Semantic Versioning (2.0.0-rc.1)
+# http://semver.org 
+our $VERSION = "0.1.0";
+
+=head1 NAME
+
+MEME
+
+=head1 DESCRIPTION
+
+
+
+=cut
+
+#BEGIN_HEADER
+#END_HEADER
+
+sub new
+{
+    my($class, @args) = @_;
+    my $self = {
+    };
+    bless $self, $class;
+    #BEGIN_CONSTRUCTOR
+    #END_CONSTRUCTOR
+
+    if ($self->can('_init_instance'))
+    {
+	$self->_init_instance();
+    }
+    return $self;
+}
+
+=head1 METHODS
+
+
+
+=head2 find_motifs_with_meme
+
+  $meme_run_result = $obj->find_motifs_with_meme($sequenceSet, $params)
+
+=over 4
+
+=item Parameter and return types
+
+=begin html
+
+<pre>
+$sequenceSet is a SequenceSet
+$params is a MemeRunParameters
+$meme_run_result is a MemeRunResult
+SequenceSet is a reference to a hash where the following keys are defined:
+	sequence_set_id has a value which is a string
+	sequences has a value which is a reference to a list where each element is a Sequence
+Sequence is a reference to a hash where the following keys are defined:
+	sequence_id has a value which is a string
+	sequence has a value which is a string
+MemeRunParameters is a reference to a hash where the following keys are defined:
+	mod has a value which is a string
+	nmotifs has a value which is an int
+	minw has a value which is an int
+	maxw has a value which is an int
+	nsites has a value which is an int
+	minsites has a value which is an int
+	maxsites has a value which is an int
+	pal has a value which is an int
+	revcomp has a value which is an int
+MemeRunResult is a reference to a hash where the following keys are defined:
+	id has a value which is a string
+	timestamp has a value which is a string
+	version has a value which is a string
+	input_file_name has a value which is a string
+	alphabet has a value which is a string
+	training_set has a value which is a reference to a list where each element is a string
+	command_line has a value which is a string
+	mod has a value which is a string
+	nmotifs has a value which is an int
+	evt has a value which is a string
+	object_function has a value which is a string
+	minw has a value which is an int
+	maxw has a value which is an int
+	minic has a value which is a float
+	wg has a value which is an int
+	ws has a value which is an int
+	endgaps has a value which is a string
+	minsites has a value which is an int
+	maxsites has a value which is an int
+	wnsites has a value which is a float
+	prob has a value which is an int
+	spmap has a value which is a string
+	spfuzz has a value which is a string
+	substring has a value which is a string
+	branching has a value which is a string
+	wbranch has a value which is a string
+	prior has a value which is a string
+	b has a value which is a float
+	maxiter has a value which is an int
+	distance has a value which is a float
+	n has a value which is an int
+	n_cap has a value which is an int
+	strands has a value which is a string
+	seed has a value which is an int
+	seqfrac has a value which is an int
+	letter_freq has a value which is a string
+	bg_freq has a value which is a string
+	motifs has a value which is a reference to a list where each element is a MemeMotif
+	raw_output has a value which is a string
+MemeMotif is a reference to a hash where the following keys are defined:
+	id has a value which is a string
+	description has a value which is a string
+	width has a value which is an int
+	llr has a value which is a float
+	evalue has a value which is a float
+	raw_output has a value which is a string
+	sites has a value which is a reference to a list where each element is a MemeSite
+MemeSite is a reference to a hash where the following keys are defined:
+	source_sequence_id has a value which is a string
+	start has a value which is an int
+	pvalue has a value which is a float
+	left_flank has a value which is a string
+	right_flank has a value which is a string
+	sequence has a value which is a string
+
+</pre>
+
+=end html
+
+=begin text
+
+$sequenceSet is a SequenceSet
+$params is a MemeRunParameters
+$meme_run_result is a MemeRunResult
+SequenceSet is a reference to a hash where the following keys are defined:
+	sequence_set_id has a value which is a string
+	sequences has a value which is a reference to a list where each element is a Sequence
+Sequence is a reference to a hash where the following keys are defined:
+	sequence_id has a value which is a string
+	sequence has a value which is a string
+MemeRunParameters is a reference to a hash where the following keys are defined:
+	mod has a value which is a string
+	nmotifs has a value which is an int
+	minw has a value which is an int
+	maxw has a value which is an int
+	nsites has a value which is an int
+	minsites has a value which is an int
+	maxsites has a value which is an int
+	pal has a value which is an int
+	revcomp has a value which is an int
+MemeRunResult is a reference to a hash where the following keys are defined:
+	id has a value which is a string
+	timestamp has a value which is a string
+	version has a value which is a string
+	input_file_name has a value which is a string
+	alphabet has a value which is a string
+	training_set has a value which is a reference to a list where each element is a string
+	command_line has a value which is a string
+	mod has a value which is a string
+	nmotifs has a value which is an int
+	evt has a value which is a string
+	object_function has a value which is a string
+	minw has a value which is an int
+	maxw has a value which is an int
+	minic has a value which is a float
+	wg has a value which is an int
+	ws has a value which is an int
+	endgaps has a value which is a string
+	minsites has a value which is an int
+	maxsites has a value which is an int
+	wnsites has a value which is a float
+	prob has a value which is an int
+	spmap has a value which is a string
+	spfuzz has a value which is a string
+	substring has a value which is a string
+	branching has a value which is a string
+	wbranch has a value which is a string
+	prior has a value which is a string
+	b has a value which is a float
+	maxiter has a value which is an int
+	distance has a value which is a float
+	n has a value which is an int
+	n_cap has a value which is an int
+	strands has a value which is a string
+	seed has a value which is an int
+	seqfrac has a value which is an int
+	letter_freq has a value which is a string
+	bg_freq has a value which is a string
+	motifs has a value which is a reference to a list where each element is a MemeMotif
+	raw_output has a value which is a string
+MemeMotif is a reference to a hash where the following keys are defined:
+	id has a value which is a string
+	description has a value which is a string
+	width has a value which is an int
+	llr has a value which is a float
+	evalue has a value which is a float
+	raw_output has a value which is a string
+	sites has a value which is a reference to a list where each element is a MemeSite
+MemeSite is a reference to a hash where the following keys are defined:
+	source_sequence_id has a value which is a string
+	start has a value which is an int
+	pvalue has a value which is a float
+	left_flank has a value which is a string
+	right_flank has a value which is a string
+	sequence has a value which is a string
+
+
+=end text
+
+
+
+=item Description
+
+Returns results of a single MEME run
+MEME will be run with -dna -text parameters
+SequenceSet sequenceSet - input set of sequences
+MemeRunParameters params - parameters of MEME run
+
+=back
+
+=cut
+
+sub find_motifs_with_meme
+{
+    my $self = shift;
+    my($sequenceSet, $params) = @_;
+
+    my @_bad_arguments;
+    (ref($sequenceSet) eq 'HASH') or push(@_bad_arguments, "Invalid type for argument \"sequenceSet\" (value was \"$sequenceSet\")");
+    (ref($params) eq 'HASH') or push(@_bad_arguments, "Invalid type for argument \"params\" (value was \"$params\")");
+    if (@_bad_arguments) {
+	my $msg = "Invalid arguments passed to find_motifs_with_meme:\n" . join("", map { "\t$_\n" } @_bad_arguments);
+	Bio::KBase::Exceptions::ArgumentValidationError->throw(error => $msg,
+							       method_name => 'find_motifs_with_meme');
+    }
+
+    my $ctx = $Bio::KBase::meme::Service::CallContext;
+    my($meme_run_result);
+    #BEGIN find_motifs_with_meme
+    #END find_motifs_with_meme
+    my @_bad_returns;
+    (ref($meme_run_result) eq 'HASH') or push(@_bad_returns, "Invalid type for return variable \"meme_run_result\" (value was \"$meme_run_result\")");
+    if (@_bad_returns) {
+	my $msg = "Invalid returns passed to find_motifs_with_meme:\n" . join("", map { "\t$_\n" } @_bad_returns);
+	Bio::KBase::Exceptions::ArgumentValidationError->throw(error => $msg,
+							       method_name => 'find_motifs_with_meme');
+    }
+    return($meme_run_result);
+}
+
+
+
+
+=head2 find_motifs_with_meme_from_ws
+
+  $meme_run_result_id = $obj->find_motifs_with_meme_from_ws($ws_id, $sequence_set_id, $params)
+
+=over 4
+
+=item Parameter and return types
+
+=begin html
+
+<pre>
+$ws_id is a string
+$sequence_set_id is a string
+$params is a MemeRunParameters
+$meme_run_result_id is a string
+MemeRunParameters is a reference to a hash where the following keys are defined:
+	mod has a value which is a string
+	nmotifs has a value which is an int
+	minw has a value which is an int
+	maxw has a value which is an int
+	nsites has a value which is an int
+	minsites has a value which is an int
+	maxsites has a value which is an int
+	pal has a value which is an int
+	revcomp has a value which is an int
+
+</pre>
+
+=end html
+
+=begin text
+
+$ws_id is a string
+$sequence_set_id is a string
+$params is a MemeRunParameters
+$meme_run_result_id is a string
+MemeRunParameters is a reference to a hash where the following keys are defined:
+	mod has a value which is a string
+	nmotifs has a value which is an int
+	minw has a value which is an int
+	maxw has a value which is an int
+	nsites has a value which is an int
+	minsites has a value which is an int
+	maxsites has a value which is an int
+	pal has a value which is an int
+	revcomp has a value which is an int
+
+
+=end text
+
+
+
+=item Description
+
+Returns kbase id of MemeRunResult object that contains results of a single MEME run
+MEME will be run with -dna -text parameters
+string ws_id - workspace id
+string sequence_set_id - kbase id of the input set of sequences
+MemeRunParameters params - parameters of MEME run
+
+=back
+
+=cut
+
+sub find_motifs_with_meme_from_ws
+{
+    my $self = shift;
+    my($ws_id, $sequence_set_id, $params) = @_;
+
+    my @_bad_arguments;
+    (!ref($ws_id)) or push(@_bad_arguments, "Invalid type for argument \"ws_id\" (value was \"$ws_id\")");
+    (!ref($sequence_set_id)) or push(@_bad_arguments, "Invalid type for argument \"sequence_set_id\" (value was \"$sequence_set_id\")");
+    (ref($params) eq 'HASH') or push(@_bad_arguments, "Invalid type for argument \"params\" (value was \"$params\")");
+    if (@_bad_arguments) {
+	my $msg = "Invalid arguments passed to find_motifs_with_meme_from_ws:\n" . join("", map { "\t$_\n" } @_bad_arguments);
+	Bio::KBase::Exceptions::ArgumentValidationError->throw(error => $msg,
+							       method_name => 'find_motifs_with_meme_from_ws');
+    }
+
+    my $ctx = $Bio::KBase::meme::Service::CallContext;
+    my($meme_run_result_id);
+    #BEGIN find_motifs_with_meme_from_ws
+    #END find_motifs_with_meme_from_ws
+    my @_bad_returns;
+    (!ref($meme_run_result_id)) or push(@_bad_returns, "Invalid type for return variable \"meme_run_result_id\" (value was \"$meme_run_result_id\")");
+    if (@_bad_returns) {
+	my $msg = "Invalid returns passed to find_motifs_with_meme_from_ws:\n" . join("", map { "\t$_\n" } @_bad_returns);
+	Bio::KBase::Exceptions::ArgumentValidationError->throw(error => $msg,
+							       method_name => 'find_motifs_with_meme_from_ws');
+    }
+    return($meme_run_result_id);
+}
+
+
+
+
+=head2 compare_motifs_with_tomtom
+
+  $tomtom_run_result = $obj->compare_motifs_with_tomtom($query, $target, $params)
+
+=over 4
+
+=item Parameter and return types
+
+=begin html
+
+<pre>
+$query is a MemePSPM
+$target is a MemePSPMCollection
+$params is a TomtomRunParameters
+$tomtom_run_result is a TomtomRunResult
+MemePSPM is a reference to a hash where the following keys are defined:
+	id has a value which is a string
+	source_id has a value which is a string
+	source_type has a value which is a string
+	description has a value which is a string
+	alphabet has a value which is a string
+	width has a value which is an int
+	nsites has a value which is an int
+	evalue has a value which is a float
+	matrix has a value which is a reference to a list where each element is a reference to a list where each element is a float
+MemePSPMCollection is a reference to a hash where the following keys are defined:
+	id has a value which is a string
+	timestamp has a value which is a string
+	description has a value which is a string
+	alphabet has a value which is a string
+	pspms has a value which is a reference to a list where each element is a MemePSPM
+TomtomRunParameters is a reference to a hash where the following keys are defined:
+	thresh has a value which is a float
+	evalue has a value which is an int
+	dist has a value which is a string
+	internal has a value which is an int
+	min_overlap has a value which is an int
+TomtomRunResult is a reference to a hash where the following keys are defined:
+	id has a value which is a string
+	timestamp has a value which is a string
+	thresh has a value which is a float
+	evalue has a value which is an int
+	dist has a value which is a string
+	internal has a value which is an int
+	min_overlap has a value which is an int
+	hits has a value which is a reference to a list where each element is a TomtomHit
+TomtomHit is a reference to a hash where the following keys are defined:
+	query_pspm_id has a value which is a string
+	target_pspm_id has a value which is a string
+	optimal_offset has a value which is an int
+	pvalue has a value which is a float
+	evalue has a value which is a float
+	qvalue has a value which is a float
+	overlap has a value which is an int
+	query_consensus has a value which is a string
+	target_consensus has a value which is a string
+	strand has a value which is a string
+
+</pre>
+
+=end html
+
+=begin text
+
+$query is a MemePSPM
+$target is a MemePSPMCollection
+$params is a TomtomRunParameters
+$tomtom_run_result is a TomtomRunResult
+MemePSPM is a reference to a hash where the following keys are defined:
+	id has a value which is a string
+	source_id has a value which is a string
+	source_type has a value which is a string
+	description has a value which is a string
+	alphabet has a value which is a string
+	width has a value which is an int
+	nsites has a value which is an int
+	evalue has a value which is a float
+	matrix has a value which is a reference to a list where each element is a reference to a list where each element is a float
+MemePSPMCollection is a reference to a hash where the following keys are defined:
+	id has a value which is a string
+	timestamp has a value which is a string
+	description has a value which is a string
+	alphabet has a value which is a string
+	pspms has a value which is a reference to a list where each element is a MemePSPM
+TomtomRunParameters is a reference to a hash where the following keys are defined:
+	thresh has a value which is a float
+	evalue has a value which is an int
+	dist has a value which is a string
+	internal has a value which is an int
+	min_overlap has a value which is an int
+TomtomRunResult is a reference to a hash where the following keys are defined:
+	id has a value which is a string
+	timestamp has a value which is a string
+	thresh has a value which is a float
+	evalue has a value which is an int
+	dist has a value which is a string
+	internal has a value which is an int
+	min_overlap has a value which is an int
+	hits has a value which is a reference to a list where each element is a TomtomHit
+TomtomHit is a reference to a hash where the following keys are defined:
+	query_pspm_id has a value which is a string
+	target_pspm_id has a value which is a string
+	optimal_offset has a value which is an int
+	pvalue has a value which is a float
+	evalue has a value which is a float
+	qvalue has a value which is a float
+	overlap has a value which is an int
+	query_consensus has a value which is a string
+	target_consensus has a value which is a string
+	strand has a value which is a string
+
+
+=end text
+
+
+
+=item Description
+
+Returns TomtomRunResult with results of a single TOMTOM run
+TOMTOM will be run with -text parameter
+MemePSPM query - query motifs for TOMTOM run
+MemePSPMCollection target - target motifs for TOMTOM run
+TomtomRunParameters params - parameters of TOMTOM run
+
+=back
+
+=cut
+
+sub compare_motifs_with_tomtom
+{
+    my $self = shift;
+    my($query, $target, $params) = @_;
+
+    my @_bad_arguments;
+    (ref($query) eq 'HASH') or push(@_bad_arguments, "Invalid type for argument \"query\" (value was \"$query\")");
+    (ref($target) eq 'HASH') or push(@_bad_arguments, "Invalid type for argument \"target\" (value was \"$target\")");
+    (ref($params) eq 'HASH') or push(@_bad_arguments, "Invalid type for argument \"params\" (value was \"$params\")");
+    if (@_bad_arguments) {
+	my $msg = "Invalid arguments passed to compare_motifs_with_tomtom:\n" . join("", map { "\t$_\n" } @_bad_arguments);
+	Bio::KBase::Exceptions::ArgumentValidationError->throw(error => $msg,
+							       method_name => 'compare_motifs_with_tomtom');
+    }
+
+    my $ctx = $Bio::KBase::meme::Service::CallContext;
+    my($tomtom_run_result);
+    #BEGIN compare_motifs_with_tomtom
+    #END compare_motifs_with_tomtom
+    my @_bad_returns;
+    (ref($tomtom_run_result) eq 'HASH') or push(@_bad_returns, "Invalid type for return variable \"tomtom_run_result\" (value was \"$tomtom_run_result\")");
+    if (@_bad_returns) {
+	my $msg = "Invalid returns passed to compare_motifs_with_tomtom:\n" . join("", map { "\t$_\n" } @_bad_returns);
+	Bio::KBase::Exceptions::ArgumentValidationError->throw(error => $msg,
+							       method_name => 'compare_motifs_with_tomtom');
+    }
+    return($tomtom_run_result);
+}
+
+
+
+
+=head2 compare_motifs_with_tomtom_from_ws
+
+  $tomtom_run_result_id = $obj->compare_motifs_with_tomtom_from_ws($ws_id, $query_id, $target_id, $params)
+
+=over 4
+
+=item Parameter and return types
+
+=begin html
+
+<pre>
+$ws_id is a string
+$query_id is a string
+$target_id is a string
+$params is a TomtomRunParameters
+$tomtom_run_result_id is a string
+TomtomRunParameters is a reference to a hash where the following keys are defined:
+	thresh has a value which is a float
+	evalue has a value which is an int
+	dist has a value which is a string
+	internal has a value which is an int
+	min_overlap has a value which is an int
+
+</pre>
+
+=end html
+
+=begin text
+
+$ws_id is a string
+$query_id is a string
+$target_id is a string
+$params is a TomtomRunParameters
+$tomtom_run_result_id is a string
+TomtomRunParameters is a reference to a hash where the following keys are defined:
+	thresh has a value which is a float
+	evalue has a value which is an int
+	dist has a value which is a string
+	internal has a value which is an int
+	min_overlap has a value which is an int
+
+
+=end text
+
+
+
+=item Description
+
+Returns kbase ID of TomtomRunResult with results of a single TOMTOM run
+string ws_id - workspace id 
+TOMTOM will be run with -text parameter
+string query_id - kbase id of query MemePSPM for TOMTOM run
+string target_id - kbase id of MemePSPMCollection with target motifs for TOMTOM run
+TomtomRunParameters params - parameters of TOMTOM run
+
+=back
+
+=cut
+
+sub compare_motifs_with_tomtom_from_ws
+{
+    my $self = shift;
+    my($ws_id, $query_id, $target_id, $params) = @_;
+
+    my @_bad_arguments;
+    (!ref($ws_id)) or push(@_bad_arguments, "Invalid type for argument \"ws_id\" (value was \"$ws_id\")");
+    (!ref($query_id)) or push(@_bad_arguments, "Invalid type for argument \"query_id\" (value was \"$query_id\")");
+    (!ref($target_id)) or push(@_bad_arguments, "Invalid type for argument \"target_id\" (value was \"$target_id\")");
+    (ref($params) eq 'HASH') or push(@_bad_arguments, "Invalid type for argument \"params\" (value was \"$params\")");
+    if (@_bad_arguments) {
+	my $msg = "Invalid arguments passed to compare_motifs_with_tomtom_from_ws:\n" . join("", map { "\t$_\n" } @_bad_arguments);
+	Bio::KBase::Exceptions::ArgumentValidationError->throw(error => $msg,
+							       method_name => 'compare_motifs_with_tomtom_from_ws');
+    }
+
+    my $ctx = $Bio::KBase::meme::Service::CallContext;
+    my($tomtom_run_result_id);
+    #BEGIN compare_motifs_with_tomtom_from_ws
+    #END compare_motifs_with_tomtom_from_ws
+    my @_bad_returns;
+    (!ref($tomtom_run_result_id)) or push(@_bad_returns, "Invalid type for return variable \"tomtom_run_result_id\" (value was \"$tomtom_run_result_id\")");
+    if (@_bad_returns) {
+	my $msg = "Invalid returns passed to compare_motifs_with_tomtom_from_ws:\n" . join("", map { "\t$_\n" } @_bad_returns);
+	Bio::KBase::Exceptions::ArgumentValidationError->throw(error => $msg,
+							       method_name => 'compare_motifs_with_tomtom_from_ws');
+    }
+    return($tomtom_run_result_id);
+}
+
+
+
+
+=head2 compare_motifs_with_tomtom_by_collection
+
+  $tomtom_run_result = $obj->compare_motifs_with_tomtom_by_collection($query, $target, $pspm_id, $params)
+
+=over 4
+
+=item Parameter and return types
+
+=begin html
+
+<pre>
+$query is a MemePSPMCollection
+$target is a MemePSPMCollection
+$pspm_id is a string
+$params is a TomtomRunParameters
+$tomtom_run_result is a TomtomRunResult
+MemePSPMCollection is a reference to a hash where the following keys are defined:
+	id has a value which is a string
+	timestamp has a value which is a string
+	description has a value which is a string
+	alphabet has a value which is a string
+	pspms has a value which is a reference to a list where each element is a MemePSPM
+MemePSPM is a reference to a hash where the following keys are defined:
+	id has a value which is a string
+	source_id has a value which is a string
+	source_type has a value which is a string
+	description has a value which is a string
+	alphabet has a value which is a string
+	width has a value which is an int
+	nsites has a value which is an int
+	evalue has a value which is a float
+	matrix has a value which is a reference to a list where each element is a reference to a list where each element is a float
+TomtomRunParameters is a reference to a hash where the following keys are defined:
+	thresh has a value which is a float
+	evalue has a value which is an int
+	dist has a value which is a string
+	internal has a value which is an int
+	min_overlap has a value which is an int
+TomtomRunResult is a reference to a hash where the following keys are defined:
+	id has a value which is a string
+	timestamp has a value which is a string
+	thresh has a value which is a float
+	evalue has a value which is an int
+	dist has a value which is a string
+	internal has a value which is an int
+	min_overlap has a value which is an int
+	hits has a value which is a reference to a list where each element is a TomtomHit
+TomtomHit is a reference to a hash where the following keys are defined:
+	query_pspm_id has a value which is a string
+	target_pspm_id has a value which is a string
+	optimal_offset has a value which is an int
+	pvalue has a value which is a float
+	evalue has a value which is a float
+	qvalue has a value which is a float
+	overlap has a value which is an int
+	query_consensus has a value which is a string
+	target_consensus has a value which is a string
+	strand has a value which is a string
+
+</pre>
+
+=end html
+
+=begin text
+
+$query is a MemePSPMCollection
+$target is a MemePSPMCollection
+$pspm_id is a string
+$params is a TomtomRunParameters
+$tomtom_run_result is a TomtomRunResult
+MemePSPMCollection is a reference to a hash where the following keys are defined:
+	id has a value which is a string
+	timestamp has a value which is a string
+	description has a value which is a string
+	alphabet has a value which is a string
+	pspms has a value which is a reference to a list where each element is a MemePSPM
+MemePSPM is a reference to a hash where the following keys are defined:
+	id has a value which is a string
+	source_id has a value which is a string
+	source_type has a value which is a string
+	description has a value which is a string
+	alphabet has a value which is a string
+	width has a value which is an int
+	nsites has a value which is an int
+	evalue has a value which is a float
+	matrix has a value which is a reference to a list where each element is a reference to a list where each element is a float
+TomtomRunParameters is a reference to a hash where the following keys are defined:
+	thresh has a value which is a float
+	evalue has a value which is an int
+	dist has a value which is a string
+	internal has a value which is an int
+	min_overlap has a value which is an int
+TomtomRunResult is a reference to a hash where the following keys are defined:
+	id has a value which is a string
+	timestamp has a value which is a string
+	thresh has a value which is a float
+	evalue has a value which is an int
+	dist has a value which is a string
+	internal has a value which is an int
+	min_overlap has a value which is an int
+	hits has a value which is a reference to a list where each element is a TomtomHit
+TomtomHit is a reference to a hash where the following keys are defined:
+	query_pspm_id has a value which is a string
+	target_pspm_id has a value which is a string
+	optimal_offset has a value which is an int
+	pvalue has a value which is a float
+	evalue has a value which is a float
+	qvalue has a value which is a float
+	overlap has a value which is an int
+	query_consensus has a value which is a string
+	target_consensus has a value which is a string
+	strand has a value which is a string
+
+
+=end text
+
+
+
+=item Description
+
+Returns TomtomRunResult with results of a single TOMTOM run
+TOMTOM will be run with -text parameter
+MemePSPMCollection query - query motifs for TOMTOM run
+MemePSPMCollection target - target motifs for TOMTOM run
+string pspm_id - KBase ID of a MemePSPM from the query collection that will be used. When empty string provided, all motifs in the query collection will be used
+TomtomRunParameters params - parameters of TOMTOM run
+
+=back
+
+=cut
+
+sub compare_motifs_with_tomtom_by_collection
+{
+    my $self = shift;
+    my($query, $target, $pspm_id, $params) = @_;
+
+    my @_bad_arguments;
+    (ref($query) eq 'HASH') or push(@_bad_arguments, "Invalid type for argument \"query\" (value was \"$query\")");
+    (ref($target) eq 'HASH') or push(@_bad_arguments, "Invalid type for argument \"target\" (value was \"$target\")");
+    (!ref($pspm_id)) or push(@_bad_arguments, "Invalid type for argument \"pspm_id\" (value was \"$pspm_id\")");
+    (ref($params) eq 'HASH') or push(@_bad_arguments, "Invalid type for argument \"params\" (value was \"$params\")");
+    if (@_bad_arguments) {
+	my $msg = "Invalid arguments passed to compare_motifs_with_tomtom_by_collection:\n" . join("", map { "\t$_\n" } @_bad_arguments);
+	Bio::KBase::Exceptions::ArgumentValidationError->throw(error => $msg,
+							       method_name => 'compare_motifs_with_tomtom_by_collection');
+    }
+
+    my $ctx = $Bio::KBase::meme::Service::CallContext;
+    my($tomtom_run_result);
+    #BEGIN compare_motifs_with_tomtom_by_collection
+    #END compare_motifs_with_tomtom_by_collection
+    my @_bad_returns;
+    (ref($tomtom_run_result) eq 'HASH') or push(@_bad_returns, "Invalid type for return variable \"tomtom_run_result\" (value was \"$tomtom_run_result\")");
+    if (@_bad_returns) {
+	my $msg = "Invalid returns passed to compare_motifs_with_tomtom_by_collection:\n" . join("", map { "\t$_\n" } @_bad_returns);
+	Bio::KBase::Exceptions::ArgumentValidationError->throw(error => $msg,
+							       method_name => 'compare_motifs_with_tomtom_by_collection');
+    }
+    return($tomtom_run_result);
+}
+
+
+
+
+=head2 compare_motifs_with_tomtom_by_collection_from_ws
+
+  $tomtom_run_result_id = $obj->compare_motifs_with_tomtom_by_collection_from_ws($ws_id, $query_id, $target_id, $pspm_id, $params)
+
+=over 4
+
+=item Parameter and return types
+
+=begin html
+
+<pre>
+$ws_id is a string
+$query_id is a string
+$target_id is a string
+$pspm_id is a string
+$params is a TomtomRunParameters
+$tomtom_run_result_id is a string
+TomtomRunParameters is a reference to a hash where the following keys are defined:
+	thresh has a value which is a float
+	evalue has a value which is an int
+	dist has a value which is a string
+	internal has a value which is an int
+	min_overlap has a value which is an int
+
+</pre>
+
+=end html
+
+=begin text
+
+$ws_id is a string
+$query_id is a string
+$target_id is a string
+$pspm_id is a string
+$params is a TomtomRunParameters
+$tomtom_run_result_id is a string
+TomtomRunParameters is a reference to a hash where the following keys are defined:
+	thresh has a value which is a float
+	evalue has a value which is an int
+	dist has a value which is a string
+	internal has a value which is an int
+	min_overlap has a value which is an int
+
+
+=end text
+
+
+
+=item Description
+
+Returns kbase ID of TomtomRunResult with results of a single TOMTOM run
+string ws_id - workspace id 
+TOMTOM will be run with -text parameter
+string query_id - kbase id of MemePSPMCollection with query motifs for TOMTOM run
+string target_id - kbase id of MemePSPMCollection with target motifs for TOMTOM run
+string pspm_id - KBase ID of a MemePSPM from the query collection that will be used. When empty string provided, all motifs in the query collection will be used
+TomtomRunParameters params - parameters of TOMTOM run
+
+=back
+
+=cut
+
+sub compare_motifs_with_tomtom_by_collection_from_ws
+{
+    my $self = shift;
+    my($ws_id, $query_id, $target_id, $pspm_id, $params) = @_;
+
+    my @_bad_arguments;
+    (!ref($ws_id)) or push(@_bad_arguments, "Invalid type for argument \"ws_id\" (value was \"$ws_id\")");
+    (!ref($query_id)) or push(@_bad_arguments, "Invalid type for argument \"query_id\" (value was \"$query_id\")");
+    (!ref($target_id)) or push(@_bad_arguments, "Invalid type for argument \"target_id\" (value was \"$target_id\")");
+    (!ref($pspm_id)) or push(@_bad_arguments, "Invalid type for argument \"pspm_id\" (value was \"$pspm_id\")");
+    (ref($params) eq 'HASH') or push(@_bad_arguments, "Invalid type for argument \"params\" (value was \"$params\")");
+    if (@_bad_arguments) {
+	my $msg = "Invalid arguments passed to compare_motifs_with_tomtom_by_collection_from_ws:\n" . join("", map { "\t$_\n" } @_bad_arguments);
+	Bio::KBase::Exceptions::ArgumentValidationError->throw(error => $msg,
+							       method_name => 'compare_motifs_with_tomtom_by_collection_from_ws');
+    }
+
+    my $ctx = $Bio::KBase::meme::Service::CallContext;
+    my($tomtom_run_result_id);
+    #BEGIN compare_motifs_with_tomtom_by_collection_from_ws
+    #END compare_motifs_with_tomtom_by_collection_from_ws
+    my @_bad_returns;
+    (!ref($tomtom_run_result_id)) or push(@_bad_returns, "Invalid type for return variable \"tomtom_run_result_id\" (value was \"$tomtom_run_result_id\")");
+    if (@_bad_returns) {
+	my $msg = "Invalid returns passed to compare_motifs_with_tomtom_by_collection_from_ws:\n" . join("", map { "\t$_\n" } @_bad_returns);
+	Bio::KBase::Exceptions::ArgumentValidationError->throw(error => $msg,
+							       method_name => 'compare_motifs_with_tomtom_by_collection_from_ws');
+    }
+    return($tomtom_run_result_id);
+}
+
+
+
+
+=head2 find_sites_with_mast
+
+  $mast_run_result = $obj->find_sites_with_mast($query, $target, $mt)
+
+=over 4
+
+=item Parameter and return types
+
+=begin html
+
+<pre>
+$query is a MemePSPM
+$target is a SequenceSet
+$mt is a float
+$mast_run_result is a MastRunResult
+MemePSPM is a reference to a hash where the following keys are defined:
+	id has a value which is a string
+	source_id has a value which is a string
+	source_type has a value which is a string
+	description has a value which is a string
+	alphabet has a value which is a string
+	width has a value which is an int
+	nsites has a value which is an int
+	evalue has a value which is a float
+	matrix has a value which is a reference to a list where each element is a reference to a list where each element is a float
+SequenceSet is a reference to a hash where the following keys are defined:
+	sequence_set_id has a value which is a string
+	sequences has a value which is a reference to a list where each element is a Sequence
+Sequence is a reference to a hash where the following keys are defined:
+	sequence_id has a value which is a string
+	sequence has a value which is a string
+MastRunResult is a reference to a hash where the following keys are defined:
+	id has a value which is a string
+	timestamp has a value which is a string
+	mt has a value which is a float
+	hits has a value which is a reference to a list where each element is a MastHit
+MastHit is a reference to a hash where the following keys are defined:
+	sequence_id has a value which is a string
+	strand has a value which is a string
+	pspm_id has a value which is a string
+	hit_start has a value which is an int
+	hit_end has a value which is an int
+	score has a value which is a float
+	hit_pvalue has a value which is a float
+
+</pre>
+
+=end html
+
+=begin text
+
+$query is a MemePSPM
+$target is a SequenceSet
+$mt is a float
+$mast_run_result is a MastRunResult
+MemePSPM is a reference to a hash where the following keys are defined:
+	id has a value which is a string
+	source_id has a value which is a string
+	source_type has a value which is a string
+	description has a value which is a string
+	alphabet has a value which is a string
+	width has a value which is an int
+	nsites has a value which is an int
+	evalue has a value which is a float
+	matrix has a value which is a reference to a list where each element is a reference to a list where each element is a float
+SequenceSet is a reference to a hash where the following keys are defined:
+	sequence_set_id has a value which is a string
+	sequences has a value which is a reference to a list where each element is a Sequence
+Sequence is a reference to a hash where the following keys are defined:
+	sequence_id has a value which is a string
+	sequence has a value which is a string
+MastRunResult is a reference to a hash where the following keys are defined:
+	id has a value which is a string
+	timestamp has a value which is a string
+	mt has a value which is a float
+	hits has a value which is a reference to a list where each element is a MastHit
+MastHit is a reference to a hash where the following keys are defined:
+	sequence_id has a value which is a string
+	strand has a value which is a string
+	pspm_id has a value which is a string
+	hit_start has a value which is an int
+	hit_end has a value which is an int
+	score has a value which is a float
+	hit_pvalue has a value which is a float
+
+
+=end text
+
+
+
+=item Description
+
+Returns MastRunResult containing list of MAST hits
+MAST will be run with -hit_list parameter
+MemePSPM query - query PSPM for MAST run
+SequenceSet target - target sequences for MAST run
+float mt - value of mt parameter for MAST run
+
+=back
+
+=cut
+
+sub find_sites_with_mast
+{
+    my $self = shift;
+    my($query, $target, $mt) = @_;
+
+    my @_bad_arguments;
+    (ref($query) eq 'HASH') or push(@_bad_arguments, "Invalid type for argument \"query\" (value was \"$query\")");
+    (ref($target) eq 'HASH') or push(@_bad_arguments, "Invalid type for argument \"target\" (value was \"$target\")");
+    (!ref($mt)) or push(@_bad_arguments, "Invalid type for argument \"mt\" (value was \"$mt\")");
+    if (@_bad_arguments) {
+	my $msg = "Invalid arguments passed to find_sites_with_mast:\n" . join("", map { "\t$_\n" } @_bad_arguments);
+	Bio::KBase::Exceptions::ArgumentValidationError->throw(error => $msg,
+							       method_name => 'find_sites_with_mast');
+    }
+
+    my $ctx = $Bio::KBase::meme::Service::CallContext;
+    my($mast_run_result);
+    #BEGIN find_sites_with_mast
+    #END find_sites_with_mast
+    my @_bad_returns;
+    (ref($mast_run_result) eq 'HASH') or push(@_bad_returns, "Invalid type for return variable \"mast_run_result\" (value was \"$mast_run_result\")");
+    if (@_bad_returns) {
+	my $msg = "Invalid returns passed to find_sites_with_mast:\n" . join("", map { "\t$_\n" } @_bad_returns);
+	Bio::KBase::Exceptions::ArgumentValidationError->throw(error => $msg,
+							       method_name => 'find_sites_with_mast');
+    }
+    return($mast_run_result);
+}
+
+
+
+
+=head2 find_sites_with_mast_from_ws
+
+  $mast_run_result_id = $obj->find_sites_with_mast_from_ws($ws_id, $query_id, $target_id, $mt)
+
+=over 4
+
+=item Parameter and return types
+
+=begin html
+
+<pre>
+$ws_id is a string
+$query_id is a string
+$target_id is a string
+$mt is a float
+$mast_run_result_id is a string
+
+</pre>
+
+=end html
+
+=begin text
+
+$ws_id is a string
+$query_id is a string
+$target_id is a string
+$mt is a float
+$mast_run_result_id is a string
+
+
+=end text
+
+
+
+=item Description
+
+Returns kbase ID of MastRunResult containing list of MAST hits
+MAST will be run with -hit_list parameter
+string ws_id - workspace id 
+string query_id - kbase ID of MemePSPM containing query motifs for MAST run
+string target_id - kbase ID of SequenceSet containing target sequences for MAST run
+float mt - value of mt parameter for MAST run
+
+=back
+
+=cut
+
+sub find_sites_with_mast_from_ws
+{
+    my $self = shift;
+    my($ws_id, $query_id, $target_id, $mt) = @_;
+
+    my @_bad_arguments;
+    (!ref($ws_id)) or push(@_bad_arguments, "Invalid type for argument \"ws_id\" (value was \"$ws_id\")");
+    (!ref($query_id)) or push(@_bad_arguments, "Invalid type for argument \"query_id\" (value was \"$query_id\")");
+    (!ref($target_id)) or push(@_bad_arguments, "Invalid type for argument \"target_id\" (value was \"$target_id\")");
+    (!ref($mt)) or push(@_bad_arguments, "Invalid type for argument \"mt\" (value was \"$mt\")");
+    if (@_bad_arguments) {
+	my $msg = "Invalid arguments passed to find_sites_with_mast_from_ws:\n" . join("", map { "\t$_\n" } @_bad_arguments);
+	Bio::KBase::Exceptions::ArgumentValidationError->throw(error => $msg,
+							       method_name => 'find_sites_with_mast_from_ws');
+    }
+
+    my $ctx = $Bio::KBase::meme::Service::CallContext;
+    my($mast_run_result_id);
+    #BEGIN find_sites_with_mast_from_ws
+    #END find_sites_with_mast_from_ws
+    my @_bad_returns;
+    (!ref($mast_run_result_id)) or push(@_bad_returns, "Invalid type for return variable \"mast_run_result_id\" (value was \"$mast_run_result_id\")");
+    if (@_bad_returns) {
+	my $msg = "Invalid returns passed to find_sites_with_mast_from_ws:\n" . join("", map { "\t$_\n" } @_bad_returns);
+	Bio::KBase::Exceptions::ArgumentValidationError->throw(error => $msg,
+							       method_name => 'find_sites_with_mast_from_ws');
+    }
+    return($mast_run_result_id);
+}
+
+
+
+
+=head2 find_sites_with_mast_by_collection
+
+  $mast_run_result = $obj->find_sites_with_mast_by_collection($query, $target, $pspm_id, $mt)
+
+=over 4
+
+=item Parameter and return types
+
+=begin html
+
+<pre>
+$query is a MemePSPMCollection
+$target is a SequenceSet
+$pspm_id is a string
+$mt is a float
+$mast_run_result is a MastRunResult
+MemePSPMCollection is a reference to a hash where the following keys are defined:
+	id has a value which is a string
+	timestamp has a value which is a string
+	description has a value which is a string
+	alphabet has a value which is a string
+	pspms has a value which is a reference to a list where each element is a MemePSPM
+MemePSPM is a reference to a hash where the following keys are defined:
+	id has a value which is a string
+	source_id has a value which is a string
+	source_type has a value which is a string
+	description has a value which is a string
+	alphabet has a value which is a string
+	width has a value which is an int
+	nsites has a value which is an int
+	evalue has a value which is a float
+	matrix has a value which is a reference to a list where each element is a reference to a list where each element is a float
+SequenceSet is a reference to a hash where the following keys are defined:
+	sequence_set_id has a value which is a string
+	sequences has a value which is a reference to a list where each element is a Sequence
+Sequence is a reference to a hash where the following keys are defined:
+	sequence_id has a value which is a string
+	sequence has a value which is a string
+MastRunResult is a reference to a hash where the following keys are defined:
+	id has a value which is a string
+	timestamp has a value which is a string
+	mt has a value which is a float
+	hits has a value which is a reference to a list where each element is a MastHit
+MastHit is a reference to a hash where the following keys are defined:
+	sequence_id has a value which is a string
+	strand has a value which is a string
+	pspm_id has a value which is a string
+	hit_start has a value which is an int
+	hit_end has a value which is an int
+	score has a value which is a float
+	hit_pvalue has a value which is a float
+
+</pre>
+
+=end html
+
+=begin text
+
+$query is a MemePSPMCollection
+$target is a SequenceSet
+$pspm_id is a string
+$mt is a float
+$mast_run_result is a MastRunResult
+MemePSPMCollection is a reference to a hash where the following keys are defined:
+	id has a value which is a string
+	timestamp has a value which is a string
+	description has a value which is a string
+	alphabet has a value which is a string
+	pspms has a value which is a reference to a list where each element is a MemePSPM
+MemePSPM is a reference to a hash where the following keys are defined:
+	id has a value which is a string
+	source_id has a value which is a string
+	source_type has a value which is a string
+	description has a value which is a string
+	alphabet has a value which is a string
+	width has a value which is an int
+	nsites has a value which is an int
+	evalue has a value which is a float
+	matrix has a value which is a reference to a list where each element is a reference to a list where each element is a float
+SequenceSet is a reference to a hash where the following keys are defined:
+	sequence_set_id has a value which is a string
+	sequences has a value which is a reference to a list where each element is a Sequence
+Sequence is a reference to a hash where the following keys are defined:
+	sequence_id has a value which is a string
+	sequence has a value which is a string
+MastRunResult is a reference to a hash where the following keys are defined:
+	id has a value which is a string
+	timestamp has a value which is a string
+	mt has a value which is a float
+	hits has a value which is a reference to a list where each element is a MastHit
+MastHit is a reference to a hash where the following keys are defined:
+	sequence_id has a value which is a string
+	strand has a value which is a string
+	pspm_id has a value which is a string
+	hit_start has a value which is an int
+	hit_end has a value which is an int
+	score has a value which is a float
+	hit_pvalue has a value which is a float
+
+
+=end text
+
+
+
+=item Description
+
+Returns MastRunResult containing list of MAST hits
+MAST will be run with -hit_list parameter
+MemePSPMCollection query - query motifs for MAST run
+SequenceSet target - target sequences for MAST run
+string pspm_id - KBase ID of a MemePSPM from the query collection that will be used. When empty string provided, all motifs in the query collection will be used
+float mt - value of mt parameter for MAST run
+
+=back
+
+=cut
+
+sub find_sites_with_mast_by_collection
+{
+    my $self = shift;
+    my($query, $target, $pspm_id, $mt) = @_;
+
+    my @_bad_arguments;
+    (ref($query) eq 'HASH') or push(@_bad_arguments, "Invalid type for argument \"query\" (value was \"$query\")");
+    (ref($target) eq 'HASH') or push(@_bad_arguments, "Invalid type for argument \"target\" (value was \"$target\")");
+    (!ref($pspm_id)) or push(@_bad_arguments, "Invalid type for argument \"pspm_id\" (value was \"$pspm_id\")");
+    (!ref($mt)) or push(@_bad_arguments, "Invalid type for argument \"mt\" (value was \"$mt\")");
+    if (@_bad_arguments) {
+	my $msg = "Invalid arguments passed to find_sites_with_mast_by_collection:\n" . join("", map { "\t$_\n" } @_bad_arguments);
+	Bio::KBase::Exceptions::ArgumentValidationError->throw(error => $msg,
+							       method_name => 'find_sites_with_mast_by_collection');
+    }
+
+    my $ctx = $Bio::KBase::meme::Service::CallContext;
+    my($mast_run_result);
+    #BEGIN find_sites_with_mast_by_collection
+    #END find_sites_with_mast_by_collection
+    my @_bad_returns;
+    (ref($mast_run_result) eq 'HASH') or push(@_bad_returns, "Invalid type for return variable \"mast_run_result\" (value was \"$mast_run_result\")");
+    if (@_bad_returns) {
+	my $msg = "Invalid returns passed to find_sites_with_mast_by_collection:\n" . join("", map { "\t$_\n" } @_bad_returns);
+	Bio::KBase::Exceptions::ArgumentValidationError->throw(error => $msg,
+							       method_name => 'find_sites_with_mast_by_collection');
+    }
+    return($mast_run_result);
+}
+
+
+
+
+=head2 find_sites_with_mast_by_collection_from_ws
+
+  $mast_run_result_id = $obj->find_sites_with_mast_by_collection_from_ws($ws_id, $query_id, $target_id, $pspm_id, $mt)
+
+=over 4
+
+=item Parameter and return types
+
+=begin html
+
+<pre>
+$ws_id is a string
+$query_id is a string
+$target_id is a string
+$pspm_id is a string
+$mt is a float
+$mast_run_result_id is a string
+
+</pre>
+
+=end html
+
+=begin text
+
+$ws_id is a string
+$query_id is a string
+$target_id is a string
+$pspm_id is a string
+$mt is a float
+$mast_run_result_id is a string
+
+
+=end text
+
+
+
+=item Description
+
+Returns kbase ID of MastRunResult containing list of MAST hits
+MAST will be run with -hit_list parameter
+string ws_id - workspace id 
+string query_id - kbase ID of MemePSPMCollection containing query motifs for MAST run
+string target_id - kbase ID of SequenceSet containing target sequences for MAST run
+string pspm_id - KBase ID of a MemePSPM from the query collection that will be used. When empty string provided, all motifs in the query collection will be used
+float mt - value of mt parameter for MAST run
+
+=back
+
+=cut
+
+sub find_sites_with_mast_by_collection_from_ws
+{
+    my $self = shift;
+    my($ws_id, $query_id, $target_id, $pspm_id, $mt) = @_;
+
+    my @_bad_arguments;
+    (!ref($ws_id)) or push(@_bad_arguments, "Invalid type for argument \"ws_id\" (value was \"$ws_id\")");
+    (!ref($query_id)) or push(@_bad_arguments, "Invalid type for argument \"query_id\" (value was \"$query_id\")");
+    (!ref($target_id)) or push(@_bad_arguments, "Invalid type for argument \"target_id\" (value was \"$target_id\")");
+    (!ref($pspm_id)) or push(@_bad_arguments, "Invalid type for argument \"pspm_id\" (value was \"$pspm_id\")");
+    (!ref($mt)) or push(@_bad_arguments, "Invalid type for argument \"mt\" (value was \"$mt\")");
+    if (@_bad_arguments) {
+	my $msg = "Invalid arguments passed to find_sites_with_mast_by_collection_from_ws:\n" . join("", map { "\t$_\n" } @_bad_arguments);
+	Bio::KBase::Exceptions::ArgumentValidationError->throw(error => $msg,
+							       method_name => 'find_sites_with_mast_by_collection_from_ws');
+    }
+
+    my $ctx = $Bio::KBase::meme::Service::CallContext;
+    my($mast_run_result_id);
+    #BEGIN find_sites_with_mast_by_collection_from_ws
+    #END find_sites_with_mast_by_collection_from_ws
+    my @_bad_returns;
+    (!ref($mast_run_result_id)) or push(@_bad_returns, "Invalid type for return variable \"mast_run_result_id\" (value was \"$mast_run_result_id\")");
+    if (@_bad_returns) {
+	my $msg = "Invalid returns passed to find_sites_with_mast_by_collection_from_ws:\n" . join("", map { "\t$_\n" } @_bad_returns);
+	Bio::KBase::Exceptions::ArgumentValidationError->throw(error => $msg,
+							       method_name => 'find_sites_with_mast_by_collection_from_ws');
+    }
+    return($mast_run_result_id);
+}
+
+
+
+
+=head2 get_pspm_collection_from_meme_result
+
+  $meme_pspm_collection = $obj->get_pspm_collection_from_meme_result($meme_run_result)
+
+=over 4
+
+=item Parameter and return types
+
+=begin html
+
+<pre>
+$meme_run_result is a MemeRunResult
+$meme_pspm_collection is a MemePSPMCollection
+MemeRunResult is a reference to a hash where the following keys are defined:
+	id has a value which is a string
+	timestamp has a value which is a string
+	version has a value which is a string
+	input_file_name has a value which is a string
+	alphabet has a value which is a string
+	training_set has a value which is a reference to a list where each element is a string
+	command_line has a value which is a string
+	mod has a value which is a string
+	nmotifs has a value which is an int
+	evt has a value which is a string
+	object_function has a value which is a string
+	minw has a value which is an int
+	maxw has a value which is an int
+	minic has a value which is a float
+	wg has a value which is an int
+	ws has a value which is an int
+	endgaps has a value which is a string
+	minsites has a value which is an int
+	maxsites has a value which is an int
+	wnsites has a value which is a float
+	prob has a value which is an int
+	spmap has a value which is a string
+	spfuzz has a value which is a string
+	substring has a value which is a string
+	branching has a value which is a string
+	wbranch has a value which is a string
+	prior has a value which is a string
+	b has a value which is a float
+	maxiter has a value which is an int
+	distance has a value which is a float
+	n has a value which is an int
+	n_cap has a value which is an int
+	strands has a value which is a string
+	seed has a value which is an int
+	seqfrac has a value which is an int
+	letter_freq has a value which is a string
+	bg_freq has a value which is a string
+	motifs has a value which is a reference to a list where each element is a MemeMotif
+	raw_output has a value which is a string
+MemeMotif is a reference to a hash where the following keys are defined:
+	id has a value which is a string
+	description has a value which is a string
+	width has a value which is an int
+	llr has a value which is a float
+	evalue has a value which is a float
+	raw_output has a value which is a string
+	sites has a value which is a reference to a list where each element is a MemeSite
+MemeSite is a reference to a hash where the following keys are defined:
+	source_sequence_id has a value which is a string
+	start has a value which is an int
+	pvalue has a value which is a float
+	left_flank has a value which is a string
+	right_flank has a value which is a string
+	sequence has a value which is a string
+MemePSPMCollection is a reference to a hash where the following keys are defined:
+	id has a value which is a string
+	timestamp has a value which is a string
+	description has a value which is a string
+	alphabet has a value which is a string
+	pspms has a value which is a reference to a list where each element is a MemePSPM
+MemePSPM is a reference to a hash where the following keys are defined:
+	id has a value which is a string
+	source_id has a value which is a string
+	source_type has a value which is a string
+	description has a value which is a string
+	alphabet has a value which is a string
+	width has a value which is an int
+	nsites has a value which is an int
+	evalue has a value which is a float
+	matrix has a value which is a reference to a list where each element is a reference to a list where each element is a float
+
+</pre>
+
+=end html
+
+=begin text
+
+$meme_run_result is a MemeRunResult
+$meme_pspm_collection is a MemePSPMCollection
+MemeRunResult is a reference to a hash where the following keys are defined:
+	id has a value which is a string
+	timestamp has a value which is a string
+	version has a value which is a string
+	input_file_name has a value which is a string
+	alphabet has a value which is a string
+	training_set has a value which is a reference to a list where each element is a string
+	command_line has a value which is a string
+	mod has a value which is a string
+	nmotifs has a value which is an int
+	evt has a value which is a string
+	object_function has a value which is a string
+	minw has a value which is an int
+	maxw has a value which is an int
+	minic has a value which is a float
+	wg has a value which is an int
+	ws has a value which is an int
+	endgaps has a value which is a string
+	minsites has a value which is an int
+	maxsites has a value which is an int
+	wnsites has a value which is a float
+	prob has a value which is an int
+	spmap has a value which is a string
+	spfuzz has a value which is a string
+	substring has a value which is a string
+	branching has a value which is a string
+	wbranch has a value which is a string
+	prior has a value which is a string
+	b has a value which is a float
+	maxiter has a value which is an int
+	distance has a value which is a float
+	n has a value which is an int
+	n_cap has a value which is an int
+	strands has a value which is a string
+	seed has a value which is an int
+	seqfrac has a value which is an int
+	letter_freq has a value which is a string
+	bg_freq has a value which is a string
+	motifs has a value which is a reference to a list where each element is a MemeMotif
+	raw_output has a value which is a string
+MemeMotif is a reference to a hash where the following keys are defined:
+	id has a value which is a string
+	description has a value which is a string
+	width has a value which is an int
+	llr has a value which is a float
+	evalue has a value which is a float
+	raw_output has a value which is a string
+	sites has a value which is a reference to a list where each element is a MemeSite
+MemeSite is a reference to a hash where the following keys are defined:
+	source_sequence_id has a value which is a string
+	start has a value which is an int
+	pvalue has a value which is a float
+	left_flank has a value which is a string
+	right_flank has a value which is a string
+	sequence has a value which is a string
+MemePSPMCollection is a reference to a hash where the following keys are defined:
+	id has a value which is a string
+	timestamp has a value which is a string
+	description has a value which is a string
+	alphabet has a value which is a string
+	pspms has a value which is a reference to a list where each element is a MemePSPM
+MemePSPM is a reference to a hash where the following keys are defined:
+	id has a value which is a string
+	source_id has a value which is a string
+	source_type has a value which is a string
+	description has a value which is a string
+	alphabet has a value which is a string
+	width has a value which is an int
+	nsites has a value which is an int
+	evalue has a value which is a float
+	matrix has a value which is a reference to a list where each element is a reference to a list where each element is a float
+
+
+=end text
+
+
+
+=item Description
+
+Converts MemeRunResult into MemePSPMCollection 
+MemeRunResult meme_run_result - source MemeRunResult
+
+=back
+
+=cut
+
+sub get_pspm_collection_from_meme_result
+{
+    my $self = shift;
+    my($meme_run_result) = @_;
+
+    my @_bad_arguments;
+    (ref($meme_run_result) eq 'HASH') or push(@_bad_arguments, "Invalid type for argument \"meme_run_result\" (value was \"$meme_run_result\")");
+    if (@_bad_arguments) {
+	my $msg = "Invalid arguments passed to get_pspm_collection_from_meme_result:\n" . join("", map { "\t$_\n" } @_bad_arguments);
+	Bio::KBase::Exceptions::ArgumentValidationError->throw(error => $msg,
+							       method_name => 'get_pspm_collection_from_meme_result');
+    }
+
+    my $ctx = $Bio::KBase::meme::Service::CallContext;
+    my($meme_pspm_collection);
+    #BEGIN get_pspm_collection_from_meme_result
+    #END get_pspm_collection_from_meme_result
+    my @_bad_returns;
+    (ref($meme_pspm_collection) eq 'HASH') or push(@_bad_returns, "Invalid type for return variable \"meme_pspm_collection\" (value was \"$meme_pspm_collection\")");
+    if (@_bad_returns) {
+	my $msg = "Invalid returns passed to get_pspm_collection_from_meme_result:\n" . join("", map { "\t$_\n" } @_bad_returns);
+	Bio::KBase::Exceptions::ArgumentValidationError->throw(error => $msg,
+							       method_name => 'get_pspm_collection_from_meme_result');
+    }
+    return($meme_pspm_collection);
+}
+
+
+
+
+=head2 get_pspm_collection_from_meme_result_from_ws
+
+  $meme_pspm_collection_id = $obj->get_pspm_collection_from_meme_result_from_ws($ws_id, $meme_run_result_id)
+
+=over 4
+
+=item Parameter and return types
+
+=begin html
+
+<pre>
+$ws_id is a string
+$meme_run_result_id is a string
+$meme_pspm_collection_id is a string
+
+</pre>
+
+=end html
+
+=begin text
+
+$ws_id is a string
+$meme_run_result_id is a string
+$meme_pspm_collection_id is a string
+
+
+=end text
+
+
+
+=item Description
+
+Converts MemeRunResult into MemePSPMCollection and writes the result to workspace
+string ws_id - workspace id
+string meme_run_result_id - KBase ID of source MemeRunResult
+
+=back
+
+=cut
+
+sub get_pspm_collection_from_meme_result_from_ws
+{
+    my $self = shift;
+    my($ws_id, $meme_run_result_id) = @_;
+
+    my @_bad_arguments;
+    (!ref($ws_id)) or push(@_bad_arguments, "Invalid type for argument \"ws_id\" (value was \"$ws_id\")");
+    (!ref($meme_run_result_id)) or push(@_bad_arguments, "Invalid type for argument \"meme_run_result_id\" (value was \"$meme_run_result_id\")");
+    if (@_bad_arguments) {
+	my $msg = "Invalid arguments passed to get_pspm_collection_from_meme_result_from_ws:\n" . join("", map { "\t$_\n" } @_bad_arguments);
+	Bio::KBase::Exceptions::ArgumentValidationError->throw(error => $msg,
+							       method_name => 'get_pspm_collection_from_meme_result_from_ws');
+    }
+
+    my $ctx = $Bio::KBase::meme::Service::CallContext;
+    my($meme_pspm_collection_id);
+    #BEGIN get_pspm_collection_from_meme_result_from_ws
+    #END get_pspm_collection_from_meme_result_from_ws
+    my @_bad_returns;
+    (!ref($meme_pspm_collection_id)) or push(@_bad_returns, "Invalid type for return variable \"meme_pspm_collection_id\" (value was \"$meme_pspm_collection_id\")");
+    if (@_bad_returns) {
+	my $msg = "Invalid returns passed to get_pspm_collection_from_meme_result_from_ws:\n" . join("", map { "\t$_\n" } @_bad_returns);
+	Bio::KBase::Exceptions::ArgumentValidationError->throw(error => $msg,
+							       method_name => 'get_pspm_collection_from_meme_result_from_ws');
+    }
+    return($meme_pspm_collection_id);
+}
+
+
+
+
+=head2 version 
+
+  $return = $obj->version()
+
+=over 4
+
+=item Parameter and return types
+
+=begin html
+
+<pre>
+$return is a string
+</pre>
+
+=end html
+
+=begin text
+
+$return is a string
+
+=end text
+
+=item Description
+
+Return the module version. This is a Semantic Versioning number.
+
+=back
+
+=cut
+
+sub version {
+    return $VERSION;
+}
+
+=head1 TYPES
+
+
+
+=head2 Sequence
+
+=over 4
+
+
+
+=item Description
+
+Represents a particular sequence from sequence set
+string sequence_id - sequence identifier,  must be unique in SequenceSet
+string sequence - nucleotide sequence
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a reference to a hash where the following keys are defined:
+sequence_id has a value which is a string
+sequence has a value which is a string
+
+</pre>
+
+=end html
+
+=begin text
+
+a reference to a hash where the following keys are defined:
+sequence_id has a value which is a string
+sequence has a value which is a string
+
+
+=end text
+
+=back
+
+
+
+=head2 SequenceSet
+
+=over 4
+
+
+
+=item Description
+
+Represents set of sequences
+string sequence_set_id - identifier of sequence set
+list<Sequence> sequences - sequences
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a reference to a hash where the following keys are defined:
+sequence_set_id has a value which is a string
+sequences has a value which is a reference to a list where each element is a Sequence
+
+</pre>
+
+=end html
+
+=begin text
+
+a reference to a hash where the following keys are defined:
+sequence_set_id has a value which is a string
+sequences has a value which is a reference to a list where each element is a Sequence
+
+
+=end text
+
+=back
+
+
+
+=head2 MemeSite
+
+=over 4
+
+
+
+=item Description
+
+Represents a particular site from MEME motif description 
+string source_sequence_id - ID of sequence where the site was found
+int start - position of site start 
+float pvalue - site P-value
+string left_flank - sequence of left flank
+string sequence - sequence of site
+string right_flank - sequence of right flank
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a reference to a hash where the following keys are defined:
+source_sequence_id has a value which is a string
+start has a value which is an int
+pvalue has a value which is a float
+left_flank has a value which is a string
+right_flank has a value which is a string
+sequence has a value which is a string
+
+</pre>
+
+=end html
+
+=begin text
+
+a reference to a hash where the following keys are defined:
+source_sequence_id has a value which is a string
+start has a value which is an int
+pvalue has a value which is a float
+left_flank has a value which is a string
+right_flank has a value which is a string
+sequence has a value which is a string
+
+
+=end text
+
+=back
+
+
+
+=head2 MemeMotif
+
+=over 4
+
+
+
+=item Description
+
+Represents a particular motif found by MEME
+string id - KBase ID of MemeMotif
+string description - name of motif or number of motif in collection or anything else
+int width - width of motif
+int sites - number of sites
+float llr - log likelihood ratio of motif
+float evalue - E-value of motif
+string raw_output - part of MEME output file with data about this motif
+list<MemeSite> sites - list of sites
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a reference to a hash where the following keys are defined:
+id has a value which is a string
+description has a value which is a string
+width has a value which is an int
+llr has a value which is a float
+evalue has a value which is a float
+raw_output has a value which is a string
+sites has a value which is a reference to a list where each element is a MemeSite
+
+</pre>
+
+=end html
+
+=begin text
+
+a reference to a hash where the following keys are defined:
+id has a value which is a string
+description has a value which is a string
+width has a value which is an int
+llr has a value which is a float
+evalue has a value which is a float
+raw_output has a value which is a string
+sites has a value which is a reference to a list where each element is a MemeSite
+
+
+=end text
+
+=back
+
+
+
+=head2 MemeRunParameters
+
+=over 4
+
+
+
+=item Description
+
+Contains parameters of a MEME run
+string mod - distribution of motifs, acceptable values are "oops", "zoops", "anr"
+int nmotifs - maximum number of motifs to find
+int minw - minumum motif width
+int maxw - maximum motif width
+int nsites - number of sites for each motif
+int minsites - minimum number of sites for each motif
+int maxsites - maximum number of sites for each motif
+int pal - force palindromes, acceptable values are 0 and 1
+int revcomp - allow sites on + or - DNA strands, acceptable values are 0 and 1
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a reference to a hash where the following keys are defined:
+mod has a value which is a string
+nmotifs has a value which is an int
+minw has a value which is an int
+maxw has a value which is an int
+nsites has a value which is an int
+minsites has a value which is an int
+maxsites has a value which is an int
+pal has a value which is an int
+revcomp has a value which is an int
+
+</pre>
+
+=end html
+
+=begin text
+
+a reference to a hash where the following keys are defined:
+mod has a value which is a string
+nmotifs has a value which is an int
+minw has a value which is an int
+maxw has a value which is an int
+nsites has a value which is an int
+minsites has a value which is an int
+maxsites has a value which is an int
+pal has a value which is an int
+revcomp has a value which is an int
+
+
+=end text
+
+=back
+
+
+
+=head2 MemeRunResult
+
+=over 4
+
+
+
+=item Description
+
+Represents results of a single MEME run
+string id - KBase ID of MemeRunResult
+string timestamp - timestamp for creation time of collection
+string version - version of MEME like "MEME version 4.9.0 (Release date: Wed Oct  3 11:07:26 EST 2012)"
+string input_file_name - name of input file, DATAFILE field of MEME output
+string alphabet - ALPHABET field of MEME output (like "ACGT")
+string training_set - strings from TRAINING SET section, except DATAFILE and ALPHABET fields
+string command_line - command line of MEME run 
+string mod - value of mod parameter of MEME run
+int nmotifs - value of nmotifs parameter of MEME run
+string evt - value of evt parameter of MEME run
+string object_function - value of object function parameter of MEME run
+int minw - value of minw parameter of MEME run
+int maxw - value of maxw parameter of MEME run
+float minic - value of minic parameter of MEME run
+int wg - value of wg parameter of MEME run
+int ws - value of wc parameter of MEME run
+string endgaps - value of endgaps parameter of MEME run
+int minsites - value of minsites parameter of MEME run
+int maxsites - value of maxsites parameter of MEME run
+float wnsites - value of wnsites parameter of MEME run
+int prob - value of prob parameter of MEME run
+string spmap - value of spmsp parameter of MEME run
+float spfuzz - value of spfuzz parameter of MEME run
+string substring - value of substring parameter of MEME run
+string branching - value of branching parameter of MEME run
+string wbranch - value of wbranch parameter of MEME run
+string prior - value of prior parameter of MEME run
+float b - value of b parameter of MEME run
+int maxiter - value of maxiter parameter of MEME run
+float distance - value of distance parameter of MEME run
+int n - value of n parameter of MEME run
+int n_cap - value of N parameter of MEME run
+string strands - value of strands parameter of MEME run
+int seed - value of seed parameter of MEME run
+int seqfrac - value of seqfrac parameter of MEME run
+string letter_freq - letter frequencies in dataset
+string bg_freq - background letter frequencies
+list<MemeMotif> motifs - A list of all motifs in a collection
+string raw_output - section of MEME output text file (all before motif data)
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a reference to a hash where the following keys are defined:
+id has a value which is a string
+timestamp has a value which is a string
+version has a value which is a string
+input_file_name has a value which is a string
+alphabet has a value which is a string
+training_set has a value which is a reference to a list where each element is a string
+command_line has a value which is a string
+mod has a value which is a string
+nmotifs has a value which is an int
+evt has a value which is a string
+object_function has a value which is a string
+minw has a value which is an int
+maxw has a value which is an int
+minic has a value which is a float
+wg has a value which is an int
+ws has a value which is an int
+endgaps has a value which is a string
+minsites has a value which is an int
+maxsites has a value which is an int
+wnsites has a value which is a float
+prob has a value which is an int
+spmap has a value which is a string
+spfuzz has a value which is a string
+substring has a value which is a string
+branching has a value which is a string
+wbranch has a value which is a string
+prior has a value which is a string
+b has a value which is a float
+maxiter has a value which is an int
+distance has a value which is a float
+n has a value which is an int
+n_cap has a value which is an int
+strands has a value which is a string
+seed has a value which is an int
+seqfrac has a value which is an int
+letter_freq has a value which is a string
+bg_freq has a value which is a string
+motifs has a value which is a reference to a list where each element is a MemeMotif
+raw_output has a value which is a string
+
+</pre>
+
+=end html
+
+=begin text
+
+a reference to a hash where the following keys are defined:
+id has a value which is a string
+timestamp has a value which is a string
+version has a value which is a string
+input_file_name has a value which is a string
+alphabet has a value which is a string
+training_set has a value which is a reference to a list where each element is a string
+command_line has a value which is a string
+mod has a value which is a string
+nmotifs has a value which is an int
+evt has a value which is a string
+object_function has a value which is a string
+minw has a value which is an int
+maxw has a value which is an int
+minic has a value which is a float
+wg has a value which is an int
+ws has a value which is an int
+endgaps has a value which is a string
+minsites has a value which is an int
+maxsites has a value which is an int
+wnsites has a value which is a float
+prob has a value which is an int
+spmap has a value which is a string
+spfuzz has a value which is a string
+substring has a value which is a string
+branching has a value which is a string
+wbranch has a value which is a string
+prior has a value which is a string
+b has a value which is a float
+maxiter has a value which is an int
+distance has a value which is a float
+n has a value which is an int
+n_cap has a value which is an int
+strands has a value which is a string
+seed has a value which is an int
+seqfrac has a value which is an int
+letter_freq has a value which is a string
+bg_freq has a value which is a string
+motifs has a value which is a reference to a list where each element is a MemeMotif
+raw_output has a value which is a string
+
+
+=end text
+
+=back
+
+
+
+=head2 MemePSPM
+
+=over 4
+
+
+
+=item Description
+
+Represents a position-specific probability matrix fot MEME motif
+string id - KBase ID of the matrix object
+string source_id - KBase ID of parent object
+string source_type - KBase type of parent object
+string description - description of motif
+string alphabet - ALPHABET field of MEME output ("ACGT" for nucleotide motifs)
+int width - width of motif
+int nsites - number of sites
+float evalue - E-value of motif
+list<list<float>> matrix - The letter probability matrix is a table of probabilities where the rows are positions in the motif and the columns are letters in the alphabet. The columns are ordered alphabetically so for DNA the first column is A, the second is C, the third is G and the last is T.
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a reference to a hash where the following keys are defined:
+id has a value which is a string
+source_id has a value which is a string
+source_type has a value which is a string
+description has a value which is a string
+alphabet has a value which is a string
+width has a value which is an int
+nsites has a value which is an int
+evalue has a value which is a float
+matrix has a value which is a reference to a list where each element is a reference to a list where each element is a float
+
+</pre>
+
+=end html
+
+=begin text
+
+a reference to a hash where the following keys are defined:
+id has a value which is a string
+source_id has a value which is a string
+source_type has a value which is a string
+description has a value which is a string
+alphabet has a value which is a string
+width has a value which is an int
+nsites has a value which is an int
+evalue has a value which is a float
+matrix has a value which is a reference to a list where each element is a reference to a list where each element is a float
+
+
+=end text
+
+=back
+
+
+
+=head2 MemePSPMCollection
+
+=over 4
+
+
+
+=item Description
+
+Represents collection of MemePSPMs
+string id - KBase ID of MotifPSPMMeme
+string timestamp - timestamp for creation time of collection
+string description - user's description of the collection
+string alphabet - ALPHABET field of MEME output ("ACGT" for nucleotide motifs)
+list<MemeMotif> pspms - A list of all MemePSPMs in a collection
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a reference to a hash where the following keys are defined:
+id has a value which is a string
+timestamp has a value which is a string
+description has a value which is a string
+alphabet has a value which is a string
+pspms has a value which is a reference to a list where each element is a MemePSPM
+
+</pre>
+
+=end html
+
+=begin text
+
+a reference to a hash where the following keys are defined:
+id has a value which is a string
+timestamp has a value which is a string
+description has a value which is a string
+alphabet has a value which is a string
+pspms has a value which is a reference to a list where each element is a MemePSPM
+
+
+=end text
+
+=back
+
+
+
+=head2 TomtomRunParameters
+
+=over 4
+
+
+
+=item Description
+
+Contains parameters of a TOMTOM run
+float thresh - thresh parameter of TOMTOM run, must be smaller than or equal to 1.0 unless evalueTomtom == 1
+int evalue - evalue parameter of TOMTOM run (accepable values are "0" and "1")
+string dist - value of dist parameter of TOMTOM run (accepable values are "allr", "ed", "kullback", "pearson", "sandelin")
+int internal - internal parameter of TOMTOM run (accepable values are "0" and "1")
+int min_overlap - value of min-overlap parameter of TOMTOM run. In case a query motif is smaller than minOverlapTomtom specified, then the motif's width is used as the minimum overlap for that query.
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a reference to a hash where the following keys are defined:
+thresh has a value which is a float
+evalue has a value which is an int
+dist has a value which is a string
+internal has a value which is an int
+min_overlap has a value which is an int
+
+</pre>
+
+=end html
+
+=begin text
+
+a reference to a hash where the following keys are defined:
+thresh has a value which is a float
+evalue has a value which is an int
+dist has a value which is a string
+internal has a value which is an int
+min_overlap has a value which is an int
+
+
+=end text
+
+=back
+
+
+
+=head2 TomtomHit
+
+=over 4
+
+
+
+=item Description
+
+Represents a particluar TOMTOM hit
+string query_pspm_id - id of query MemePSPM
+string target_pspm_id - id of target MemePSPM
+int optimal_offset - Optimal offset: the offset between the query and the target motif
+float pvalue - p-value
+float evalue - E-value
+float qvalue - q-value
+int overlap - Overlap: the number of positions of overlap between the two motifs.
+string query_consensus - Query consensus sequence.
+string target_consensus - Target consensus sequence.
+string strand - Orientation: Orientation of target motif with respect to query motif.
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a reference to a hash where the following keys are defined:
+query_pspm_id has a value which is a string
+target_pspm_id has a value which is a string
+optimal_offset has a value which is an int
+pvalue has a value which is a float
+evalue has a value which is a float
+qvalue has a value which is a float
+overlap has a value which is an int
+query_consensus has a value which is a string
+target_consensus has a value which is a string
+strand has a value which is a string
+
+</pre>
+
+=end html
+
+=begin text
+
+a reference to a hash where the following keys are defined:
+query_pspm_id has a value which is a string
+target_pspm_id has a value which is a string
+optimal_offset has a value which is an int
+pvalue has a value which is a float
+evalue has a value which is a float
+qvalue has a value which is a float
+overlap has a value which is an int
+query_consensus has a value which is a string
+target_consensus has a value which is a string
+strand has a value which is a string
+
+
+=end text
+
+=back
+
+
+
+=head2 TomtomRunResult
+
+=over 4
+
+
+
+=item Description
+
+Represents result of a single TOMTOM run
+string id - KBase ID of TomtomRunResult
+string timestamp - timestamp for creation time of TomtomRunResult
+float thresh - thresh parameter of TOMTOM run
+int evalue - evalue parameter of TOMTOM run
+string dist - dist parameter of TOMTOM run (accepable values are "allr", "ed", "kullback", "pearson", "sandelin")
+int internal - internal parameter of TOMTOM run ("0" or "1")
+int min_overlap - min-overlap parameter of TOMTOM run
+list<TomtomHit> hits - A list of all hits found by TOMTOM
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a reference to a hash where the following keys are defined:
+id has a value which is a string
+timestamp has a value which is a string
+thresh has a value which is a float
+evalue has a value which is an int
+dist has a value which is a string
+internal has a value which is an int
+min_overlap has a value which is an int
+hits has a value which is a reference to a list where each element is a TomtomHit
+
+</pre>
+
+=end html
+
+=begin text
+
+a reference to a hash where the following keys are defined:
+id has a value which is a string
+timestamp has a value which is a string
+thresh has a value which is a float
+evalue has a value which is an int
+dist has a value which is a string
+internal has a value which is an int
+min_overlap has a value which is an int
+hits has a value which is a reference to a list where each element is a TomtomHit
+
+
+=end text
+
+=back
+
+
+
+=head2 MastHit
+
+=over 4
+
+
+
+=item Description
+
+Represents a particluar MAST hit
+string sequence_id - name of sequence
+string strand - strand ("+" or "-")
+string pspm_id - id of MemePSPM
+int hit_start - start position of hit
+int hit_end - end position of hit
+float score - hit score
+float hitPvalue - hit p-value
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a reference to a hash where the following keys are defined:
+sequence_id has a value which is a string
+strand has a value which is a string
+pspm_id has a value which is a string
+hit_start has a value which is an int
+hit_end has a value which is an int
+score has a value which is a float
+hit_pvalue has a value which is a float
+
+</pre>
+
+=end html
+
+=begin text
+
+a reference to a hash where the following keys are defined:
+sequence_id has a value which is a string
+strand has a value which is a string
+pspm_id has a value which is a string
+hit_start has a value which is an int
+hit_end has a value which is an int
+score has a value which is a float
+hit_pvalue has a value which is a float
+
+
+=end text
+
+=back
+
+
+
+=head2 MastRunResult
+
+=over 4
+
+
+
+=item Description
+
+Represents result of a single MAST run
+string id - KBase ID of MastRunResult
+string timestamp - timestamp for creation time of MastRunResult
+float mt - mt parameter of MAST run (p-value threshold)
+list<MastHit> hits - A list of all hits found by MAST
+
+
+=item Definition
+
+=begin html
+
+<pre>
+a reference to a hash where the following keys are defined:
+id has a value which is a string
+timestamp has a value which is a string
+mt has a value which is a float
+hits has a value which is a reference to a list where each element is a MastHit
+
+</pre>
+
+=end html
+
+=begin text
+
+a reference to a hash where the following keys are defined:
+id has a value which is a string
+timestamp has a value which is a string
+mt has a value which is a float
+hits has a value which is a reference to a list where each element is a MastHit
+
+
+=end text
+
+=back
+
+
+
+=cut
+
+1;

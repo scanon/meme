@@ -224,9 +224,9 @@ public class MemeClientTest {
 		
 		TomtomRunParameters paramsTomtom = new TomtomRunParameters();
 		paramsTomtom.setDist("pearson");
-		paramsTomtom.setThresh(0.00);
+		paramsTomtom.setThresh(0.0000001);
 		paramsTomtom.setEvalue(0);
-		paramsTomtom.setInternal(0);
+		paramsTomtom.setInternal(1);
 		paramsTomtom.setMinOverlap(0);
 				
 		TomtomRunResult result = client.compareMotifsWithTomtomByCollection(memePspmCollection, memePspmCollection, "", paramsTomtom);
@@ -250,12 +250,13 @@ public class MemeClientTest {
 		
 		TomtomRunParameters paramsTomtom = new TomtomRunParameters();
 		paramsTomtom.setDist("pearson");
-		paramsTomtom.setThresh(0.00);
+		paramsTomtom.setThresh(0.00001);
 		paramsTomtom.setEvalue(0);
 		paramsTomtom.setInternal(0);
 		paramsTomtom.setMinOverlap(0);
 				
-		String resultId = client.compareMotifsWithTomtomByCollectionFromWs("AKtest", "KBase.MemePSPM.1380920063267", "KBase.MemePSPM.1380920063267", "", paramsTomtom);
+//		String resultId = client.compareMotifsWithTomtomByCollectionFromWs("AKtest", "kb|memepspmcollection.2", "RegPreciseMotifs_20131006", "", paramsTomtom);
+		String resultId = client.compareMotifsWithTomtomByCollectionFromWs("AKtest", "kb|memepspmcollection.2", "kb|memepspmcollection.2", "", paramsTomtom);
 		GetObjectParams params = new GetObjectParams().withType("TomtomRunResult").withId(resultId).withWorkspace("AKtest").withAuth(WSUtil.authToken().toString());   
 		GetObjectOutput output = WSUtil.wsClient().getObject(params);
 		TomtomRunResult result = UObject.transform(output.getData(), TomtomRunResult.class);
