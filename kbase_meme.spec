@@ -33,7 +33,30 @@
 	
 */
 
+/*
 #include <general_types.types>
+*/
+
+module GeneralTypes
+{
+	/* Represents a particular sequence from sequence set
+		string sequence_id - sequence identifier,  must be unique in SequenceSet
+		string sequence - nucleotide sequence 
+	*/
+	typedef structure{
+		string sequence_id;
+		string sequence;
+	} Sequence;
+	
+	/* Represents set of sequences
+		string sequence_set_id - identifier of sequence set
+		list<Sequence> sequences - sequences
+	*/
+	typedef structure{
+		string sequence_set_id;
+		list<Sequence> sequences;
+	} SequenceSet;
+};
 
 module MEME
 {
@@ -318,7 +341,7 @@ module MEME
 		SequenceSet sequenceSet - input set of sequences
 		MemeRunParameters params - parameters of MEME run
 	*/
-	funcdef find_motifs_with_meme(GeneralTypes.SequenceSet sequenceSet, MemeRunParameters params) returns(MemeRunResult meme_run_result);
+	funcdef find_motifs_with_meme(SequenceSet sequenceSet, MemeRunParameters params) returns(MemeRunResult meme_run_result);
 
 	/*
 		Returns kbase id of MemeRunResult object that contains results of a single MEME run
@@ -376,7 +399,7 @@ module MEME
 		SequenceSet target - target sequences for MAST run
 		float mt - value of mt parameter for MAST run
 	*/
-	funcdef find_sites_with_mast(MemePSPM query, GeneralTypes.SequenceSet target, float mt) returns(MastRunResult mast_run_result);
+	funcdef find_sites_with_mast(MemePSPM query, SequenceSet target, float mt) returns(MastRunResult mast_run_result);
 
 	/*
 		Returns kbase ID of MastRunResult containing list of MAST hits
@@ -396,7 +419,7 @@ module MEME
 		string pspm_id - KBase ID of a MemePSPM from the query collection that will be used. When empty string provided, all motifs in the query collection will be used
 		float mt - value of mt parameter for MAST run
 	*/
-	funcdef find_sites_with_mast_by_collection (MemePSPMCollection query, GeneralTypes.SequenceSet target, string pspm_id, float mt) returns(MastRunResult mast_run_result);
+	funcdef find_sites_with_mast_by_collection (MemePSPMCollection query, SequenceSet target, string pspm_id, float mt) returns(MastRunResult mast_run_result);
 
 	/*
 		Returns kbase ID of MastRunResult containing list of MAST hits
