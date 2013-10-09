@@ -28,3 +28,4 @@ Thumbs.db
 # other files ###########
 lib/Bio/KBase/Auth*
 test/regprecise.meme
+*.bak*

@@ -1,3 +1,33 @@
+/*
+	Module GeneralTypes provides data types that seem to be not unique for MEME package
+
+dev-prototype branch of typecomp can include this module from a separate file as well
+#include <general_types.types>
+*/
+
+
+module GeneralTypes
+{
+	/* Represents a particular sequence from sequence set
+		string sequence_id - sequence identifier,  must be unique in SequenceSet
+		string sequence - nucleotide sequence 
+	*/
+	typedef structure{
+		string sequence_id;
+		string sequence;
+	} Sequence;
+	
+	/* Represents set of sequences
+		string sequence_set_id - identifier of sequence set
+		list<Sequence> sequences - sequences
+	*/
+	typedef structure{
+		string sequence_set_id;
+		list<Sequence> sequences;
+	} SequenceSet;
+};
+
+
 /* 
 	Module MEME version 1.0
 	This module provides a set of methods for work with regulatory motifs. These methods integrate capabilities of three MEME Suite tools into KBase:
@@ -33,30 +63,7 @@
 	
 */
 
-/*
-#include <general_types.types>
-*/
 
-module GeneralTypes
-{
-	/* Represents a particular sequence from sequence set
-		string sequence_id - sequence identifier,  must be unique in SequenceSet
-		string sequence - nucleotide sequence 
-	*/
-	typedef structure{
-		string sequence_id;
-		string sequence;
-	} Sequence;
-	
-	/* Represents set of sequences
-		string sequence_set_id - identifier of sequence set
-		list<Sequence> sequences - sequences
-	*/
-	typedef structure{
-		string sequence_set_id;
-		list<Sequence> sequences;
-	} SequenceSet;
-};
 
 module MEME
 {
