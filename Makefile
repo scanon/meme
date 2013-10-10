@@ -41,8 +41,8 @@ deploy-scripts:
 	done
 
 deploy-docs: build-docs
-	-mkdir -p $(TARGET)/services/$(SERVICE_DIR)/webroot/.
-	cp docs/*.html $(TARGET)/services/$(SERVICE_DIR)/webroot/.
+	-mkdir -p $(TARGET)/services/$(SERVICE_NAME)/webroot/.
+	cp docs/*.html $(TARGET)/services/$(SERVICE_NAME)/webroot/.
 
 build-docs: compile-docs
 	pod2html --infile=lib/Bio/KBase/$(SERVICE_NAME)/Client.pm --outfile=docs/$(SERVICE_NAME).html

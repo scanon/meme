@@ -29,3 +29,4 @@ Thumbs.db
 lib/Bio/KBase/Auth*
 test/regprecise.meme
 *.bak*
+/war_*

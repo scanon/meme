@@ -22,7 +22,8 @@ public class MemeClientTest {
 	private SequenceSet testSequenceSet = new SequenceSet();
 	private MemeRunResult memeRunResult = new MemeRunResult();
 //	private String serverUrl = "http://140.221.84.195:7049";
-	private String serverUrl = "http://127.0.0.1:7108";
+	private String serverUrl = "http://140.221.84.191/services/meme/";
+//	private String serverUrl = "http://127.0.0.1:7108";
 
 	@Before
 	public void setUp() throws Exception {
