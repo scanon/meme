@@ -18,6 +18,9 @@ Bio::KBase::meme::Client
 =head1 DESCRIPTION
 
 
+Module GeneralTypes provides data types that seem to be not unique for MEME package
+
+dev-prototype branch of typecomp can include this module from a separate file as well
 #include <general_types.types>
 
 

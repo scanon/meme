@@ -7,7 +7,37 @@ Module Name:
 MEME
 
 Module Description:
+Module MEME version 1.0
+This module provides a set of methods for work with regulatory motifs. These methods integrate capabilities of three MEME Suite tools into KBase:
+- MEME is a tool for finding ungapped motifs in unaligned DNA sequences
+- TOMTOM is a tool for comparison of an input DNA motif to the elements of a database of known motifs
+- MAST is a tool for searching biological sequence databases for occurrences of known motifs
 
+Data types summary
+MemeRunParameters data type keeps input parameters for MEME run.
+TomtomRunParameters data type keeps input parameters for TOMTOM run.
+MastRunParameters data type keeps input parameters for MAST run.
+MemeSite data type represents a particular site from MEME motif description.
+MemeMotif data type represents DNA sequence motif predicted by MEME.
+MemeRunResult data type represents result of a single MEME run and contains parameters of the search and list of identified motifs.
+MemePSPM data type represents a position-specific letter-probability matrix for use with TOMTOM and MAST.
+MemePSPMCollection data type contains collection of matrices for use with TOMTOM and MAST.
+TomtomHit represents a results of comparison of two matrices by TOMTOM.
+TomtomRunResult represents result of a single TOMTOM run.
+MastHit represents a particular MAST hit.
+MastRunResult represents results of a single MAST run.
+
+Methods summary
+find_motifs_with_meme - runs MEME for a set of nucleotide sequences provided as SequenceSet object and returns MemeRunResult object
+find_motifs_with_meme_from_ws - runs MEME for a set of nucleotide sequences provided as workspace ID of the SequenceSet and returns kbase ID of MemeRunResult object saved in workspace
+compare_motifs_with_tomtom - runs TOMTOM for MemePSPM as query vs. MemePSPMCollection as target and returns TomtomRunResult (list of motif pairs)
+compare_motifs_with_tomtom_from_ws - runs TOMTOM for MemePSPM as query vs. MemePSPMCollection as target provided as workspace IDs and returns kbase ID of the TomtomRunResult saved in workspace
+compare_motifs_with_tomtom_by_collection - runs TOMTOM for two collection of PSPMs and returns TomtomRunResult (list of motif pairs)
+compare_motifs_with_tomtom_by_collection_from_ws - runs TOMTOM for two collection of PSPMs provided as workspace IDs and returns kbase ID of the TomtomRunResult saved in workspace
+find_sites_with_mast - runs MAST for MemePSPM vs. SequenceSet and returns MastRunResult (list of MAST hits)
+find_sites_with_mast_from_ws - runs MAST for MemePSPM stored in workspace vs. SequenceSet stored in workspace and returns kbase ID of MastRunResult (list of MAST hits) saved in workspace
+find_sites_with_mast_by_collection - runs MAST for MemePSPMCollection vs. SequenceSet and returns MastRunResult (list of MAST hits)
+find_sites_with_mast_by_collection_from_ws - runs MAST for MemePSPMCollection stored in workspace vs. SequenceSet stored in workspace and returns kbase ID of MastRunResult (list of MAST hits) saved in workspace
 
 '''
 class MEME:

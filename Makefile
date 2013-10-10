@@ -13,9 +13,9 @@ SERVICE_SPEC = ./kbase_meme.spec
 SERVICE_PORT = $(TARGET_PORT)
 SERVICE_DIR = $(TARGET_DIR)
 SERVLET_CLASS = us.kbase.meme.MemeServer
-
 SERVICE_PSGI = $(SERVICE_NAME).psgi
 TPAGE_ARGS = --define kb_top=$(TARGET) --define kb_runtime=$(DEPLOY_RUNTIME) --define kb_service_name=$(SERVICE_NAME) --define kb_service_dir=$(SERVICE_DIR) --define kb_service_port=$(SERVICE_PORT) --define kb_psgi=$(SERVICE_PSGI)
+SCRIPTS_TESTS = $(wildcard script-tests/*.t)
 
 default: compile
 
@@ -59,8 +59,19 @@ build-libs:
 		--js javascript/$(SERVICE_NAME)/Client \
 		$(SERVICE_SPEC) lib
 
-test:
-	@echo "no tests"
+test: test-scripts
+	@echo "running script tests"
+
+test-scripts:
+	# run each test
+	for t in $(SCRIPTS_TESTS) ; do \
+		if [ -f $$t ] ; then \
+			$(DEPLOY_RUNTIME)/bin/perl $$t ; \
+			if [ $$? -ne 0 ] ; then \
+				exit 1 ; \
+			fi \
+		fi \
+	done
 
 compile: src lib
 	./make_war.sh $(SERVLET_CLASS)

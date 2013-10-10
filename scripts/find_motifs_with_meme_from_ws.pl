@@ -74,7 +74,7 @@ use Carp;
 
 =head1 EXAMPLE
 
-    find_motifs_with_meme_from_ws 
+    find_motifs_with_meme_from_ws --url=http://140.221.84.195:7049/ --ws=AKtest --input=KBase.SequenceSet.12345 --mod=oops --nmotifs=2 --minw=14 --maxw=28
     find_motifs_with_meme_from_ws --help
     find_motifs_with_meme_from_ws --version
 
@@ -177,7 +177,7 @@ print "--version         Print version information. \n";
 print "\n";
 print " \n";
 print "EXAMPLES \n";
-print "find_motifs_with_meme_from_ws --url=http://kbase.us/services/meme --ws=AKtest --input=kbase.sequenceset.012345 --mod=oops --nmotifs=2 --minw=14 --maxw=28 \n";
+print "find_motifs_with_meme_from_ws --url=http://140.221.84.195:7049/ --ws=AKtest --input=KBase.SequenceSet.012345 --mod=oops --nmotifs=2 --minw=14 --maxw=28 \n";
 print "\n";
 print "This command will return a collection of two motifs with length between 14 and 28 bp.\n";
 print "\n";

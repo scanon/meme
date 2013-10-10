@@ -22,7 +22,7 @@ public class MemeClientTest {
 	private SequenceSet testSequenceSet = new SequenceSet();
 	private MemeRunResult memeRunResult = new MemeRunResult();
 //	private String serverUrl = "http://140.221.84.195:7049";
-	private String serverUrl = "http://127.0.0.1:1111";
+	private String serverUrl = "http://127.0.0.1:7108";
 
 	@Before
 	public void setUp() throws Exception {
@@ -276,7 +276,7 @@ public class MemeClientTest {
 	
 	
 	@Test
-	public final void testFindSitesByMotifCollectionWithMast() throws Exception {
+	public final void testFindSitesWithMastByMotifCollection() throws Exception {
 		MemeClient client = new MemeClient(serverUrl, "aktest", "1475rokegi");
 		client.setAuthAllowedForHttp(true);
 
@@ -307,7 +307,7 @@ public class MemeClientTest {
 	}
 
 	@Test
-	public final void testFindSitesByMotifCollectionWsWithMast() throws Exception {
+	public final void testFindSitesWithMastByMotifCollectionFromWs() throws Exception {
 		String seqId = "KBase.SequenceSet.12345";
 		String pspmCollectionId = "KBase.MemePSPMCollection.1380921747486";
 		MemeClient client = new MemeClient(serverUrl, "aktest", "1475rokegi");
@@ -330,6 +330,52 @@ public class MemeClientTest {
 		assertEquals(Double.valueOf("1416.26"), result.getHits().get(0).getScore());
 		assertEquals(Double.valueOf("0.0000101"), result.getHits().get(0).getHitPvalue());
 	}
+
+	@Test
+	public final void testFindSitesWithMast() throws Exception {
+		String memePspmId = "kb|memepspm.14"; 
+		MemeClient client = new MemeClient(serverUrl, "aktest", "1475rokegi");
+		client.setAuthAllowedForHttp(true);
+
+		GetObjectParams objectParams = new GetObjectParams().withType("MemePSPM").withId(memePspmId).withWorkspace(WSUtil.workspaceName).withAuth(WSUtil.authToken().toString());   
+		GetObjectOutput output = WSUtil.wsClient().getObject(objectParams);
+		MemePSPM pspm = UObject.transform(output.getData(), MemePSPM.class);
+
+		MastRunResult result = client.findSitesWithMast(pspm, testSequenceSet, 0.0005);
+		assertNotNull(result);
+		assertFalse(result.getHits().size() == 0);
+		assertEquals("209110", result.getHits().get(0).getSequenceId());
+		assertEquals("+", result.getHits().get(0).getStrand());
+		assertEquals("1", result.getHits().get(0).getPspmId());
+		assertEquals(Integer.valueOf("122"), result.getHits().get(0).getHitStart());
+		assertEquals(Integer.valueOf("145"), result.getHits().get(0).getHitEnd());
+		assertEquals(Double.valueOf("2594.71"), result.getHits().get(0).getScore());
+		assertEquals(Double.valueOf("0.000000000582"), result.getHits().get(0).getHitPvalue());
+	}
+	
+	@Test
+	public final void testFindSitesWithMastFromWs() throws Exception {
+		MemeClient client = new MemeClient(serverUrl, "aktest", "1475rokegi");
+		client.setAuthAllowedForHttp(true);
+
+		String resultId = client.findSitesWithMastFromWs("AKtest", "kb|memepspm.14", "KBase.SequenceSet.12345", 0.0005);
+		
+		GetObjectParams objectParams = new GetObjectParams().withType("MastRunResult").withId(resultId).withWorkspace(WSUtil.workspaceName).withAuth(WSUtil.authToken().toString());   
+		GetObjectOutput output = WSUtil.wsClient().getObject(objectParams);
+		MastRunResult result = UObject.transform(output.getData(), MastRunResult.class);
+
+		
+		assertNotNull(result);
+		assertFalse(result.getHits().size() == 0);
+		assertEquals("209110", result.getHits().get(0).getSequenceId());
+		assertEquals("+", result.getHits().get(0).getStrand());
+		assertEquals("1", result.getHits().get(0).getPspmId());
+		assertEquals(Integer.valueOf("122"), result.getHits().get(0).getHitStart());
+		assertEquals(Integer.valueOf("145"), result.getHits().get(0).getHitEnd());
+		assertEquals(Double.valueOf("2594.71"), result.getHits().get(0).getScore());
+		assertEquals(Double.valueOf("0.000000000582"), result.getHits().get(0).getHitPvalue());
+	}
+
 	
 	@Test
 	public final void testGetPspmCollectionFromMemeResultFromWs() throws Exception {

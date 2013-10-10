@@ -527,14 +527,14 @@ public class MemeServerImpl {
 		}
 		finally {
 			//Clean up
-/*			try {
+			try {
 				Runtime.getRuntime().exec("rm " + firstInputFile);
 				Runtime.getRuntime().exec("rm " + secondInputFile);
 				Runtime.getRuntime().exec("rm " + outputFileName);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
-			}*/
+			}
 		}
 		return result;
 		
@@ -725,13 +725,13 @@ public class MemeServerImpl {
 		}
 		if (internalTomtom == 1){
 			commandLine += " -internal";
-		} else if (evalueTomtom != 0) {
+		} else if (internalTomtom != 0) {
 			System.out.println("Cannot parse value of internalTomtom parameter: " + internalTomtom.toString());
 		}
 		if (minOverlapTomtom >= 1){
 			commandLine += " -min-overlap " + minOverlapTomtom.toString();
-		} else if (evalueTomtom != 0) {
-			System.out.println("Cannot parse value of internalTomtom parameter: " + internalTomtom.toString());
+		} else if (minOverlapTomtom != 0) {
+			System.out.println("Cannot parse value of minOverlapTomtom parameter: " + internalTomtom.toString());
 		}
 		
 		commandLine += " -text";
@@ -854,8 +854,19 @@ public class MemeServerImpl {
 	}
 	
 	public static String findSitesWithMastFromWs(String wsId, String queryId, String targetId, Double mt, AuthUser authPart) throws MalformedURLException, Exception{
+
+		GetObjectParams queryParams = new GetObjectParams().withType("MemePSPM").withId(queryId).withWorkspace(wsId).withAuth(authPart.getTokenString());   
+		GetObjectOutput queryOutput = WSUtil.wsClient().getObject(queryParams);
+		MemePSPM query = UObject.transform(queryOutput.getData(), MemePSPM.class);
+		GetObjectParams targetParams = new GetObjectParams().withType("SequenceSet").withId(targetId).withWorkspace(wsId).withAuth(authPart.getTokenString());
+		GetObjectOutput targetOutput = WSUtil.wsClient().getObject(targetParams);
+		SequenceSet target = UObject.transform(targetOutput.getData(), SequenceSet.class);
 		
-		String returnVal = findSitesWithMastByCollectionFromWs(wsId, queryId, targetId, "", mt, authPart);
+	
+		MastRunResult result = findSitesWithMast(query, target, mt);
+		String returnVal = result.getId();
+		WSUtil.saveObject(returnVal, result, false);
+
 		return returnVal;
 	}
 	
