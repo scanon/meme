@@ -22,8 +22,9 @@ public class MemeClientTest {
 	private SequenceSet testSequenceSet = new SequenceSet();
 	private MemeRunResult memeRunResult = new MemeRunResult();
 //	private String serverUrl = "http://140.221.84.195:7049";
-	private String serverUrl = "http://140.221.84.191/services/meme/";
-//	private String serverUrl = "http://127.0.0.1:7108";
+//	private String serverUrl = "http://140.221.84.191/services/meme/";
+//	private String serverUrl = "http://kbase.us/services/meme/";
+	private String serverUrl = "http://127.0.0.1:7108";
 
 	@Before
 	public void setUp() throws Exception {
@@ -132,12 +133,9 @@ public class MemeClientTest {
 	}
 
 	@Test
-	public final void testSearchMotifsFromWorkspaceWithMeme() throws MalformedURLException, Exception {
+	public final void testFindMotifsWithMemeFromWs() throws MalformedURLException, Exception {
 		
 		String id = "KBase.SequenceSet.12345";
-		GetObjectParams objectParams = new GetObjectParams().withType("SequenceSet").withId(id).withWorkspace(WSUtil.workspaceName).withAuth(WSUtil.authToken().toString());   
-		GetObjectOutput output = WSUtil.wsClient().getObject(objectParams);
-		SequenceSet input = UObject.transform(output.getData(), SequenceSet.class);
 		MemeClient client = new MemeClient(serverUrl, "aktest", "1475rokegi");
 		client.setAuthAllowedForHttp(true);
 		
@@ -158,10 +156,12 @@ public class MemeClientTest {
 		params.setRevcomp(0);
 
 		
-		MemeRunResult result = client.findMotifsWithMeme(input, params);
-//Write result to WS
-		WSUtil.saveObject(result.getId(), result, false);
-		
+		String resultId = client.findMotifsWithMemeFromWs(WSUtil.workspaceName, id, params);
+//Read result from WS
+		GetObjectParams objectParams = new GetObjectParams().withType("MemeRunResult").withId(resultId).withWorkspace(WSUtil.workspaceName).withAuth(WSUtil.authToken().toString());   
+		GetObjectOutput output = WSUtil.wsClient().getObject(objectParams);
+		MemeRunResult result = UObject.transform(output.getData(), MemeRunResult.class);
+
 		assertEquals(Integer.valueOf("0"),result.getSeed());
 		assertEquals(Integer.valueOf("1"),result.getSeqfrac());
 		assertEquals("+",result.getStrands());

@@ -102,7 +102,7 @@ public class MemeServer extends JsonServerServlet {
     public String findMotifsWithMemeFromWs(String wsId, String sequenceSetId, MemeRunParameters params, AuthUser authPart) throws Exception {
         String returnVal = null;
         //BEGIN find_motifs_with_meme_from_ws
-        returnVal = MemeServerImpl.findMotifsWithMemeFromWs(wsId, sequenceSetId, params, authPart);
+        returnVal = MemeServerImpl.findMotifsWithMemeFromWs(wsId, sequenceSetId, params, authPart.getTokenString());
         //END find_motifs_with_meme_from_ws
         return returnVal;
     }
@@ -146,7 +146,7 @@ public class MemeServer extends JsonServerServlet {
     public String compareMotifsWithTomtomFromWs(String wsId, String queryId, String targetId, TomtomRunParameters params, AuthUser authPart) throws Exception {
         String returnVal = null;
         //BEGIN compare_motifs_with_tomtom_from_ws
-        returnVal = MemeServerImpl.compareMotifsWithTomtomFromWs(wsId, queryId, targetId, params, authPart);
+        returnVal = MemeServerImpl.compareMotifsWithTomtomFromWs(wsId, queryId, targetId, params, authPart.getTokenString());
         //END compare_motifs_with_tomtom_from_ws
         return returnVal;
     }
@@ -192,7 +192,7 @@ public class MemeServer extends JsonServerServlet {
     public String compareMotifsWithTomtomByCollectionFromWs(String wsId, String queryId, String targetId, String pspmId, TomtomRunParameters params, AuthUser authPart) throws Exception {
         String returnVal = null;
         //BEGIN compare_motifs_with_tomtom_by_collection_from_ws
-        returnVal = MemeServerImpl.compareMotifsWithTomtomByCollectionFromWs(wsId, queryId, targetId, pspmId, params, authPart);
+        returnVal = MemeServerImpl.compareMotifsWithTomtomByCollectionFromWs(wsId, queryId, targetId, pspmId, params, authPart.getTokenString());
         //END compare_motifs_with_tomtom_by_collection_from_ws
         return returnVal;
     }
@@ -234,7 +234,7 @@ public class MemeServer extends JsonServerServlet {
     public String findSitesWithMastFromWs(String wsId, String queryId, String targetId, Double mt, AuthUser authPart) throws Exception {
         String returnVal = null;
         //BEGIN find_sites_with_mast_from_ws
-        returnVal = MemeServerImpl.findSitesWithMastFromWs(wsId, queryId, targetId, mt, authPart);
+        returnVal = MemeServerImpl.findSitesWithMastFromWs(wsId, queryId, targetId, mt, authPart.getTokenString());
         //END find_sites_with_mast_from_ws
         return returnVal;
     }
@@ -278,7 +278,7 @@ public class MemeServer extends JsonServerServlet {
     public String findSitesWithMastByCollectionFromWs(String wsId, String queryId, String targetId, String pspmId, Double mt, AuthUser authPart) throws Exception {
         String returnVal = null;
         //BEGIN find_sites_with_mast_by_collection_from_ws
-        returnVal = MemeServerImpl.findSitesWithMastByCollectionFromWs(wsId, queryId, targetId, pspmId, mt, authPart);
+        returnVal = MemeServerImpl.findSitesWithMastByCollectionFromWs(wsId, queryId, targetId, pspmId, mt, authPart.getTokenString());
         //END find_sites_with_mast_by_collection_from_ws
         return returnVal;
     }
@@ -313,7 +313,7 @@ public class MemeServer extends JsonServerServlet {
     public String getPspmCollectionFromMemeResultFromWs(String wsId, String memeRunResultId, AuthUser authPart) throws Exception {
         String returnVal = null;
         //BEGIN get_pspm_collection_from_meme_result_from_ws
-        returnVal = MemeServerImpl.getPspmCollectionFromMemeResultFromWs(wsId, memeRunResultId, authPart);
+        returnVal = MemeServerImpl.getPspmCollectionFromMemeResultFromWs(wsId, memeRunResultId, authPart.getTokenString());
         //END get_pspm_collection_from_meme_result_from_ws
         return returnVal;
     }

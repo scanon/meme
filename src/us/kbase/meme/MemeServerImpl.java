@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.regex.Pattern;
 
 import us.kbase.UObject;
-import us.kbase.auth.AuthUser;
+//import us.kbase.auth.AuthUser;
 import us.kbase.generaltypes.Sequence;
 import us.kbase.generaltypes.SequenceSet;
 import us.kbase.idserverapi.IdserverapiClient;
@@ -75,10 +75,10 @@ public class MemeServerImpl {
 	}
 	
 	public static String findMotifsWithMemeFromWs(
-			String wsId, String sequenceSetId, MemeRunParameters params, AuthUser authPart) throws Exception {
+			String wsId, String sequenceSetId, MemeRunParameters params, String token) throws Exception {
 		String returnVal = null;
 
-		GetObjectParams objectParams = new GetObjectParams().withType("SequenceSet").withId(sequenceSetId).withWorkspace(wsId).withAuth(authPart.getTokenString());   
+		GetObjectParams objectParams = new GetObjectParams().withType("SequenceSet").withId(sequenceSetId).withWorkspace(wsId).withAuth(token);   
 		GetObjectOutput output = WSUtil.wsClient().getObject(objectParams);
 		SequenceSet input = UObject.transform(output.getData(), SequenceSet.class);
 		MemeRunResult memeRunResult = findMotifsWithMeme(input, params);
@@ -488,12 +488,12 @@ public class MemeServerImpl {
 		return result;
 	}
 
-	public static String compareMotifsWithTomtomFromWs(String wsId, String queryId, String targetId, TomtomRunParameters params, AuthUser authPart) throws MalformedURLException, Exception{
+	public static String compareMotifsWithTomtomFromWs(String wsId, String queryId, String targetId, TomtomRunParameters params, String token) throws MalformedURLException, Exception{
 
-		GetObjectParams queryParams = new GetObjectParams().withType("MemePSPM").withId(queryId).withWorkspace(wsId).withAuth(authPart.getTokenString());   
+		GetObjectParams queryParams = new GetObjectParams().withType("MemePSPM").withId(queryId).withWorkspace(wsId).withAuth(token);   
 		GetObjectOutput queryOutput = WSUtil.wsClient().getObject(queryParams);
 		MemePSPM query = UObject.transform(queryOutput.getData(), MemePSPM.class);
-		GetObjectParams targetParams = new GetObjectParams().withType("MemePSPMCollection").withId(targetId).withWorkspace(wsId).withAuth(authPart.getTokenString());
+		GetObjectParams targetParams = new GetObjectParams().withType("MemePSPMCollection").withId(targetId).withWorkspace(wsId).withAuth(token);
 		GetObjectOutput targetOutput = WSUtil.wsClient().getObject(targetParams);
 		MemePSPMCollection target = UObject.transform(targetOutput.getData(), MemePSPMCollection.class);
 		
@@ -540,12 +540,12 @@ public class MemeServerImpl {
 		
 	}
 	
-	public static String compareMotifsWithTomtomByCollectionFromWs(String wsId, String queryId, String targetId, String pspmId, TomtomRunParameters params, AuthUser authPart) throws MalformedURLException, Exception{
+	public static String compareMotifsWithTomtomByCollectionFromWs(String wsId, String queryId, String targetId, String pspmId, TomtomRunParameters params, String token) throws MalformedURLException, Exception{
 
-		GetObjectParams queryParams = new GetObjectParams().withType("MemePSPMCollection").withId(queryId).withWorkspace(wsId).withAuth(authPart.getTokenString());   
+		GetObjectParams queryParams = new GetObjectParams().withType("MemePSPMCollection").withId(queryId).withWorkspace(wsId).withAuth(token);   
 		GetObjectOutput queryOutput = WSUtil.wsClient().getObject(queryParams);
 		MemePSPMCollection query = UObject.transform(queryOutput.getData(), MemePSPMCollection.class);
-		GetObjectParams targetParams = new GetObjectParams().withType("MemePSPMCollection").withId(targetId).withWorkspace(wsId).withAuth(authPart.getTokenString());
+		GetObjectParams targetParams = new GetObjectParams().withType("MemePSPMCollection").withId(targetId).withWorkspace(wsId).withAuth(token);
 		GetObjectOutput targetOutput = WSUtil.wsClient().getObject(targetParams);
 		MemePSPMCollection target = UObject.transform(targetOutput.getData(), MemePSPMCollection.class);
 		TomtomRunResult result = compareMotifsWithTomtomByCollection(query, target, pspmId, params);
@@ -571,9 +571,9 @@ public class MemeServerImpl {
 		return returnVal;
 	}
 	
-	public static String getPspmCollectionFromMemeResultFromWs(String wsId, String memeRunResultId, AuthUser authPart) throws Exception {
+	public static String getPspmCollectionFromMemeResultFromWs(String wsId, String memeRunResultId, String token) throws Exception {
 
-		GetObjectParams objectParams = new GetObjectParams().withType("MemeRunResult").withId(memeRunResultId).withWorkspace(wsId).withAuth(authPart.getTokenString());   
+		GetObjectParams objectParams = new GetObjectParams().withType("MemeRunResult").withId(memeRunResultId).withWorkspace(wsId).withAuth(token);   
 		GetObjectOutput output = WSUtil.wsClient().getObject(objectParams);
 		MemeRunResult result = UObject.transform(output.getData(), MemeRunResult.class);
 		MemePSPMCollection collection = getPspmCollectionFromMemeResult(result);
@@ -828,12 +828,12 @@ public class MemeServerImpl {
 		return returnVal;
 	}
 	
-	public static String findSitesWithMastByCollectionFromWs(String wsId, String queryId, String targetId, String pspmId, Double mt, AuthUser authPart) throws MalformedURLException, Exception{
+	public static String findSitesWithMastByCollectionFromWs(String wsId, String queryId, String targetId, String pspmId, Double mt, String token) throws MalformedURLException, Exception{
 
-		GetObjectParams queryParams = new GetObjectParams().withType("MemePSPMCollection").withId(queryId).withWorkspace(wsId).withAuth(authPart.getTokenString());   
+		GetObjectParams queryParams = new GetObjectParams().withType("MemePSPMCollection").withId(queryId).withWorkspace(wsId).withAuth(token);   
 		GetObjectOutput queryOutput = WSUtil.wsClient().getObject(queryParams);
 		MemePSPMCollection query = UObject.transform(queryOutput.getData(), MemePSPMCollection.class);
-		GetObjectParams targetParams = new GetObjectParams().withType("SequenceSet").withId(targetId).withWorkspace(wsId).withAuth(authPart.getTokenString());
+		GetObjectParams targetParams = new GetObjectParams().withType("SequenceSet").withId(targetId).withWorkspace(wsId).withAuth(token);
 		GetObjectOutput targetOutput = WSUtil.wsClient().getObject(targetParams);
 		SequenceSet target = UObject.transform(targetOutput.getData(), SequenceSet.class);
 		MastRunResult result = findSitesWithMastByCollection(query, target, pspmId, mt);
@@ -853,12 +853,12 @@ public class MemeServerImpl {
 
 	}
 	
-	public static String findSitesWithMastFromWs(String wsId, String queryId, String targetId, Double mt, AuthUser authPart) throws MalformedURLException, Exception{
+	public static String findSitesWithMastFromWs(String wsId, String queryId, String targetId, Double mt, String token) throws MalformedURLException, Exception{
 
-		GetObjectParams queryParams = new GetObjectParams().withType("MemePSPM").withId(queryId).withWorkspace(wsId).withAuth(authPart.getTokenString());   
+		GetObjectParams queryParams = new GetObjectParams().withType("MemePSPM").withId(queryId).withWorkspace(wsId).withAuth(token);   
 		GetObjectOutput queryOutput = WSUtil.wsClient().getObject(queryParams);
 		MemePSPM query = UObject.transform(queryOutput.getData(), MemePSPM.class);
-		GetObjectParams targetParams = new GetObjectParams().withType("SequenceSet").withId(targetId).withWorkspace(wsId).withAuth(authPart.getTokenString());
+		GetObjectParams targetParams = new GetObjectParams().withType("SequenceSet").withId(targetId).withWorkspace(wsId).withAuth(token);
 		GetObjectOutput targetOutput = WSUtil.wsClient().getObject(targetParams);
 		SequenceSet target = UObject.transform(targetOutput.getData(), SequenceSet.class);
 		
