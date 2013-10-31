@@ -447,6 +447,8 @@ public class MemeServerTug {
  
 		    	}
 		    	else {
+			    	HelpFormatter formatter = new HelpFormatter();
+			    	formatter.printHelp( "java -jar /kb/deployment/meme/meme_cluster.jar [parameters]", options );
 		    		System.exit(1);
 		    	}
 		    }

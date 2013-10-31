@@ -17,7 +17,7 @@ MAIN_CLASS = us.kbase.meme.MemeServerTug
 SERVICE_PSGI = $(SERVICE_NAME).psgi
 TPAGE_ARGS = --define kb_top=$(TARGET) --define kb_runtime=$(DEPLOY_RUNTIME) --define kb_service_name=$(SERVICE_NAME) --define kb_service_dir=$(SERVICE_DIR) --define kb_service_port=$(SERVICE_PORT) --define kb_psgi=$(SERVICE_PSGI)
 SCRIPTS_TESTS = $(wildcard script-tests/*.t)
-DEPLOY_CLUSTER = $(KB_TOP)/meme
+DEPLOY_CLUSTER = /kb/deployment/meme
 SCRIPTS_TESTS_CLUSTER = $(wildcard script-test-cluster/*.t)
 	
 default: compile
