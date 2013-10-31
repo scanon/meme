@@ -2,28 +2,17 @@ package us.kbase.meme;
 
 import org.apache.commons.cli.*;
 
-//import us.kbase.auth.AuthService;
-//import us.kbase.auth.AuthToken;
-
 public class MemeServerTug {
 
 	/**
 	 * @param args
 	 */
-	String serverMethod = "";
-
 	
-	@SuppressWarnings("static-access")
-	public static void main(String[] args) throws Exception {
-		
-		//AuthToken authToken = AuthService.login("aktest", "1475rokegi").getToken();
-		//System.out.println(authToken.toString());
+	Options options = new Options();
 
-		CommandLineParser parser = new GnuParser();
-		Options options = new Options();
-		String serverMethod = "";
-		String returnVal = null;
-		
+	@SuppressWarnings("static-access")
+	public MemeServerTug() {
+
 		options.addOption( OptionBuilder.withLongOpt( "help" )
                 .withDescription( "print this message" )
                 .withArgName("help")
@@ -145,265 +134,317 @@ public class MemeServerTug {
                 .withArgName("token")
                 .create() );
 
+	}
+
+	private String runMeme (CommandLine line) throws Exception{
+
+		MemeRunParameters params = new MemeRunParameters();		    			
+		String returnVal = null;
+		
+		if ( line.hasOption("mod")){
+			params.setMod(line.getOptionValue("mod"));
+		}
+		else {
+			System.err.println( "Required MEME mod parameter missed");
+			System.exit(1);
+		}
+		
+		if ( line.hasOption("nmotifs")){
+			params.setNmotifs(Integer.parseInt(line.getOptionValue("nmotifs")));
+		}
+		else {
+			params.setNmotifs(0);
+		}
+		
+		if ( line.hasOption("minw")){
+			params.setMinw(Integer.parseInt(line.getOptionValue("minw")));
+		}
+		else {
+			params.setMinw(0);
+		}
+		
+		if ( line.hasOption("maxw")){
+			params.setMaxw(Integer.parseInt(line.getOptionValue("maxw")));
+		}
+		else {
+			params.setMaxw(0);
+		}
+
+		if ( line.hasOption("nsites")){
+			params.setNsites(Integer.parseInt(line.getOptionValue("nsites")));
+		}
+		else {
+			params.setNsites(0);
+		}
+
+		if ( line.hasOption("minsites")){
+			params.setMinsites(Integer.parseInt(line.getOptionValue("minsites")));
+		}
+		else {
+			params.setMinsites(0);
+		}
+
+		if ( line.hasOption("maxsites")){
+			params.setMaxsites(Integer.parseInt(line.getOptionValue("maxsites")));
+		}
+		else {
+			params.setMaxsites(0);
+		}
+
+		if ( line.hasOption("pal")){
+			params.setPal(1);
+		} 
+		else {
+			params.setPal(0);
+		}
+
+		if ( line.hasOption("revcomp")){
+			params.setRevcomp(1);
+		} 
+		else {
+			params.setRevcomp(0);
+		}
+
+		returnVal = MemeServerImpl.findMotifsWithMemeFromWs(line.getOptionValue("ws"), 
+							line.getOptionValue("query"), 
+							params, 
+							line.getOptionValue("token"));
+		
+		return returnVal;
+		
+	}
+	
+	private String runTomtomWithMatrix (CommandLine line) throws Exception {
+
+		TomtomRunParameters params = new TomtomRunParameters();
+		String returnVal = null;
+
+		if ( line.hasOption("thresh")){
+			params.setThresh(Double.parseDouble(line.getOptionValue("thresh")));
+		}
+		else {
+			params.setThresh(0.0);
+		}
+
+		if ( line.hasOption("dist")){
+			params.setDist(line.getOptionValue("dist"));
+		}
+		else {
+			System.err.println( "Required TOMTOM dist parameter missed");
+			System.exit(1);
+		}
+
+		if ( line.hasOption("min_overlap")){
+			params.setMinOverlap(Integer.parseInt(line.getOptionValue("min_overlap")));
+		}
+		else {
+			params.setMinOverlap(0);
+		}
+
+		if ( line.hasOption("evalue")){
+			params.setEvalue(1);
+		} 
+		else {
+			params.setEvalue(0);
+		}
+		
+		if ( line.hasOption("internal")){
+			params.setInternal(1);
+		} 
+		else {
+			params.setInternal(0);
+		}
+		
+		if (line.hasOption("target")) {
+			returnVal = MemeServerImpl.compareMotifsWithTomtomFromWs(line.getOptionValue("ws"), 
+								line.getOptionValue("query"), 
+								line.getOptionValue("target"), 
+								params, 
+								line.getOptionValue("token"));
+		}
+		else {
+			System.err.println( "Target ID required");
+			System.exit(1);
+		}
+		return returnVal;
+
+	}
+
+	private String runTomtomWithCollection (CommandLine line) throws Exception {
+
+		TomtomRunParameters params = new TomtomRunParameters();
+		String returnVal = null;
+
+		if ( line.hasOption("thresh")){
+			params.setThresh(Double.parseDouble(line.getOptionValue("thresh")));
+		}
+		else {
+			params.setThresh(0.0);
+		}
+
+		if ( line.hasOption("dist")){
+			params.setDist(line.getOptionValue("dist"));
+		}
+		else {
+			System.err.println( "Required TOMTOM dist parameter missed");
+			System.exit(1);
+		}
+
+		if ( line.hasOption("min_overlap")){
+			params.setMinOverlap(Integer.parseInt(line.getOptionValue("min_overlap")));
+		}
+		else {
+			params.setMinOverlap(0);
+		}
+
+		if ( line.hasOption("evalue")){
+			params.setEvalue(1);
+		} 
+		else {
+			params.setEvalue(0);
+		}
+
+		if ( line.hasOption("internal")){
+			params.setInternal(1);
+		} 
+		else {
+			params.setInternal(0);
+		}
+
+		String pspm = "";
+		if ( line.hasOption("pspm")){
+			pspm = line.getOptionValue("pspm");
+		}
+		
+		if (line.hasOption("target")) {
+			returnVal = MemeServerImpl.compareMotifsWithTomtomByCollectionFromWs(line.getOptionValue("ws"), 
+								line.getOptionValue("query"), 
+								line.getOptionValue("target"), 
+								pspm, 
+								params, 
+								line.getOptionValue("token"));
+		
+			System.out.println(returnVal);
+		}
+		else {
+			System.err.println( "Target ID required");
+			System.exit(1);
+		}
+		
+		return returnVal;
+	}
+
+
+	private String runMastWithMatrix (CommandLine line) throws Exception {
+		Double mt = 0.0;
+		String returnVal = null;
+
+		if (line.hasOption("thresh")){
+			mt = Double.parseDouble(line.getOptionValue("thresh"));
+		}
+		else {
+			mt = 0.0;
+		}
+
+		if (line.hasOption("target")) {
+			returnVal = MemeServerImpl.findSitesWithMastFromWs(line.getOptionValue("ws"), 
+								line.getOptionValue("query"), 
+								line.getOptionValue("target"), 
+								mt, 
+								line.getOptionValue("token"));
+			System.out.println(returnVal);
+		}
+		else {
+			System.err.println( "Target ID required");
+			System.exit(1);
+		}
+		
+		return returnVal;
+	}
+
+	private String runMastWithCollection (CommandLine line) throws Exception {
+		String returnVal = null;
+		String pspm = "";
+
+		if ( line.hasOption("pspm")){
+			pspm = line.getOptionValue("pspm");
+		}
+
+		Double mt = 0.0;
+		if (line.hasOption("thresh")){
+			mt = Double.parseDouble(line.getOptionValue("thresh"));
+		}
+		else {
+			mt = 0.0;
+		}
+
+		if (line.hasOption("target")) {
+			returnVal = MemeServerImpl.findSitesWithMastByCollectionFromWs(line.getOptionValue("ws"), 
+								line.getOptionValue("query"), 
+								line.getOptionValue("target"), 
+								pspm, 
+								mt, 
+								line.getOptionValue("token"));
+			System.out.println(returnVal);
+		}
+		else {
+			System.err.println( "Target ID required");
+			System.exit(1);
+		}
+		return returnVal;
+	}
+
+	private String generateCollection (CommandLine line) throws Exception {
+		String returnVal = null;
+		returnVal = MemeServerImpl.getPspmCollectionFromMemeResultFromWs(line.getOptionValue("ws"), 
+				line.getOptionValue("query"), 
+				line.getOptionValue("token"));		
+		return returnVal;
+	}
+
+	public void run (String[] args) throws Exception{
+
+		String serverMethod = "";
+		CommandLineParser parser = new GnuParser();
+		String returnVal = "";
+
 		try {
 	        // parse the command line arguments
-	        CommandLine line = parser.parse( options, args );
+	        CommandLine line = parser.parse( options, args);
 		    if( line.hasOption( "help" ) ) {
 		    	// automatically generate the help statement
 		    	HelpFormatter formatter = new HelpFormatter();
-		    	formatter.printHelp( "java MemeServerTug", options );
+		    	formatter.printHelp( "java -classpath <path to meme_cluster.jar:path to lib> us.kbase.meme.MemeServerTug", options );
 
 		    }
 		    else {
 		    	if ( validateInput(line)){
 		    		serverMethod = line.getOptionValue( "method" );
+
 		    		if (serverMethod.equalsIgnoreCase("find_motifs_with_meme_from_ws")){
-		    			MemeRunParameters params = new MemeRunParameters();		    			
-		    			
-		    			if ( line.hasOption("mod")){
-		    				params.setMod(line.getOptionValue("mod"));
-		    			}
-		    			else {
-		    				System.err.println( "Required MEME mod parameter missed");
-		    				System.exit(1);
-		    			}
-		    			
-		    			if ( line.hasOption("nmotifs")){
-		    				params.setNmotifs(Integer.parseInt(line.getOptionValue("nmotifs")));
-		    			}
-		    			else {
-		    				params.setNmotifs(0);
-		    			}
-		    			
-		    			if ( line.hasOption("minw")){
-		    				params.setMinw(Integer.parseInt(line.getOptionValue("minw")));
-		    			}
-		    			else {
-		    				params.setMinw(0);
-		    			}
-		    			
-		    			if ( line.hasOption("maxw")){
-		    				params.setMaxw(Integer.parseInt(line.getOptionValue("maxw")));
-		    			}
-		    			else {
-		    				params.setMaxw(0);
-		    			}
-
-		    			if ( line.hasOption("nsites")){
-		    				params.setNsites(Integer.parseInt(line.getOptionValue("nsites")));
-		    			}
-		    			else {
-		    				params.setNsites(0);
-		    			}
-
-		    			if ( line.hasOption("minsites")){
-		    				params.setMinsites(Integer.parseInt(line.getOptionValue("minsites")));
-		    			}
-		    			else {
-		    				params.setMinsites(0);
-		    			}
-
-		    			if ( line.hasOption("maxsites")){
-		    				params.setMaxsites(Integer.parseInt(line.getOptionValue("maxsites")));
-		    			}
-		    			else {
-		    				params.setMaxsites(0);
-		    			}
-
-		    			if ( line.hasOption("pal")){
-		    				params.setPal(1);
-		    			} 
-		    			else {
-		    				params.setPal(0);
-		    			}
-
-		    			if ( line.hasOption("revcomp")){
-		    				params.setRevcomp(1);
-		    			} 
-		    			else {
-		    				params.setRevcomp(0);
-		    			}
-
-		    			returnVal = MemeServerImpl.findMotifsWithMemeFromWs(line.getOptionValue("ws"), 
-	    									line.getOptionValue("query"), 
-	    									params, 
-	    									line.getOptionValue("token"));
-	    				System.out.println(returnVal);
+		    			returnVal = runMeme(line);
 		    		}
 		    		else if (serverMethod.equalsIgnoreCase("compare_motifs_with_tomtom_from_ws")){
-		    			TomtomRunParameters params = new TomtomRunParameters();
-		    			if ( line.hasOption("thresh")){
-		    				params.setThresh(Double.parseDouble(line.getOptionValue("thresh")));
-		    			}
-		    			else {
-		    				params.setThresh(0.0);
-		    			}
-
-		    			if ( line.hasOption("dist")){
-		    				params.setDist(line.getOptionValue("dist"));
-		    			}
-		    			else {
-		    				System.err.println( "Required TOMTOM dist parameter missed");
-		    				System.exit(1);
-		    			}
-
-		    			if ( line.hasOption("min_overlap")){
-		    				params.setMinOverlap(Integer.parseInt(line.getOptionValue("min_overlap")));
-		    			}
-		    			else {
-		    				params.setMinOverlap(0);
-		    			}
-
-		    			if ( line.hasOption("evalue")){
-		    				params.setEvalue(1);
-		    			} 
-		    			else {
-		    				params.setEvalue(0);
-		    			}
-		    			
-		    			if ( line.hasOption("internal")){
-		    				params.setInternal(1);
-		    			} 
-		    			else {
-		    				params.setInternal(0);
-		    			}
-		    			
-		    			if (line.hasOption("target")) {
-		    				returnVal = MemeServerImpl.compareMotifsWithTomtomFromWs(line.getOptionValue("ws"), 
-		    									line.getOptionValue("query"), 
-		    									line.getOptionValue("target"), 
-		    									params, 
-		    									line.getOptionValue("token"));
-		    				System.out.println(returnVal);
-		    			}
-		    			else {
-		    				System.err.println( "Target ID required");
-		    				System.exit(1);
-		    			}
+		    			returnVal = runTomtomWithMatrix(line);
 		    		}
 		    		else if (serverMethod.equalsIgnoreCase("compare_motifs_with_tomtom_by_collection_from_ws")){
-		    			TomtomRunParameters params = new TomtomRunParameters();
-		    			if ( line.hasOption("thresh")){
-		    				params.setThresh(Double.parseDouble(line.getOptionValue("thresh")));
-		    			}
-		    			else {
-		    				params.setThresh(0.0);
-		    			}
-
-		    			if ( line.hasOption("dist")){
-		    				params.setDist(line.getOptionValue("dist"));
-		    			}
-		    			else {
-		    				System.err.println( "Required TOMTOM dist parameter missed");
-		    				System.exit(1);
-		    			}
-
-		    			if ( line.hasOption("min_overlap")){
-		    				params.setMinOverlap(Integer.parseInt(line.getOptionValue("min_overlap")));
-		    			}
-		    			else {
-		    				params.setMinOverlap(0);
-		    			}
-
-		    			if ( line.hasOption("evalue")){
-		    				params.setEvalue(1);
-		    			} 
-		    			else {
-		    				params.setEvalue(0);
-		    			}
-
-		    			if ( line.hasOption("internal")){
-		    				params.setInternal(1);
-		    			} 
-		    			else {
-		    				params.setInternal(0);
-		    			}
-
-		    			String pspm = "";
-		    			if ( line.hasOption("pspm")){
-		    				pspm = line.getOptionValue("pspm");
-		    			}
-		    			
-		    			if (line.hasOption("target")) {
-		    				returnVal = MemeServerImpl.compareMotifsWithTomtomByCollectionFromWs(line.getOptionValue("ws"), 
-		    									line.getOptionValue("query"), 
-		    									line.getOptionValue("target"), 
-		    									pspm, 
-		    									params, 
-		    									line.getOptionValue("token"));
-		    			
-		    				System.out.println(returnVal);
-		    			}
-		    			else {
-		    				System.err.println( "Target ID required");
-		    				System.exit(1);
-		    			}
-		    			
+		    			returnVal = runTomtomWithCollection(line);
 		    		}
 		    		else if (serverMethod.equalsIgnoreCase("find_sites_with_mast_from_ws")){
-		    			Double mt = 0.0;
-		    			if (line.hasOption("thresh")){
-		    				mt = Double.parseDouble(line.getOptionValue("thresh"));
-		    			}
-		    			else {
-		    				mt = 0.0;
-		    			}
-
-		    			if (line.hasOption("target")) {
-		    				returnVal = MemeServerImpl.findSitesWithMastFromWs(line.getOptionValue("ws"), 
-		    									line.getOptionValue("query"), 
-		    									line.getOptionValue("target"), 
-		    									mt, 
-		    									line.getOptionValue("token"));
-		    				System.out.println(returnVal);
-		    			}
-		    			else {
-		    				System.err.println( "Target ID required");
-		    				System.exit(1);
-		    			}
+		    			returnVal = runMastWithMatrix(line);
 		    		}
-		    		
 		    		else if (serverMethod.equalsIgnoreCase("find_sites_with_mast_by_collection_from_ws")){
-		    			String pspm = "";
-		    			if ( line.hasOption("pspm")){
-		    				pspm = line.getOptionValue("pspm");
-		    			}
-
-		    			Double mt = 0.0;
-		    			if (line.hasOption("thresh")){
-		    				mt = Double.parseDouble(line.getOptionValue("thresh"));
-		    			}
-		    			else {
-		    				mt = 0.0;
-		    			}
-
-		    			if (line.hasOption("target")) {
-		    				returnVal = MemeServerImpl.findSitesWithMastByCollectionFromWs(line.getOptionValue("ws"), 
-		    									line.getOptionValue("query"), 
-		    									line.getOptionValue("target"), 
-		    									pspm, 
-		    									mt, 
-		    									line.getOptionValue("token"));
-		    				System.out.println(returnVal);
-		    			}
-		    			else {
-		    				System.err.println( "Target ID required");
-		    				System.exit(1);
-		    			}
-		    			
+		    			returnVal = runMastWithCollection(line);
 		    		}
 		    		else if (serverMethod.equalsIgnoreCase("get_pspm_collection_from_meme_result_from_ws")){
-
-		    			returnVal = MemeServerImpl.getPspmCollectionFromMemeResultFromWs(line.getOptionValue("ws"), 
-								line.getOptionValue("query"), 
-								line.getOptionValue("token"));
-	    				System.out.println(returnVal);
-		    			
+		    			returnVal = generateCollection(line);
 		    		}
 		    		else {
 		    			System.err.println( "Unknown method: " + serverMethod );
 		    			System.exit(1);
 		    		}
+		    		// do something with resulting value
+	    			returnResult(returnVal);
  
 		    	}
 		    	else {
@@ -416,8 +457,9 @@ public class MemeServerTug {
 	        // oops, something went wrong
 	        System.err.println( "Parsing failed.  Reason: " + exp.getMessage() );
 	    }
-	    
+
 	}
+
 	
 	private static boolean validateInput (CommandLine line) {
 		boolean returnVal = false;
@@ -450,5 +492,21 @@ public class MemeServerTug {
 		}
 		return returnVal;
 	}
+
+	public void returnResult (String resultId) {
+		System.out.println(resultId);
+	}
+	
+	public static void main(String[] args) throws Exception {
+		
+		//AuthToken authToken = AuthService.login("aktest", "1475rokegi").getToken();
+		//System.out.println(authToken.toString());
+		
+		MemeServerTug tug = new MemeServerTug();
+		tug.run(args);
+
+	    
+	}
+	
 
 }

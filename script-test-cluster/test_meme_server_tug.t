@@ -22,10 +22,9 @@ if ($token->error_message){
 
 my $auth_token = $token->token;
 
-my $java_bin  = "../bin";
-my $java_lib = "../lib";
+my $deployment_dir = "/kb/deployment/meme/";
 
-my $command_line = "java -classpath $java_bin:$java_lib/* us.kbase.meme.MemeServerTug";
+my $command_line = "java -classpath ".$deployment_dir."meme_cluster.jar:".$deployment_dir."lib/* us.kbase.meme.MemeServerTug";
 
 my $ws = "AKtest";
 my $sequence_set_id = "KBase.SequenceSet.12345";

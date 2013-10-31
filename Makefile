@@ -13,13 +13,27 @@ SERVICE_SPEC = ./kbase_meme.spec
 SERVICE_PORT = $(TARGET_PORT)
 SERVICE_DIR = $(TARGET_DIR)
 SERVLET_CLASS = us.kbase.meme.MemeServer
+MAIN_CLASS = us.kbase.meme.MemeServerTug
 SERVICE_PSGI = $(SERVICE_NAME).psgi
 TPAGE_ARGS = --define kb_top=$(TARGET) --define kb_runtime=$(DEPLOY_RUNTIME) --define kb_service_name=$(SERVICE_NAME) --define kb_service_dir=$(SERVICE_DIR) --define kb_service_port=$(SERVICE_PORT) --define kb_psgi=$(SERVICE_PSGI)
 SCRIPTS_TESTS = $(wildcard script-tests/*.t)
-
+DEPLOY_CLUSTER = $(KB_TOP)/meme
+SCRIPTS_TESTS_CLUSTER = $(wildcard script-test-cluster/*.t)
+	
 default: compile
 
 deploy: distrib deploy-client
+
+deploy-cluster: compile-cluster deploy-cluster-logic test-cluster
+
+compile-cluster: src lib
+	./make_jar.sh $(MAIN_CLASS)
+
+deploy-cluster-logic:
+	mkdir $(DEPLOY_CLUSTER)
+	mkdir $(DEPLOY_CLUSTER)/lib
+	cp ./lib/*.jar $(DEPLOY_CLUSTER)/lib
+	cp ./dist/meme_cluster.jar $(DEPLOY_CLUSTER)
 
 deploy-all: distrib deploy-client
 
@@ -65,6 +79,17 @@ test: test-scripts
 test-scripts:
 	# run each test
 	for t in $(SCRIPTS_TESTS) ; do \
+		if [ -f $$t ] ; then \
+			$(DEPLOY_RUNTIME)/bin/perl $$t ; \
+			if [ $$? -ne 0 ] ; then \
+				exit 1 ; \
+			fi \
+		fi \
+	done
+
+test-cluster:
+	# run each test
+	for t in $(SCRIPTS_TESTS_CLUSTER) ; do \
 		if [ -f $$t ] ; then \
 			$(DEPLOY_RUNTIME)/bin/perl $$t ; \
 			if [ $$? -ne 0 ] ; then \
