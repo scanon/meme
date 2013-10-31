@@ -14,7 +14,6 @@ DIST_DIR=$CURRENT_DIR/dist
 JAR_FILE=$DIST_DIR/meme_cluster.jar
 SRC_DIR=./src
 LIB_DIR=./lib
-#JAR_LIB_DIR=$JAR_DIR/lib 
 CLASSES_DIR=$JAR_DIR
 CLASSPATH=
 
@@ -33,22 +32,24 @@ if [ -d $LIB_DIR ]; then
 fi
 
 mkdir $JAR_DIR
-#mkdir $JAR_LIB_DIR
-#mkdir $CLASSES_DIR
 
 JAVA_FILE=${MAIN_CLASS//\./\/}
 javac -sourcepath $SRC_DIR $CLASSPATH -d $JAR_DIR -g $SRC_DIR/$JAVA_FILE.java
 
-#if [ -d $LIB_DIR ]; then
-#    cp -R $LIB_DIR $JAR_DIR
-#fi
+
+cat > $JAR_DIR/Manifest.txt <<EOF
+Main-Class: $MAIN_CLASS
+Class-Path: lib/bcpkix-jdk15on-147.jar lib/bcprov-ext-jdk15on-147.jar lib/commons-cli-1.2.jar lib/ini4j-0.5.2.jar lib/jackson-all-1.9.11.jar lib/jetty-all-7.0.0.jar lib/kbase-auth.jar lib/servlet-api-2.5.jar
+EOF
+
+
 if [ -f $JAR_FILE ]
 then
     rm $JAR_FILE
 fi
 
 cd $JAR_DIR
-jar cfe $JAR_FILE $MAIN_CLASS *
+jar cfm $JAR_FILE Manifest.txt *
 
 cd ..
 rm -rf $JAR_DIR

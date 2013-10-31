@@ -24,7 +24,7 @@ my $auth_token = $token->token;
 
 my $deployment_dir = "/kb/deployment/meme/";
 
-my $command_line = "java -classpath ".$deployment_dir."meme_cluster.jar:".$deployment_dir."lib/* us.kbase.meme.MemeServerTug";
+my $command_line = "java -jar ".$deployment_dir."meme_cluster.jar";
 
 my $ws = "AKtest";
 my $sequence_set_id = "KBase.SequenceSet.12345";

@@ -324,7 +324,6 @@ public class MemeServerTug {
 								params, 
 								line.getOptionValue("token"));
 		
-			System.out.println(returnVal);
 		}
 		else {
 			System.err.println( "Target ID required");
@@ -352,7 +351,6 @@ public class MemeServerTug {
 								line.getOptionValue("target"), 
 								mt, 
 								line.getOptionValue("token"));
-			System.out.println(returnVal);
 		}
 		else {
 			System.err.println( "Target ID required");
@@ -385,7 +383,6 @@ public class MemeServerTug {
 								pspm, 
 								mt, 
 								line.getOptionValue("token"));
-			System.out.println(returnVal);
 		}
 		else {
 			System.err.println( "Target ID required");
@@ -414,7 +411,7 @@ public class MemeServerTug {
 		    if( line.hasOption( "help" ) ) {
 		    	// automatically generate the help statement
 		    	HelpFormatter formatter = new HelpFormatter();
-		    	formatter.printHelp( "java -classpath <path to meme_cluster.jar:path to lib> us.kbase.meme.MemeServerTug", options );
+		    	formatter.printHelp( "java -jar /kb/deployment/meme/meme_cluster.jar [parameters]", options );
 
 		    }
 		    else {
@@ -440,7 +437,9 @@ public class MemeServerTug {
 		    			returnVal = generateCollection(line);
 		    		}
 		    		else {
-		    			System.err.println( "Unknown method: " + serverMethod );
+		    			System.err.println( "Unknown method: " + serverMethod + "\n");
+				    	HelpFormatter formatter = new HelpFormatter();
+				    	formatter.printHelp( "java -jar /kb/deployment/meme/meme_cluster.jar [parameters]", options );
 		    			System.exit(1);
 		    		}
 		    		// do something with resulting value
