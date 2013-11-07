@@ -91,12 +91,14 @@ public class MemeServerTug {
                 .create() );
 
 		options.addOption( OptionBuilder.withLongOpt( "pal" )
-                .withDescription( "MEME option: force palindromes" )
+                .withDescription( "MEME option: force palindromes: 0 | 1" )
+                .hasArg(true)
                 .withArgName("pal")
                 .create() );
 
 		options.addOption( OptionBuilder.withLongOpt( "revcomp" )
-                .withDescription( "MEME option: allow sites on + or - DNA strands. Default: look for DNA motifs only on the strand given in the training set" )
+                .withDescription( "MEME option: allow sites on + or - DNA strands. Possible values 0 or 1. Default(0): look for DNA motifs only on the strand given in the training set" )
+                .hasArg(true)
                 .withArgName("revcomp")
                 .create() );
 
@@ -107,7 +109,8 @@ public class MemeServerTug {
                 .create() );
 		
 		options.addOption( OptionBuilder.withLongOpt( "evalue" )
-                .withDescription( "TOMTOM option: use the E-value of the match as the significance threshold" )
+                .withDescription( "TOMTOM option: use the E-value of the match as the significance threshold: 0 | 1" )
+                .hasArg(true)
                 .withArgName("evalue")
                 .create() );
 
@@ -118,7 +121,8 @@ public class MemeServerTug {
                 .create() );
 
 		options.addOption( OptionBuilder.withLongOpt( "internal" )
-                .withDescription( "TOMTOM option: this parameter forces the shorter motif to be completely contained in the longer motif." )
+                .withDescription( "TOMTOM option: this parameter forces the shorter motif to be completely contained in the longer motif. Possible values: 0 | 1 " )
+                .hasArg(true)
                 .withArgName("internal")
                 .create() );
 
@@ -192,14 +196,14 @@ public class MemeServerTug {
 		}
 
 		if ( line.hasOption("pal")){
-			params.setPal(1);
+			params.setPal(Integer.parseInt(line.getOptionValue("pal")));
 		} 
 		else {
 			params.setPal(0);
 		}
 
 		if ( line.hasOption("revcomp")){
-			params.setRevcomp(1);
+			params.setPal(Integer.parseInt(line.getOptionValue("revcomp")));
 		} 
 		else {
 			params.setRevcomp(0);
@@ -242,14 +246,14 @@ public class MemeServerTug {
 		}
 
 		if ( line.hasOption("evalue")){
-			params.setEvalue(1);
+			params.setEvalue(Integer.parseInt(line.getOptionValue("evalue")));
 		} 
 		else {
 			params.setEvalue(0);
 		}
 		
 		if ( line.hasOption("internal")){
-			params.setInternal(1);
+			params.setInternal(Integer.parseInt(line.getOptionValue("internal")));
 		} 
 		else {
 			params.setInternal(0);

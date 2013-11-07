@@ -41,7 +41,7 @@ print $test_command."\n\n";
 system ($test_command);
 
 #2 find_motifs_with_meme_from_ws
-$test_command = $command_line." --method find_motifs_with_meme_from_ws --ws $ws --query $sequence_set_id --mod oops --nmotifs 2 --minw 14 --maxw 28 --pal --token \"$auth_token\"";
+$test_command = $command_line." --method find_motifs_with_meme_from_ws --ws $ws --query $sequence_set_id --mod oops --nmotifs 2 --minw 14 --maxw 28 --pal 1 --token \"$auth_token\"";
 print $test_command."\n\n";
 system ($test_command);
 
@@ -51,12 +51,12 @@ print $test_command."\n\n";
 system ($test_command);
 
 #4 compare_motifs_with_tomtom_by_collection_from_ws
-$test_command = $command_line." --method compare_motifs_with_tomtom_by_collection_from_ws --ws $ws --query $meme_pspm_collection_id --target $meme_pspm_collection_id --thresh 0.000001 --evalue --dist pearson --min_overlap 12 --token \"$auth_token\"";
+$test_command = $command_line." --method compare_motifs_with_tomtom_by_collection_from_ws --ws $ws --query $meme_pspm_collection_id --target $meme_pspm_collection_id --thresh 0.000001 --evalue 1 --dist pearson --min_overlap 12 --token \"$auth_token\"";
 print $test_command."\n\n";
 system ($test_command);
 
 #5 compare_motifs_with_tomtom_from_ws
-$test_command = $command_line." --method compare_motifs_with_tomtom_from_ws --ws $ws --query $meme_pspm_id --target $meme_pspm_collection_id --thresh 0.000001 --evalue --dist pearson --min_overlap 12 --token \"$auth_token\"";
+$test_command = $command_line." --method compare_motifs_with_tomtom_from_ws --ws $ws --query $meme_pspm_id --target $meme_pspm_collection_id --thresh 0.000001 --evalue 1 --dist pearson --min_overlap 12 --token \"$auth_token\"";
 print $test_command."\n\n";
 system ($test_command);
 
