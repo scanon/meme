@@ -30,6 +30,7 @@ compile-cluster: src lib
 	./make_jar.sh $(MAIN_CLASS)
 
 deploy-cluster-logic:
+	rm -r $(DEPLOY_CLUSTER)
 	mkdir $(DEPLOY_CLUSTER)
 	mkdir $(DEPLOY_CLUSTER)/lib
 	cp ./lib/*.jar $(DEPLOY_CLUSTER)/lib

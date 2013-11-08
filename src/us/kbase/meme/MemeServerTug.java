@@ -203,7 +203,7 @@ public class MemeServerTug {
 		}
 
 		if ( line.hasOption("revcomp")){
-			params.setPal(Integer.parseInt(line.getOptionValue("revcomp")));
+			params.setRevcomp(Integer.parseInt(line.getOptionValue("revcomp")));
 		} 
 		else {
 			params.setRevcomp(0);
