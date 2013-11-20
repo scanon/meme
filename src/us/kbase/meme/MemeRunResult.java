@@ -1,16 +1,15 @@
 
 package us.kbase.meme;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.Generated;
-import org.codehaus.jackson.annotate.JsonAnyGetter;
-import org.codehaus.jackson.annotate.JsonAnySetter;
-import org.codehaus.jackson.annotate.JsonProperty;
-import org.codehaus.jackson.annotate.JsonPropertyOrder;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 
 /**
@@ -59,7 +58,7 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
  * </pre>
  * 
  */
-@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @Generated("com.googlecode.jsonschema2pojo")
 @JsonPropertyOrder({
     "id",
@@ -105,156 +104,156 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
 public class MemeRunResult {
 
     @JsonProperty("id")
-    private String id;
+    private java.lang.String id;
     @JsonProperty("timestamp")
-    private String timestamp;
+    private java.lang.String timestamp;
     @JsonProperty("version")
-    private String version;
+    private java.lang.String version;
     @JsonProperty("input_file_name")
-    private String inputFileName;
+    private java.lang.String inputFileName;
     @JsonProperty("alphabet")
-    private String alphabet;
+    private java.lang.String alphabet;
     @JsonProperty("training_set")
-    private List<String> trainingSet = new ArrayList<String>();
+    private List<String> trainingSet;
     @JsonProperty("command_line")
-    private String commandLine;
+    private java.lang.String commandLine;
     @JsonProperty("mod")
-    private String mod;
+    private java.lang.String mod;
     @JsonProperty("nmotifs")
-    private Integer nmotifs;
+    private Long nmotifs;
     @JsonProperty("evt")
-    private String evt;
+    private java.lang.String evt;
     @JsonProperty("object_function")
-    private String objectFunction;
+    private java.lang.String objectFunction;
     @JsonProperty("minw")
-    private Integer minw;
+    private Long minw;
     @JsonProperty("maxw")
-    private Integer maxw;
+    private Long maxw;
     @JsonProperty("minic")
     private Double minic;
     @JsonProperty("wg")
-    private Integer wg;
+    private Long wg;
     @JsonProperty("ws")
-    private Integer ws;
+    private Long ws;
     @JsonProperty("endgaps")
-    private String endgaps;
+    private java.lang.String endgaps;
     @JsonProperty("minsites")
-    private Integer minsites;
+    private Long minsites;
     @JsonProperty("maxsites")
-    private Integer maxsites;
+    private Long maxsites;
     @JsonProperty("wnsites")
     private Double wnsites;
     @JsonProperty("prob")
-    private Integer prob;
+    private Long prob;
     @JsonProperty("spmap")
-    private String spmap;
+    private java.lang.String spmap;
     @JsonProperty("spfuzz")
-    private String spfuzz;
+    private java.lang.String spfuzz;
     @JsonProperty("substring")
-    private String substring;
+    private java.lang.String substring;
     @JsonProperty("branching")
-    private String branching;
+    private java.lang.String branching;
     @JsonProperty("wbranch")
-    private String wbranch;
+    private java.lang.String wbranch;
     @JsonProperty("prior")
-    private String prior;
+    private java.lang.String prior;
     @JsonProperty("b")
     private Double b;
     @JsonProperty("maxiter")
-    private Integer maxiter;
+    private Long maxiter;
     @JsonProperty("distance")
     private Double distance;
     @JsonProperty("n")
-    private Integer n;
+    private Long n;
     @JsonProperty("n_cap")
-    private Integer nCap;
+    private Long nCap;
     @JsonProperty("strands")
-    private String strands;
+    private java.lang.String strands;
     @JsonProperty("seed")
-    private Integer seed;
+    private Long seed;
     @JsonProperty("seqfrac")
-    private Integer seqfrac;
+    private Long seqfrac;
     @JsonProperty("letter_freq")
-    private String letterFreq;
+    private java.lang.String letterFreq;
     @JsonProperty("bg_freq")
-    private String bgFreq;
+    private java.lang.String bgFreq;
     @JsonProperty("motifs")
-    private List<MemeMotif> motifs = new ArrayList<MemeMotif>();
+    private List<MemeMotif> motifs;
     @JsonProperty("raw_output")
-    private String rawOutput;
-    private Map<String, Object> additionalProperties = new HashMap<String, Object>();
+    private java.lang.String rawOutput;
+    private Map<java.lang.String, Object> additionalProperties = new HashMap<java.lang.String, Object>();
 
     @JsonProperty("id")
-    public String getId() {
+    public java.lang.String getId() {
         return id;
     }
 
     @JsonProperty("id")
-    public void setId(String id) {
+    public void setId(java.lang.String id) {
         this.id = id;
     }
 
-    public MemeRunResult withId(String id) {
+    public MemeRunResult withId(java.lang.String id) {
         this.id = id;
         return this;
     }
 
     @JsonProperty("timestamp")
-    public String getTimestamp() {
+    public java.lang.String getTimestamp() {
         return timestamp;
     }
 
     @JsonProperty("timestamp")
-    public void setTimestamp(String timestamp) {
+    public void setTimestamp(java.lang.String timestamp) {
         this.timestamp = timestamp;
     }
 
-    public MemeRunResult withTimestamp(String timestamp) {
+    public MemeRunResult withTimestamp(java.lang.String timestamp) {
         this.timestamp = timestamp;
         return this;
     }
 
     @JsonProperty("version")
-    public String getVersion() {
+    public java.lang.String getVersion() {
         return version;
     }
 
     @JsonProperty("version")
-    public void setVersion(String version) {
+    public void setVersion(java.lang.String version) {
         this.version = version;
     }
 
-    public MemeRunResult withVersion(String version) {
+    public MemeRunResult withVersion(java.lang.String version) {
         this.version = version;
         return this;
     }
 
     @JsonProperty("input_file_name")
-    public String getInputFileName() {
+    public java.lang.String getInputFileName() {
         return inputFileName;
     }
 
     @JsonProperty("input_file_name")
-    public void setInputFileName(String inputFileName) {
+    public void setInputFileName(java.lang.String inputFileName) {
         this.inputFileName = inputFileName;
     }
 
-    public MemeRunResult withInputFileName(String inputFileName) {
+    public MemeRunResult withInputFileName(java.lang.String inputFileName) {
         this.inputFileName = inputFileName;
         return this;
     }
 
     @JsonProperty("alphabet")
-    public String getAlphabet() {
+    public java.lang.String getAlphabet() {
         return alphabet;
     }
 
     @JsonProperty("alphabet")
-    public void setAlphabet(String alphabet) {
+    public void setAlphabet(java.lang.String alphabet) {
         this.alphabet = alphabet;
     }
 
-    public MemeRunResult withAlphabet(String alphabet) {
+    public MemeRunResult withAlphabet(java.lang.String alphabet) {
         this.alphabet = alphabet;
         return this;
     }
@@ -275,106 +274,106 @@ public class MemeRunResult {
     }
 
     @JsonProperty("command_line")
-    public String getCommandLine() {
+    public java.lang.String getCommandLine() {
         return commandLine;
     }
 
     @JsonProperty("command_line")
-    public void setCommandLine(String commandLine) {
+    public void setCommandLine(java.lang.String commandLine) {
         this.commandLine = commandLine;
     }
 
-    public MemeRunResult withCommandLine(String commandLine) {
+    public MemeRunResult withCommandLine(java.lang.String commandLine) {
         this.commandLine = commandLine;
         return this;
     }
 
     @JsonProperty("mod")
-    public String getMod() {
+    public java.lang.String getMod() {
         return mod;
     }
 
     @JsonProperty("mod")
-    public void setMod(String mod) {
+    public void setMod(java.lang.String mod) {
         this.mod = mod;
     }
 
-    public MemeRunResult withMod(String mod) {
+    public MemeRunResult withMod(java.lang.String mod) {
         this.mod = mod;
         return this;
     }
 
     @JsonProperty("nmotifs")
-    public Integer getNmotifs() {
+    public Long getNmotifs() {
         return nmotifs;
     }
 
     @JsonProperty("nmotifs")
-    public void setNmotifs(Integer nmotifs) {
+    public void setNmotifs(Long nmotifs) {
         this.nmotifs = nmotifs;
     }
 
-    public MemeRunResult withNmotifs(Integer nmotifs) {
+    public MemeRunResult withNmotifs(Long nmotifs) {
         this.nmotifs = nmotifs;
         return this;
     }
 
     @JsonProperty("evt")
-    public String getEvt() {
+    public java.lang.String getEvt() {
         return evt;
     }
 
     @JsonProperty("evt")
-    public void setEvt(String evt) {
+    public void setEvt(java.lang.String evt) {
         this.evt = evt;
     }
 
-    public MemeRunResult withEvt(String evt) {
+    public MemeRunResult withEvt(java.lang.String evt) {
         this.evt = evt;
         return this;
     }
 
     @JsonProperty("object_function")
-    public String getObjectFunction() {
+    public java.lang.String getObjectFunction() {
         return objectFunction;
     }
 
     @JsonProperty("object_function")
-    public void setObjectFunction(String objectFunction) {
+    public void setObjectFunction(java.lang.String objectFunction) {
         this.objectFunction = objectFunction;
     }
 
-    public MemeRunResult withObjectFunction(String objectFunction) {
+    public MemeRunResult withObjectFunction(java.lang.String objectFunction) {
         this.objectFunction = objectFunction;
         return this;
     }
 
     @JsonProperty("minw")
-    public Integer getMinw() {
+    public Long getMinw() {
         return minw;
     }
 
     @JsonProperty("minw")
-    public void setMinw(Integer minw) {
+    public void setMinw(Long minw) {
         this.minw = minw;
     }
 
-    public MemeRunResult withMinw(Integer minw) {
+    public MemeRunResult withMinw(Long minw) {
         this.minw = minw;
         return this;
     }
 
     @JsonProperty("maxw")
-    public Integer getMaxw() {
+    public Long getMaxw() {
         return maxw;
     }
 
     @JsonProperty("maxw")
-    public void setMaxw(Integer maxw) {
+    public void setMaxw(Long maxw) {
         this.maxw = maxw;
     }
 
-    public MemeRunResult withMaxw(Integer maxw) {
+    public MemeRunResult withMaxw(Long maxw) {
         this.maxw = maxw;
         return this;
     }
@@ -395,76 +394,76 @@ public class MemeRunResult {
     }
 
     @JsonProperty("wg")
-    public Integer getWg() {
+    public Long getWg() {
         return wg;
     }
 
     @JsonProperty("wg")
-    public void setWg(Integer wg) {
+    public void setWg(Long wg) {
         this.wg = wg;
     }
 
-    public MemeRunResult withWg(Integer wg) {
+    public MemeRunResult withWg(Long wg) {
         this.wg = wg;
         return this;
     }
 
     @JsonProperty("ws")
-    public Integer getWs() {
+    public Long getWs() {
         return ws;
     }
 
     @JsonProperty("ws")
-    public void setWs(Integer ws) {
+    public void setWs(Long ws) {
         this.ws = ws;
     }
 
-    public MemeRunResult withWs(Integer ws) {
+    public MemeRunResult withWs(Long ws) {
         this.ws = ws;
         return this;
     }
 
     @JsonProperty("endgaps")
-    public String getEndgaps() {
+    public java.lang.String getEndgaps() {
         return endgaps;
     }
 
     @JsonProperty("endgaps")
-    public void setEndgaps(String endgaps) {
+    public void setEndgaps(java.lang.String endgaps) {
         this.endgaps = endgaps;
     }
 
-    public MemeRunResult withEndgaps(String endgaps) {
+    public MemeRunResult withEndgaps(java.lang.String endgaps) {
         this.endgaps = endgaps;
         return this;
     }
 
     @JsonProperty("minsites")
-    public Integer getMinsites() {
+    public Long getMinsites() {
         return minsites;
     }
 
     @JsonProperty("minsites")
-    public void setMinsites(Integer minsites) {
+    public void setMinsites(Long minsites) {
         this.minsites = minsites;
     }
 
-    public MemeRunResult withMinsites(Integer minsites) {
+    public MemeRunResult withMinsites(Long minsites) {
         this.minsites = minsites;
         return this;
     }
 
     @JsonProperty("maxsites")
-    public Integer getMaxsites() {
+    public Long getMaxsites() {
         return maxsites;
     }
 
     @JsonProperty("maxsites")
-    public void setMaxsites(Integer maxsites) {
+    public void setMaxsites(Long maxsites) {
         this.maxsites = maxsites;
     }
 
-    public MemeRunResult withMaxsites(Integer maxsites) {
+    public MemeRunResult withMaxsites(Long maxsites) {
         this.maxsites = maxsites;
         return this;
     }
@@ -485,106 +484,106 @@ public class MemeRunResult {
     }
 
     @JsonProperty("prob")
-    public Integer getProb() {
+    public Long getProb() {
         return prob;
     }
 
     @JsonProperty("prob")
-    public void setProb(Integer prob) {
+    public void setProb(Long prob) {
         this.prob = prob;
     }
 
-    public MemeRunResult withProb(Integer prob) {
+    public MemeRunResult withProb(Long prob) {
         this.prob = prob;
         return this;
     }
 
     @JsonProperty("spmap")
-    public String getSpmap() {
+    public java.lang.String getSpmap() {
         return spmap;
     }
 
     @JsonProperty("spmap")
-    public void setSpmap(String spmap) {
+    public void setSpmap(java.lang.String spmap) {
         this.spmap = spmap;
     }
 
-    public MemeRunResult withSpmap(String spmap) {
+    public MemeRunResult withSpmap(java.lang.String spmap) {
         this.spmap = spmap;
         return this;
     }
 
     @JsonProperty("spfuzz")
-    public String getSpfuzz() {
+    public java.lang.String getSpfuzz() {
         return spfuzz;
     }
 
     @JsonProperty("spfuzz")
-    public void setSpfuzz(String spfuzz) {
+    public void setSpfuzz(java.lang.String spfuzz) {
         this.spfuzz = spfuzz;
     }
 
-    public MemeRunResult withSpfuzz(String spfuzz) {
+    public MemeRunResult withSpfuzz(java.lang.String spfuzz) {
         this.spfuzz = spfuzz;
         return this;
     }
 
     @JsonProperty("substring")
-    public String getSubstring() {
+    public java.lang.String getSubstring() {
         return substring;
     }
 
     @JsonProperty("substring")
-    public void setSubstring(String substring) {
+    public void setSubstring(java.lang.String substring) {
         this.substring = substring;
     }
 
-    public MemeRunResult withSubstring(String substring) {
+    public MemeRunResult withSubstring(java.lang.String substring) {
         this.substring = substring;
         return this;
     }
 
     @JsonProperty("branching")
-    public String getBranching() {
+    public java.lang.String getBranching() {
         return branching;
     }
 
     @JsonProperty("branching")
-    public void setBranching(String branching) {
+    public void setBranching(java.lang.String branching) {
         this.branching = branching;
     }
 
-    public MemeRunResult withBranching(String branching) {
+    public MemeRunResult withBranching(java.lang.String branching) {
         this.branching = branching;
         return this;
     }
 
     @JsonProperty("wbranch")
-    public String getWbranch() {
+    public java.lang.String getWbranch() {
         return wbranch;
     }
 
     @JsonProperty("wbranch")
-    public void setWbranch(String wbranch) {
+    public void setWbranch(java.lang.String wbranch) {
         this.wbranch = wbranch;
     }
 
-    public MemeRunResult withWbranch(String wbranch) {
+    public MemeRunResult withWbranch(java.lang.String wbranch) {
         this.wbranch = wbranch;
         return this;
     }
 
     @JsonProperty("prior")
-    public String getPrior() {
+    public java.lang.String getPrior() {
         return prior;
     }
 
     @JsonProperty("prior")
-    public void setPrior(String prior) {
+    public void setPrior(java.lang.String prior) {
         this.prior = prior;
     }
 
-    public MemeRunResult withPrior(String prior) {
+    public MemeRunResult withPrior(java.lang.String prior) {
         this.prior = prior;
         return this;
     }
@@ -605,16 +604,16 @@ public class MemeRunResult {
     }
 
     @JsonProperty("maxiter")
-    public Integer getMaxiter() {
+    public Long getMaxiter() {
         return maxiter;
     }
 
     @JsonProperty("maxiter")
-    public void setMaxiter(Integer maxiter) {
+    public void setMaxiter(Long maxiter) {
         this.maxiter = maxiter;
     }
 
-    public MemeRunResult withMaxiter(Integer maxiter) {
+    public MemeRunResult withMaxiter(Long maxiter) {
         this.maxiter = maxiter;
         return this;
     }
@@ -635,106 +634,106 @@ public class MemeRunResult {
     }
 
     @JsonProperty("n")
-    public Integer getN() {
+    public Long getN() {
         return n;
     }
 
     @JsonProperty("n")
-    public void setN(Integer n) {
+    public void setN(Long n) {
         this.n = n;
     }
 
-    public MemeRunResult withN(Integer n) {
+    public MemeRunResult withN(Long n) {
         this.n = n;
         return this;
     }
 
     @JsonProperty("n_cap")
-    public Integer getNCap() {
+    public Long getNCap() {
         return nCap;
     }
 
     @JsonProperty("n_cap")
-    public void setNCap(Integer nCap) {
+    public void setNCap(Long nCap) {
         this.nCap = nCap;
     }
 
-    public MemeRunResult withNCap(Integer nCap) {
+    public MemeRunResult withNCap(Long nCap) {
         this.nCap = nCap;
         return this;
     }
 
     @JsonProperty("strands")
-    public String getStrands() {
+    public java.lang.String getStrands() {
         return strands;
     }
 
     @JsonProperty("strands")
-    public void setStrands(String strands) {
+    public void setStrands(java.lang.String strands) {
         this.strands = strands;
     }
 
-    public MemeRunResult withStrands(String strands) {
+    public MemeRunResult withStrands(java.lang.String strands) {
         this.strands = strands;
         return this;
     }
 
     @JsonProperty("seed")
-    public Integer getSeed() {
+    public Long getSeed() {
         return seed;
     }
 
     @JsonProperty("seed")
-    public void setSeed(Integer seed) {
+    public void setSeed(Long seed) {
         this.seed = seed;
     }
 
-    public MemeRunResult withSeed(Integer seed) {
+    public MemeRunResult withSeed(Long seed) {
         this.seed = seed;
         return this;
     }
 
     @JsonProperty("seqfrac")
-    public Integer getSeqfrac() {
+    public Long getSeqfrac() {
         return seqfrac;
     }
 
     @JsonProperty("seqfrac")
-    public void setSeqfrac(Integer seqfrac) {
+    public void setSeqfrac(Long seqfrac) {
         this.seqfrac = seqfrac;
     }
 
-    public MemeRunResult withSeqfrac(Integer seqfrac) {
+    public MemeRunResult withSeqfrac(Long seqfrac) {
         this.seqfrac = seqfrac;
         return this;
     }
 
     @JsonProperty("letter_freq")
-    public String getLetterFreq() {
+    public java.lang.String getLetterFreq() {
         return letterFreq;
     }
 
     @JsonProperty("letter_freq")
-    public void setLetterFreq(String letterFreq) {
+    public void setLetterFreq(java.lang.String letterFreq) {
         this.letterFreq = letterFreq;
     }
 
-    public MemeRunResult withLetterFreq(String letterFreq) {
+    public MemeRunResult withLetterFreq(java.lang.String letterFreq) {
         this.letterFreq = letterFreq;
         return this;
     }
 
     @JsonProperty("bg_freq")
-    public String getBgFreq() {
+    public java.lang.String getBgFreq() {
         return bgFreq;
     }
 
     @JsonProperty("bg_freq")
-    public void setBgFreq(String bgFreq) {
+    public void setBgFreq(java.lang.String bgFreq) {
         this.bgFreq = bgFreq;
     }
 
-    public MemeRunResult withBgFreq(String bgFreq) {
+    public MemeRunResult withBgFreq(java.lang.String bgFreq) {
         this.bgFreq = bgFreq;
         return this;
     }
@@ -755,28 +754,33 @@ public class MemeRunResult {
     }
 
     @JsonProperty("raw_output")
-    public String getRawOutput() {
+    public java.lang.String getRawOutput() {
         return rawOutput;
     }
 
     @JsonProperty("raw_output")
-    public void setRawOutput(String rawOutput) {
+    public void setRawOutput(java.lang.String rawOutput) {
         this.rawOutput = rawOutput;
     }
 
-    public MemeRunResult withRawOutput(String rawOutput) {
+    public MemeRunResult withRawOutput(java.lang.String rawOutput) {
         this.rawOutput = rawOutput;
         return this;
     }
 
     @JsonAnyGetter
-    public Map<String, Object> getAdditionalProperties() {
+    public Map<java.lang.String, Object> getAdditionalProperties() {
         return this.additionalProperties;
     }
 
     @JsonAnySetter
-    public void setAdditionalProperties(String name, Object value) {
+    public void setAdditionalProperties(java.lang.String name, Object value) {
         this.additionalProperties.put(name, value);
+    }
+
+    @Override
+    public java.lang.String toString() {
+        return ((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((("MemeRunResult"+" [id=")+ id)+", timestamp=")+ timestamp)+", version=")+ version)+", inputFileName=")+ inputFileName)+", alphabet=")+ alphabet)+", trainingSet=")+ trainingSet)+", commandLine=")+ commandLine)+", mod=")+ mod)+", nmotifs=")+ nmotifs)+", evt=")+ evt)+", objectFunction=")+ objectFunction)+", minw=")+ minw)+", maxw=")+ maxw)+", minic=")+ minic)+", wg=")+ wg)+", ws=")+ ws)+", endgaps=")+ endgaps)+", minsites=")+ minsites)+", maxsites=")+ maxsites)+", wnsites=")+ wnsites)+", prob=")+ prob)+", spmap=")+ spmap)+", spfuzz=")+ spfuzz)+", substring=")+ substring)+", branching=")+ branching)+", wbranch=")+ wbranch)+", prior=")+ prior)+", b=")+ b)+", maxiter=")+ maxiter)+", distance=")+ distance)+", n=")+ n)+", nCap=")+ nCap)+", strands=")+ strands)+", seed=")+ seed)+", seqfrac=")+ seqfrac)+", letterFreq=")+ letterFreq)+", bgFreq=")+ bgFreq)+", motifs=")+ motifs)+", rawOutput=")+ rawOutput)+", additionalProperties=")+ additionalProperties)+"]");
     }
 
 }

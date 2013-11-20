@@ -4,22 +4,24 @@ package us.kbase.workspaceservice;
 import java.util.HashMap;
 import java.util.Map;
 import javax.annotation.Generated;
-import org.codehaus.jackson.annotate.JsonAnyGetter;
-import org.codehaus.jackson.annotate.JsonAnySetter;
-import org.codehaus.jackson.annotate.JsonProperty;
-import org.codehaus.jackson.annotate.JsonPropertyOrder;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 
 /**
+ * <p>Original spec-file type: get_workspacemeta_params</p>
+ * <pre>
  * Input parameters for the "get_workspacemeta" function.
- * 
  *         workspace_id workspace - ID of the workspace for which metadata should be returned (an essential argument)
- *         string auth - the authentication token of the KBase account accessing workspace metadata (an optional argument; user is "public" if auth is not provided)
- *         bool2 asHash - a bool2ean indicating if metadata should be returned as a hash
+ *         string auth - the authentication token of the KBase account accessing workspace metadata (an optional argument)
+ *         bool asHash - a boolean indicating if metadata should be returned as a hash
+ * </pre>
  * 
  */
-@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @Generated("com.googlecode.jsonschema2pojo")
 @JsonPropertyOrder({
     "workspace",
@@ -33,7 +35,7 @@ public class GetWorkspacemetaParams {
     @JsonProperty("auth")
     private String auth;
     @JsonProperty("asHash")
-    private Integer asHash;
+    private Long asHash;
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
     @JsonProperty("workspace")
@@ -67,16 +69,16 @@ public class GetWorkspacemetaParams {
     }
 
     @JsonProperty("asHash")
-    public Integer getAsHash() {
+    public Long getAsHash() {
         return asHash;
     }
 
     @JsonProperty("asHash")
-    public void setAsHash(Integer asHash) {
+    public void setAsHash(Long asHash) {
         this.asHash = asHash;
     }
 
-    public GetWorkspacemetaParams withAsHash(Integer asHash) {
+    public GetWorkspacemetaParams withAsHash(Long asHash) {
         this.asHash = asHash;
         return this;
     }
@@ -89,6 +91,11 @@ public class GetWorkspacemetaParams {
     @JsonAnySetter
     public void setAdditionalProperties(String name, Object value) {
         this.additionalProperties.put(name, value);
+    }
+
+    @Override
+    public String toString() {
+        return ((((((((("GetWorkspacemetaParams"+" [workspace=")+ workspace)+", auth=")+ auth)+", asHash=")+ asHash)+", additionalProperties=")+ additionalProperties)+"]");
     }
 
 }

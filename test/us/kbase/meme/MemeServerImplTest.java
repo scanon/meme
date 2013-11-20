@@ -6,19 +6,45 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import us.kbase.UObject;
+import us.kbase.auth.AuthException;
+import us.kbase.auth.AuthService;
+import us.kbase.auth.AuthToken;
+import us.kbase.common.service.JsonClientCaller;
+import us.kbase.common.service.JsonClientException;
+import us.kbase.common.service.Tuple14;
+import us.kbase.common.service.Tuple5;
+import us.kbase.common.service.Tuple7;
+//import us.kbase.common.service.Tuple9;
+import us.kbase.common.service.UObject;
+import us.kbase.common.service.UnauthorizedException;
 import us.kbase.generaltypes.SequenceSet;
 import us.kbase.generaltypes.Sequence;
-import us.kbase.util.WSUtil;
+import us.kbase.userandjobstate.InitProgress;
+import us.kbase.userandjobstate.Results;
+import us.kbase.userandjobstate.UserAndJobStateClient;
+
+//import us.kbase.workspace.CompileTypespecParams;
+//import us.kbase.workspace.ListModulesParams;
+//import us.kbase.workspace.ObjectData;
+//import us.kbase.workspace.ObjectIdentity;
+//import us.kbase.workspace.ObjectSaveData;
+//import us.kbase.workspace.SaveObjectsParams;
+
+//import us.kbase.util.WSUtil;
 import us.kbase.workspaceservice.GetObjectOutput;
 import us.kbase.workspaceservice.GetObjectParams;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+//import java.util.Map;
 import java.io.IOException;
 import java.io.FileReader;
 import java.io.BufferedReader;
 import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 public class MemeServerImplTest {
 	
@@ -26,7 +52,13 @@ public class MemeServerImplTest {
 	private String fakeJobId = "12345.fasta";
 	private String inputSequenceSet = new String();
 	private MemeRunResult memeRunResult = new MemeRunResult();
-
+	private final String USER_NAME = "aktest";
+	private final String PASSWORD = "1475rokegi";
+	private final String JOB_SERVICE = "http://140.221.84.180:7083";
+	private final String JOB_ACCOUNT = "memejobs";
+	private final String JOB_PASSWORD = "1475_rokegi";
+	private String jobId = "528ac64ee4b0702f7611d8de";
+	
 	@Before
 	public void setUp() throws Exception {
     	Sequence seq1 = new Sequence();
@@ -93,7 +125,7 @@ public class MemeServerImplTest {
 	public void testGenerateMemeCommandLine() throws UnsupportedEncodingException {
 //		String modMeme = new String("anr".getBytes("UTF-8"), "ISO-8859-1");
 		String modMeme = "anr";
-		String result = MemeServerImpl.generateMemeCommandLine(fakeJobId, modMeme, 5, 8, 22, 2, 2, 3, 0, 1);
+		String result = MemeServerImpl.generateMemeCommandLine(fakeJobId, modMeme, 5L, 8L, 22L, 2L, 2L, 3L, 0L, 1L);
 		assertEquals("meme "+fakeJobId+" -mod anr -nmotifs 5 -minw 8 -maxw 22 -nsites 2 -minsites 2 -maxsites 3 -revcomp -dna -text -nostatus",result);
 	}
 
@@ -126,7 +158,7 @@ public class MemeServerImplTest {
 		MemeMotif result = new MemeMotif();
 		MemeServerImpl.processMotifDataLine(result, "MOTIF  1	width =   24   sites =   6   llr = 90   E-value = 2.3e+003");
 		assertEquals("MOTIF  1	width =   24   sites =   6   llr = 90   E-value = 2.3e+003",result.getDescription());
-		assertEquals(Integer.valueOf("24"),result.getWidth());
+		assertEquals(Long.valueOf("24"),result.getWidth());
 		assertEquals(Double.valueOf("90"),result.getLlr());
 		assertEquals(Double.valueOf("2300"),result.getEvalue());
 	}
@@ -135,8 +167,8 @@ public class MemeServerImplTest {
 	public void testProcessSampleLine() {
 		MemeRunResult result = new MemeRunResult();
 		MemeServerImpl.processSampleLine(result, "sample: seed=            0    seqfrac=         1");
-		assertEquals(Integer.valueOf("0"),result.getSeed());
-		assertEquals(Integer.valueOf("1"),result.getSeqfrac());
+		assertEquals(Long.valueOf("0"),result.getSeed());
+		assertEquals(Long.valueOf("1"),result.getSeqfrac());
 	}
 
 	@Test
@@ -150,8 +182,8 @@ public class MemeServerImplTest {
 	public void testProcessDataNLine() {
 		MemeRunResult result = new MemeRunResult();
 		MemeServerImpl.processDataNLine(result, "data:   n=            1500    N=               6");
-		assertEquals(Integer.valueOf("1500"),result.getN());
-		assertEquals(Integer.valueOf("6"),result.getNCap());
+		assertEquals(Long.valueOf("1500"),result.getN());
+		assertEquals(Long.valueOf("6"),result.getNCap());
 	}
 
 	@Test
@@ -167,7 +199,7 @@ public class MemeServerImplTest {
 		MemeServerImpl.processEmLine(result, "em:     prior=   dirichlet    b=            0.01    maxiter=        50");
 		assertEquals("dirichlet",result.getPrior());
 		assertEquals(Double.valueOf("0.01"),result.getB());
-		assertEquals(Integer.valueOf("50"),result.getMaxiter());
+		assertEquals(Long.valueOf("50"),result.getMaxiter());
 	}
 
 	@Test
@@ -183,7 +215,7 @@ public class MemeServerImplTest {
 	public void testProcessThetaLine() {
 		MemeRunResult result = new MemeRunResult();
 		MemeServerImpl.processThetaLine(result, "theta:  prob=            1    spmap=         uni    spfuzz=        0.5");
-		assertEquals(Integer.valueOf("1"),result.getProb());
+		assertEquals(Long.valueOf("1"),result.getProb());
 		assertEquals("uni",result.getSpmap());
 		assertEquals("0.5",result.getSpfuzz());
 	}
@@ -192,8 +224,8 @@ public class MemeServerImplTest {
 	public void testProcessNsitesLine() {
 		MemeRunResult result = new MemeRunResult();
 		MemeServerImpl.processNsitesLine(result, "nsites: minsites=        6    maxsites=        6    wnsites=       0.8");
-		assertEquals(Integer.valueOf("6"),result.getMinsites());
-		assertEquals(Integer.valueOf("6"),result.getMaxsites());
+		assertEquals(Long.valueOf("6"),result.getMinsites());
+		assertEquals(Long.valueOf("6"),result.getMaxsites());
 		assertEquals(Double.valueOf("0.8"),result.getWnsites());
 	}
 
@@ -201,8 +233,8 @@ public class MemeServerImplTest {
 	public void testProcessWgLine() {
 		MemeRunResult result = new MemeRunResult();
 		MemeServerImpl.processWgLine(result, "width:  wg=             11    ws=              1    endgaps=       yes");
-		assertEquals(Integer.valueOf("11"),result.getWg());
-		assertEquals(Integer.valueOf("1"),result.getWs());
+		assertEquals(Long.valueOf("11"),result.getWg());
+		assertEquals(Long.valueOf("1"),result.getWs());
 		assertEquals("yes",result.getEndgaps());
 	}
 
@@ -210,8 +242,8 @@ public class MemeServerImplTest {
 	public void testProcessMinwLine() {
 		MemeRunResult result = new MemeRunResult();
 		MemeServerImpl.processMinwLine(result, "width:  minw=           14    maxw=           24    minic=        0.00");
-		assertEquals(Integer.valueOf("14"),result.getMinw());
-		assertEquals(Integer.valueOf("24"),result.getMaxw());
+		assertEquals(Long.valueOf("14"),result.getMinw());
+		assertEquals(Long.valueOf("24"),result.getMaxw());
 		assertEquals(Double.valueOf("0.00"),result.getMinic());
 	}
 
@@ -227,7 +259,7 @@ public class MemeServerImplTest {
 		MemeRunResult result = new MemeRunResult();
 		MemeServerImpl.processModLine(result, "model:  mod=          oops    nmotifs=         2    evt=           inf");
 		assertEquals("oops",result.getMod());
-		assertEquals(Integer.valueOf("2"),result.getNmotifs());
+		assertEquals(Long.valueOf("2"),result.getNmotifs());
 		assertEquals("inf",result.getEvt());
 	}
 
@@ -236,7 +268,7 @@ public class MemeServerImplTest {
 		MemeSite result = new MemeSite();
 		result = MemeServerImpl.generateMemeSite("393587                      134  1.52e-10 ACTGGTTTTG TCACGATTTTCAGGACATTCGTGA CCGCGTTGGC");
 		assertEquals("393587",result.getSourceSequenceId());
-		assertEquals(Integer.valueOf("134"),result.getStart());
+		assertEquals(Long.valueOf("134"),result.getStart());
 		assertEquals(Double.valueOf("0.000000000152"),result.getPvalue());
 		assertEquals("ACTGGTTTTG",result.getLeftFlank());
 		assertEquals("TCACGATTTTCAGGACATTCGTGA",result.getSequence());
@@ -256,12 +288,12 @@ public class MemeServerImplTest {
 		MemeServerImpl.generateMemeMotif("MOTIF  1	width =   24   sites =   6   llr = 90   E-value = 2.3e+003", "cumulativeOutput", sites, motifs);
 		MemeMotif result = motifs.get(0);
 		assertEquals("MOTIF  1	width =   24   sites =   6   llr = 90   E-value = 2.3e+003",result.getDescription());
-		assertEquals(Integer.valueOf("24"),result.getWidth());
+		assertEquals(Long.valueOf("24"),result.getWidth());
 		assertEquals(6,result.getSites().size());
 		assertEquals(Double.valueOf("90"),result.getLlr());
 		assertEquals(Double.valueOf("2300"),result.getEvalue());
 		assertEquals("393587",result.getSites().get(0).getSourceSequenceId());
-		assertEquals(Integer.valueOf("134"),result.getSites().get(0).getStart());
+		assertEquals(Long.valueOf("134"),result.getSites().get(0).getStart());
 		assertEquals(Double.valueOf("0.000000000152"),result.getSites().get(0).getPvalue());
 		assertEquals("ACTGGTTTTG",result.getSites().get(0).getLeftFlank());
 		assertEquals("TCACGATTTTCAGGACATTCGTGA",result.getSites().get(0).getSequence());
@@ -274,41 +306,41 @@ public class MemeServerImplTest {
 
 		MemeRunResult result = MemeServerImpl.parseMemeOutput(testOutputFile);
 
-		assertEquals(Integer.valueOf("0"),result.getSeed());
-		assertEquals(Integer.valueOf("1"),result.getSeqfrac());
+		assertEquals(Long.valueOf("0"),result.getSeed());
+		assertEquals(Long.valueOf("1"),result.getSeqfrac());
 		assertEquals("+",result.getStrands());
-		assertEquals(Integer.valueOf("1500"),result.getN());
-		assertEquals(Integer.valueOf("6"),result.getNCap());
+		assertEquals(Long.valueOf("1500"),result.getN());
+		assertEquals(Long.valueOf("6"),result.getNCap());
 		assertEquals(Double.valueOf("0.00001"),result.getDistance());
 		assertEquals("dirichlet",result.getPrior());
 		assertEquals(Double.valueOf("0.01"),result.getB());
-		assertEquals(Integer.valueOf("50"),result.getMaxiter());
+		assertEquals(Long.valueOf("50"),result.getMaxiter());
 		assertEquals("yes",result.getSubstring());
 		assertEquals("no",result.getBranching());
 		assertEquals("no",result.getWbranch());
-		assertEquals(Integer.valueOf("1"),result.getProb());
+		assertEquals(Long.valueOf("1"),result.getProb());
 		assertEquals("uni",result.getSpmap());
 		assertEquals("0.5",result.getSpfuzz());
-		assertEquals(Integer.valueOf("6"),result.getMinsites());
-		assertEquals(Integer.valueOf("6"),result.getMaxsites());
+		assertEquals(Long.valueOf("6"),result.getMinsites());
+		assertEquals(Long.valueOf("6"),result.getMaxsites());
 		assertEquals(Double.valueOf("0.8"),result.getWnsites());
-		assertEquals(Integer.valueOf("11"),result.getWg());
-		assertEquals(Integer.valueOf("1"),result.getWs());
+		assertEquals(Long.valueOf("11"),result.getWg());
+		assertEquals(Long.valueOf("1"),result.getWs());
 		assertEquals("yes",result.getEndgaps());
-		assertEquals(Integer.valueOf("14"),result.getMinw());
-		assertEquals(Integer.valueOf("24"),result.getMaxw());
+		assertEquals(Long.valueOf("14"),result.getMinw());
+		assertEquals(Long.valueOf("24"),result.getMaxw());
 		assertEquals(Double.valueOf("0.00"),result.getMinic());
 		assertEquals("E-value of product of p-values",result.getObjectFunction());
 		assertEquals("oops",result.getMod());
-		assertEquals(Integer.valueOf("2"),result.getNmotifs());
+		assertEquals(Long.valueOf("2"),result.getNmotifs());
 		assertEquals("inf",result.getEvt());
 		assertEquals("MOTIF  1	width =   24   sites =   6   llr = 90   E-value = 2.3e+003",result.getMotifs().get(0).getDescription());
-		assertEquals(Integer.valueOf("24"),result.getMotifs().get(0).getWidth());
+		assertEquals(Long.valueOf("24"),result.getMotifs().get(0).getWidth());
 		assertEquals(6,result.getMotifs().get(0).getSites().size());
 		assertEquals(Double.valueOf("90"),result.getMotifs().get(0).getLlr());
 		assertEquals(Double.valueOf("2300"),result.getMotifs().get(0).getEvalue());
 		assertEquals("393587",result.getMotifs().get(0).getSites().get(0).getSourceSequenceId());
-		assertEquals(Integer.valueOf("134"),result.getMotifs().get(0).getSites().get(0).getStart());
+		assertEquals(Long.valueOf("134"),result.getMotifs().get(0).getSites().get(0).getStart());
 		assertEquals(Double.valueOf("0.000000000152"),result.getMotifs().get(0).getSites().get(0).getPvalue());
 		assertEquals("ACTGGTTTTG",result.getMotifs().get(0).getSites().get(0).getLeftFlank());
 		assertEquals("TCACGATTTTCAGGACATTCGTGA",result.getMotifs().get(0).getSites().get(0).getSequence());
@@ -320,55 +352,55 @@ public class MemeServerImplTest {
 //		String modMeme = new String("oops".getBytes("UTF-8"), "ISO-8859-1");
 		MemeRunParameters params = new MemeRunParameters();
 		params.setMod("oops");
-		params.setNmotifs(2);
-		params.setMinw(14);
-		params.setMaxw(24);
-		params.setNsites(0);
-		params.setMinsites(0);
-		params.setMaxsites(0);
-		params.setPal(1);
-		params.setRevcomp(0);
+		params.setNmotifs(2L);
+		params.setMinw(14L);
+		params.setMaxw(24L);
+		params.setNsites(0L);
+		params.setMinsites(0L);
+		params.setMaxsites(0L);
+		params.setPal(1L);
+		params.setRevcomp(0L);
 		
 		MemeRunResult result = MemeServerImpl.findMotifsWithMeme(testSequenceSet, params);
 
 		
 		displayCollection(result);
 
-		assertEquals(Integer.valueOf("0"),result.getSeed());
-		assertEquals(Integer.valueOf("1"),result.getSeqfrac());
+		assertEquals(Long.valueOf("0"),result.getSeed());
+		assertEquals(Long.valueOf("1"),result.getSeqfrac());
 		assertEquals("+",result.getStrands());
-		assertEquals(Integer.valueOf("1500"),result.getN());
-		assertEquals(Integer.valueOf("6"),result.getNCap());
+		assertEquals(Long.valueOf("1500"),result.getN());
+		assertEquals(Long.valueOf("6"),result.getNCap());
 		assertEquals(Double.valueOf("0.00001"),result.getDistance());
 		assertEquals("dirichlet",result.getPrior());
 		assertEquals(Double.valueOf("0.01"),result.getB());
-		assertEquals(Integer.valueOf("50"),result.getMaxiter());
+		assertEquals(Long.valueOf("50"),result.getMaxiter());
 		assertEquals("yes",result.getSubstring());
 		assertEquals("no",result.getBranching());
 		assertEquals("no",result.getWbranch());
-		assertEquals(Integer.valueOf("1"),result.getProb());
+		assertEquals(Long.valueOf("1"),result.getProb());
 		assertEquals("uni",result.getSpmap());
 		assertEquals("0.5",result.getSpfuzz());
-		assertEquals(Integer.valueOf("6"),result.getMinsites());
-		assertEquals(Integer.valueOf("6"),result.getMaxsites());
+		assertEquals(Long.valueOf("6"),result.getMinsites());
+		assertEquals(Long.valueOf("6"),result.getMaxsites());
 		assertEquals(Double.valueOf("0.8"),result.getWnsites());
-		assertEquals(Integer.valueOf("11"),result.getWg());
-		assertEquals(Integer.valueOf("1"),result.getWs());
+		assertEquals(Long.valueOf("11"),result.getWg());
+		assertEquals(Long.valueOf("1"),result.getWs());
 		assertEquals("yes",result.getEndgaps());
-		assertEquals(Integer.valueOf("14"),result.getMinw());
-		assertEquals(Integer.valueOf("24"),result.getMaxw());
+		assertEquals(Long.valueOf("14"),result.getMinw());
+		assertEquals(Long.valueOf("24"),result.getMaxw());
 		assertEquals(Double.valueOf("0.00"),result.getMinic());
 		assertEquals("E-value of product of p-values",result.getObjectFunction());
 		assertEquals("oops",result.getMod());
-		assertEquals(Integer.valueOf("2"),result.getNmotifs());
+		assertEquals(Long.valueOf("2"),result.getNmotifs());
 		assertEquals("inf",result.getEvt());
 		assertEquals("MOTIF  1	width =   24   sites =   6   llr = 90   E-value = 2.3e+003",result.getMotifs().get(0).getDescription());
-		assertEquals(Integer.valueOf("24"),result.getMotifs().get(0).getWidth());
+		assertEquals(Long.valueOf("24"),result.getMotifs().get(0).getWidth());
 		assertEquals(6,result.getMotifs().get(0).getSites().size());
 		assertEquals(Double.valueOf("90"),result.getMotifs().get(0).getLlr());
 		assertEquals(Double.valueOf("2300"),result.getMotifs().get(0).getEvalue());
 		assertEquals("393587",result.getMotifs().get(0).getSites().get(0).getSourceSequenceId());
-		assertEquals(Integer.valueOf("134"),result.getMotifs().get(0).getSites().get(0).getStart());
+		assertEquals(Long.valueOf("134"),result.getMotifs().get(0).getSites().get(0).getStart());
 		assertEquals(Double.valueOf("0.000000000152"),result.getMotifs().get(0).getSites().get(0).getPvalue());
 		assertEquals("ACTGGTTTTG",result.getMotifs().get(0).getSites().get(0).getLeftFlank());
 		assertEquals("TCACGATTTTCAGGACATTCGTGA",result.getMotifs().get(0).getSites().get(0).getSequence());
@@ -377,7 +409,7 @@ public class MemeServerImplTest {
 	
 	@Test
 	public void testGenerateTomtomCommandLine() {
-		String result = MemeServerImpl.generateTomtomCommandLine("1.meme", "2.meme", 0.5, 1, "allr", 1, 15, "");
+		String result = MemeServerImpl.generateTomtomCommandLine("1.meme", "2.meme", 0.5, 1L, "allr", 1L, 15L, "");
 		assertEquals("tomtom -thresh 0.5 -evalue -dist allr -internal -min-overlap 15 -text 1.meme 2.meme",result);
 		
 	}
@@ -412,11 +444,11 @@ public class MemeServerImplTest {
 		TomtomHit result = MemeServerImpl.generateHitTomtom(hit);
 		assertEquals("1",result.getQueryPspmId());
 		assertEquals("1",result.getTargetPspmId());
-		assertEquals(Integer.valueOf("0"),result.getOptimalOffset());
+		assertEquals(Long.valueOf("0"),result.getOptimalOffset());
 		assertEquals(Double.valueOf("3.89353E-37"),result.getPvalue());
 		assertEquals(Double.valueOf("7.78706e-37"),result.getEvalue());
 		assertEquals(Double.valueOf("7.78706e-37"),result.getQvalue());
-		assertEquals(Integer.valueOf("24"),result.getOverlap());
+		assertEquals(Long.valueOf("24"),result.getOverlap());
 		assertEquals("TCACGCTCGTCATGACGAGCGTGA",result.getQueryConsensus());
 		assertEquals("TCACGCTCGTCATGACGAGCGTGA",result.getTargetConsensus());
 		assertEquals("+",result.getStrand());
@@ -426,14 +458,14 @@ public class MemeServerImplTest {
 	public void testCompareMotifsWithTomtom() throws Exception {
 		MemeRunParameters params = new MemeRunParameters();
 		params.setMod("oops");
-		params.setNmotifs(2);
-		params.setMinw(14);
-		params.setMaxw(24);
-		params.setNsites(0);
-		params.setMinsites(0);
-		params.setMaxsites(0);
-		params.setPal(1);
-		params.setRevcomp(0);
+		params.setNmotifs(2L);
+		params.setMinw(14L);
+		params.setMaxw(24L);
+		params.setNsites(0L);
+		params.setMinsites(0L);
+		params.setMaxsites(0L);
+		params.setPal(1L);
+		params.setRevcomp(0L);
 		
 		memeRunResult = MemeServerImpl.findMotifsWithMeme(testSequenceSet, params);
 		MemePSPMCollection memePspmCollection = MemeServerImpl.getPspmCollectionFromMemeResult(memeRunResult);
@@ -441,19 +473,19 @@ public class MemeServerImplTest {
 		TomtomRunParameters paramsTomtom = new TomtomRunParameters();
 		paramsTomtom.setDist("pearson");
 		paramsTomtom.setThresh(0.00);
-		paramsTomtom.setEvalue(0);
-		paramsTomtom.setInternal(0);
-		paramsTomtom.setMinOverlap(0);
+		paramsTomtom.setEvalue(0L);
+		paramsTomtom.setInternal(0L);
+		paramsTomtom.setMinOverlap(0L);
 
 		TomtomRunResult result = MemeServerImpl.compareMotifsWithTomtomByCollection(memePspmCollection, memePspmCollection, "", paramsTomtom);
 		
 		assertNotNull(result.getHits().get(0).getTargetPspmId());
 		assertEquals(result.getHits().get(0).getTargetPspmId(),result.getHits().get(0).getQueryPspmId());
-		assertEquals(Integer.valueOf("0"),result.getHits().get(0).getOptimalOffset());
+		assertEquals(Long.valueOf("0"),result.getHits().get(0).getOptimalOffset());
 		assertEquals(Double.valueOf("3.89353E-37"),result.getHits().get(0).getPvalue());
 		assertEquals(Double.valueOf("7.78706e-37"),result.getHits().get(0).getEvalue());
 		assertEquals(Double.valueOf("7.78706e-37"),result.getHits().get(0).getQvalue());
-		assertEquals(Integer.valueOf("24"),result.getHits().get(0).getOverlap());
+		assertEquals(Long.valueOf("24"),result.getHits().get(0).getOverlap());
 		assertEquals("TCACGCTCGTCATGACGAGCGTGA",result.getHits().get(0).getQueryConsensus());
 		assertEquals("TCACGCTCGTCATGACGAGCGTGA",result.getHits().get(0).getTargetConsensus());
 		assertEquals("+",result.getHits().get(0).getStrand());
@@ -497,8 +529,8 @@ public class MemeServerImplTest {
 		assertEquals("209110", result.getSequenceId());
 		assertEquals("+", result.getStrand());
 		assertEquals("2", result.getPspmId());
-		assertEquals(Integer.valueOf("65"), result.getHitStart());
-		assertEquals(Integer.valueOf("78"), result.getHitEnd());
+		assertEquals(Long.valueOf("65"), result.getHitStart());
+		assertEquals(Long.valueOf("78"), result.getHitEnd());
 		assertEquals(Double.valueOf("1527.00"), result.getScore());
 		assertEquals(Double.valueOf("0.0000253"), result.getHitPvalue());
 	}
@@ -510,8 +542,8 @@ public class MemeServerImplTest {
 		assertEquals("209110", result.get(0).getSequenceId());
 		assertEquals("+", result.get(0).getStrand());
 		assertEquals("2", result.get(0).getPspmId());
-		assertEquals(Integer.valueOf("65"), result.get(0).getHitStart());
-		assertEquals(Integer.valueOf("78"), result.get(0).getHitEnd());
+		assertEquals(Long.valueOf("65"), result.get(0).getHitStart());
+		assertEquals(Long.valueOf("78"), result.get(0).getHitEnd());
 		assertEquals(Double.valueOf("1527.00"), result.get(0).getScore());
 		assertEquals(Double.valueOf("0.0000253"), result.get(0).getHitPvalue());
 	}
@@ -521,14 +553,14 @@ public class MemeServerImplTest {
 	public void testfindSitesWithMastByCollection() throws Exception {
 		MemeRunParameters params = new MemeRunParameters();
 		params.setMod("oops");
-		params.setNmotifs(2);
-		params.setMinw(14);
-		params.setMaxw(24);
-		params.setNsites(0);
-		params.setMinsites(0);
-		params.setMaxsites(0);
-		params.setPal(1);
-		params.setRevcomp(0);
+		params.setNmotifs(2L);
+		params.setMinw(14L);
+		params.setMaxw(24L);
+		params.setNsites(0L);
+		params.setMinsites(0L);
+		params.setMaxsites(0L);
+		params.setPal(1L);
+		params.setRevcomp(0L);
 		
 		memeRunResult = MemeServerImpl.findMotifsWithMeme(testSequenceSet, params);
 		MemePSPMCollection memePspmCollection = MemeServerImpl.getPspmCollectionFromMemeResult(memeRunResult);
@@ -540,27 +572,84 @@ public class MemeServerImplTest {
 		assertEquals("209110", result.getHits().get(0).getSequenceId());
 		assertEquals("+", result.getHits().get(0).getStrand());
 		assertEquals("2", result.getHits().get(0).getPspmId());
-		assertEquals(Integer.valueOf("65"), result.getHits().get(0).getHitStart());
-		assertEquals(Integer.valueOf("78"), result.getHits().get(0).getHitEnd());
+		assertEquals(Long.valueOf("65"), result.getHits().get(0).getHitStart());
+		assertEquals(Long.valueOf("78"), result.getHits().get(0).getHitEnd());
 		assertEquals(Double.valueOf("1416.26"), result.getHits().get(0).getScore());
 		assertEquals(Double.valueOf("0.0000101"), result.getHits().get(0).getHitPvalue());
 	}
 	
-/*	@Test
-	public void testWsWrite() throws Exception {
-		WSUtil.saveObject(testSequenceSet.getSequenceSetId(), testSequenceSet, false);
-		fail("Not yet implemented"); // TODO
-		
-	}
-*/
 	@Test
 	public void testWsRead() throws Exception {
-		GetObjectParams params = new GetObjectParams().withType("SequenceSet").withId("KBase.SequenceSet.12345").withWorkspace("AKtest").withAuth(WSUtil.authToken().toString());   
-		GetObjectOutput output = WSUtil.wsClient().getObject(params);
-		SequenceSet result = UObject.transform(output.getData(), SequenceSet.class);
+
+		AuthToken token = JsonClientCaller.requestTokenFromKBase(USER_NAME, PASSWORD.toCharArray());		
+/*		
+		List<ObjectIdentity> objectIds = new ArrayList<ObjectIdentity>();
+		ObjectIdentity objectIdentity = new ObjectIdentity().withWorkspace("AKtest2").withName("KBase.SequenceSet.12345");
+		objectIds.add(objectIdentity);
+		List<ObjectData> output = MemeServerImpl.wsClient(token.toString()).getObjects(objectIds);
+		
+		SequenceSet result = UObject.transformObjectToObject(output.get(0).getData(), SequenceSet.class);
+*/
+		
+		GetObjectParams params = new GetObjectParams().withType("SequenceSet").withId("KBase.SequenceSet.12345").withWorkspace("AKtest").withAsJSON(1L).withAuth(token.toString());
+		GetObjectOutput output = MemeServerImpl.wsClient(token.toString()).getObject(params);
+		SequenceSet result = UObject.transformObjectToObject(output.getData(), SequenceSet.class);
+		assertEquals("GCCGGGCACGGGCCACCTCATCATCCGAGACTGCGACGTCTTTCATGGGGTCTCCGGTTGCTCAAGTATGAGGGTACGATGCCTCCACTCCTGCCCCAAGTCCAGCCGTGCGTGAATGCGGTCACGTTCGTCACCATGAGGGTGACCGGGTTGCCGGGTGCGATACGCAGGGCTAACGCTGCCATAATCGGGAGAGGAGTATCCACGCTTCCGGTCATGCATCATCCACCCGCATCCGCAAGGAGGCCCC",result.getSequences().get(0).getSequence());
 		assertEquals(testSequenceSet.getSequenceSetId(),result.getSequenceSetId());
 	}
 
+	@Test
+	public void testWsWrite() throws Exception {
+		
+		String id = "kb|sequenceset.3";
+		AuthToken token = JsonClientCaller.requestTokenFromKBase(USER_NAME, PASSWORD.toCharArray());
+		MemeServerImpl.saveObjectToWorkspace (UObject.transformObjectToObject(testSequenceSet, UObject.class), "SequenceSet", "AKtest", id, token.toString());		
+		fail("Not yet implemented"); // TODO
+		
+	}
+
+/*	@Test
+	public void testRegisterModule() throws Exception {
+		//Now requestModuleOwnership
+		
+		AuthToken token = JsonClientCaller.requestTokenFromKBase(USER_NAME, PASSWORD.toCharArray());
+		MemeServerImpl.wsClient(token.toString()).requestModuleOwnership("MEME");
+		//WSUtil.saveObject(testSequenceSet.getSequenceSetId(), testSequenceSet, false);
+		fail("Not yet implemented"); // TODO
+		
+	}
+	
+	@Test
+	public void testListModules() throws Exception {
+		
+		AuthToken token = JsonClientCaller.requestTokenFromKBase(USER_NAME, PASSWORD.toCharArray());
+		ListModulesParams params = new ListModulesParams();
+		
+		List<String> result = MemeServerImpl.wsClient(token.toString()).listModules(params);
+		System.out.println(result.toString());
+		//WSUtil.saveObject(testSequenceSet.getSequenceSetId(), testSequenceSet, false);
+		fail("Not yet implemented"); // TODO
+		
+	}
+
+	@Test
+	public void testWsRegisterType() throws Exception {
+		//Now CompileTypespec
+		
+		AuthToken token = JsonClientCaller.requestTokenFromKBase(USER_NAME, PASSWORD.toCharArray());
+		CompileTypespecParams params = new CompileTypespecParams();
+		params.setMod("MEME");
+		List<String> types = new ArrayList<String>();
+		types.add("SequenceSet");
+		params.setNewTypes(types);
+		Map<String,String> result = MemeServerImpl.wsClient(token.toString()).compileTypespec(params);
+		System.out.println(result.toString());
+		//WSUtil.saveObject(testSequenceSet.getSequenceSetId(), testSequenceSet, false);
+		fail("Not yet implemented"); // TODO
+		
+	}
+
+*/	
 	@Test
 	public void testFormatSequence() {
 		String sequence = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaattt";
@@ -628,5 +717,440 @@ public class MemeServerImplTest {
 		
 	}
 
+	@Test
+	public void testJobClientCreation() throws IOException, JsonClientException {
+		URL jobServiceUrl = null;
+		UserAndJobStateClient client = null;
+		try {
+			jobServiceUrl = new URL(JOB_SERVICE);
+		} catch (MalformedURLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		try {
+			client = new UserAndJobStateClient(jobServiceUrl, USER_NAME, PASSWORD);
+		} catch (UnauthorizedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		client.setAuthAllowedForHttp(true);
+		List<String> jobServicesList = client.listJobServices();
+		assertNotNull(jobServicesList);
+	}
 
+	@Test
+	public void testCreateJob() {
+		URL jobServiceUrl = null;
+		UserAndJobStateClient client = null;
+		try {
+			jobServiceUrl = new URL(JOB_SERVICE);
+		} catch (MalformedURLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		try {
+			client = new UserAndJobStateClient(jobServiceUrl, JOB_ACCOUNT, JOB_PASSWORD);
+		} catch (UnauthorizedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		client.setAuthAllowedForHttp(true);
+		try {
+			jobId = client.createJob();
+			System.out.println(jobId);
+			assertNotNull(jobId);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (JsonClientException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	@Test
+	public void testStartJob() throws AuthException, IOException {
+		URL jobServiceUrl = null;
+		UserAndJobStateClient client = null;
+		AuthToken token = AuthService.login(JOB_ACCOUNT, new String(JOB_PASSWORD)).getToken();
+		
+		try {
+			jobServiceUrl = new URL(JOB_SERVICE);
+		} catch (MalformedURLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		try {
+			client = new UserAndJobStateClient(jobServiceUrl, token);
+		} catch (UnauthorizedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		client.setAuthAllowedForHttp(true);
+		try {
+			String status = "Starting...";
+			String desc = "Test job";
+
+			InitProgress initProgress = new InitProgress();
+			initProgress.setPtype("task");
+			initProgress.setMax(2L);
+
+			Date date = new Date();
+			date.setTime(date.getTime()+10000L);
+			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+			client.startJob(jobId, token.toString(), status, desc, initProgress, dateFormat.format(date));
+			System.out.println(jobId);
+			assertNotNull(jobId);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (JsonClientException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	@Test
+	public void testUpdateJob() throws AuthException, IOException {
+		URL jobServiceUrl = null;
+		UserAndJobStateClient client = null;
+		AuthToken token = AuthService.login(JOB_ACCOUNT, new String(JOB_PASSWORD)).getToken();
+		
+		try {
+			jobServiceUrl = new URL(JOB_SERVICE);
+		} catch (MalformedURLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		try {
+			client = new UserAndJobStateClient(jobServiceUrl, token);
+		} catch (UnauthorizedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		client.setAuthAllowedForHttp(true);
+		try {
+			String status = "Running...";
+			Date date = new Date();
+			date.setTime(date.getTime()+10000L);
+			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+			client.updateJob(jobId, token.toString(), status, dateFormat.format(date));
+			System.out.println(jobId);
+			assertNotNull(jobId);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (JsonClientException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	@Test
+	public void testUpdateJobProgress() throws AuthException, IOException {
+		URL jobServiceUrl = null;
+		UserAndJobStateClient client = null;
+		AuthToken token = AuthService.login(JOB_ACCOUNT, new String(JOB_PASSWORD)).getToken();
+		
+		try {
+			jobServiceUrl = new URL(JOB_SERVICE);
+		} catch (MalformedURLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		try {
+			client = new UserAndJobStateClient(jobServiceUrl, token);
+		} catch (UnauthorizedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		client.setAuthAllowedForHttp(true);
+		try {
+			String status = "Running...";
+			Date date = new Date();
+			date.setTime(date.getTime()+10000L);
+			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
+			client.updateJobProgress(jobId, token.toString(), status, 1L, dateFormat.format(date));
+			System.out.println(jobId);
+			assertNotNull(jobId);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (JsonClientException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	@Test
+	public void testGetJobInfo() throws AuthException, IOException {
+		URL jobServiceUrl = null;
+		UserAndJobStateClient client = null;
+		AuthToken token = AuthService.login(JOB_ACCOUNT, new String(JOB_PASSWORD)).getToken();
+		
+		try {
+			jobServiceUrl = new URL(JOB_SERVICE);
+		} catch (MalformedURLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		try {
+			client = new UserAndJobStateClient(jobServiceUrl, token);
+		} catch (UnauthorizedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		client.setAuthAllowedForHttp(true);
+		try {
+			Tuple14<String,String,String,String,String,String,Long,Long,String,String,Long,Long,String,Results> t = client.getJobInfo(jobId); 
+			System.out.println(t.getE1());
+			System.out.println(t.getE2());
+			System.out.println(t.getE3());
+			System.out.println(t.getE4());
+			System.out.println(t.getE5());
+			System.out.println(t.getE6());
+			System.out.println(t.getE7());
+			System.out.println(t.getE8());
+			System.out.println(t.getE9());
+			System.out.println(t.getE10());
+			System.out.println(t.getE11());
+			System.out.println(t.getE12());
+			System.out.println(t.getE13());
+			System.out.println(t.getE14());
+			assertNotNull(t.getE1());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (JsonClientException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	@Test
+	public void testGetJobDescription() throws AuthException, IOException {
+		URL jobServiceUrl = null;
+		UserAndJobStateClient client = null;
+		AuthToken token = AuthService.login(JOB_ACCOUNT, new String(JOB_PASSWORD)).getToken();
+		
+		try {
+			jobServiceUrl = new URL(JOB_SERVICE);
+		} catch (MalformedURLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		try {
+			client = new UserAndJobStateClient(jobServiceUrl, token);
+		} catch (UnauthorizedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		client.setAuthAllowedForHttp(true);
+		try {
+			Tuple5<String,String,Long,String,String> t = client.getJobDescription(jobId); 
+			System.out.println(t.getE1());
+			System.out.println(t.getE2());
+			System.out.println(t.getE3());
+			System.out.println(t.getE4());
+			System.out.println(t.getE5());
+			assertNotNull(t.getE1());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (JsonClientException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	@Test
+	public void testGetJobStatus() throws AuthException, IOException {
+		URL jobServiceUrl = null;
+		UserAndJobStateClient client = null;
+		AuthToken token = AuthService.login(JOB_ACCOUNT, new String(JOB_PASSWORD)).getToken();
+		
+		try {
+			jobServiceUrl = new URL(JOB_SERVICE);
+		} catch (MalformedURLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		try {
+			client = new UserAndJobStateClient(jobServiceUrl, token);
+		} catch (UnauthorizedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		client.setAuthAllowedForHttp(true);
+		try {
+			Tuple7<String,String,String,Long,String,Long,Long> t = client.getJobStatus(jobId); 
+			System.out.println(t.getE1());
+			System.out.println(t.getE2());
+			System.out.println(t.getE3());
+			System.out.println(t.getE4());
+			System.out.println(t.getE5());
+			System.out.println(t.getE6());
+			System.out.println(t.getE7());
+			assertNotNull(t.getE1());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (JsonClientException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	@Test
+	public void testCompleteJob() throws AuthException, IOException {
+		URL jobServiceUrl = null;
+		UserAndJobStateClient client = null;
+		AuthToken token = AuthService.login(JOB_ACCOUNT, new String(JOB_PASSWORD)).getToken();
+		
+		try {
+			jobServiceUrl = new URL(JOB_SERVICE);
+		} catch (MalformedURLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		try {
+			client = new UserAndJobStateClient(jobServiceUrl, token);
+		} catch (UnauthorizedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		client.setAuthAllowedForHttp(true);
+		try {
+			String status = "Finished";
+			String error = null;
+			
+			String wsId = "AKtest";
+			String resultId = "KBase.SequenceSet.12345";
+			
+			Results res = new Results();
+			List<String> workspaceIds = new ArrayList<String>();
+			workspaceIds.add(wsId);
+			workspaceIds.add(resultId);
+			res.setWorkspaceids(workspaceIds);
+			client.completeJob(jobId, token.toString(), status, error, res); 
+			assertNotNull(jobId);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (JsonClientException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	@Test
+	public void testGetResults() throws AuthException, IOException {
+		URL jobServiceUrl = null;
+		UserAndJobStateClient client = null;
+		AuthToken token = AuthService.login(JOB_ACCOUNT, new String(JOB_PASSWORD)).getToken();
+		
+		try {
+			jobServiceUrl = new URL(JOB_SERVICE);
+		} catch (MalformedURLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+
+		try {
+			client = new UserAndJobStateClient(jobServiceUrl, token);
+		} catch (UnauthorizedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		client.setAuthAllowedForHttp(true);
+
+		try {
+			Results res = client.getResults(jobId);			
+			String workspaceId = res.getWorkspaceids().get(0);
+			System.out.println(workspaceId);
+			String resultId = res.getWorkspaceids().get(1);
+			System.out.println(resultId);
+			
+			assertNotNull(res.getAdditionalProperties().keySet());
+			assertEquals(workspaceId,"AKtest");
+			assertEquals(resultId,"KBase.SequenceSet.12345");
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (JsonClientException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+	@Test
+	public void testDeleteJob() throws AuthException, IOException {
+		URL jobServiceUrl = null;
+		UserAndJobStateClient client = null;
+		AuthToken token = AuthService.login(JOB_ACCOUNT, new String(JOB_PASSWORD)).getToken();
+		
+		try {
+			jobServiceUrl = new URL(JOB_SERVICE);
+		} catch (MalformedURLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		try {
+			client = new UserAndJobStateClient(jobServiceUrl, token);
+		} catch (UnauthorizedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		client.setAuthAllowedForHttp(true);
+		try {
+			client.forceDeleteJob(token.toString(), jobId); 
+			assertNotNull(jobId);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (JsonClientException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+
+/*	@Test
+	public void testCreateWS() throws AuthException, IOException, JsonClientException {
+		WSUtil.createWorkspace("AKtest2", "AK test workspace");
+	}
+*/	
 }

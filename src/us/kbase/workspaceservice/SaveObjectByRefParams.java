@@ -4,31 +4,33 @@ package us.kbase.workspaceservice;
 import java.util.HashMap;
 import java.util.Map;
 import javax.annotation.Generated;
-import org.codehaus.jackson.annotate.JsonAnyGetter;
-import org.codehaus.jackson.annotate.JsonAnySetter;
-import org.codehaus.jackson.annotate.JsonProperty;
-import org.codehaus.jackson.annotate.JsonPropertyOrder;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 
 /**
+ * <p>Original spec-file type: save_object_by_ref_params</p>
+ * <pre>
  * Input parameters for the "save_object_by_ref" function.
- * 
  *         object_id id - ID to which the model should be saved (an essential argument)
  *         object_type type - type of the object for which metadata is to be retrieved (an essential argument)
  *         ObjectData data - string or reference to complex datastructure to be saved in the workspace (an essential argument)
  *         string command - the name of the KBase command that is calling the "save_object" function (an optional argument with default "unknown")
  *         mapping<string,string> metadata - a hash of metadata to be associated with the object (an optional argument with default "{}")
  *         workspace_ref reference - reference the object should be saved in
- *         bool2 json - a flag indicating if the input data is encoded as a JSON string (an optional argument with default "0")
- *         bool2 compressed - a flag indicating if the input data in zipped (an optional argument with default "0")
- *         bool2 retrieveFromURL - a flag indicating that the "data" argument contains a URL from which the actual data should be downloaded (an optional argument with default "0")
- *         bool2 replace - a flag indicating any existing object located at the specified reference should be overwritten (an optional argument with default "0")
- *         string auth - the authentication token of the KBase account to associate this save command (an optional argument, user is "public" if auth is not provided)
- *         bool2 asHash - a bool2ean indicating if metadata should be returned as a hash
+ *         bool json - a flag indicating if the input data is encoded as a JSON string (an optional argument with default "0")
+ *         bool compressed - a flag indicating if the input data in zipped (an optional argument with default "0")
+ *         bool retrieveFromURL - a flag indicating that the "data" argument contains a URL from which the actual data should be downloaded (an optional argument with default "0")
+ *         bool replace - a flag indicating any existing object located at the specified reference should be overwritten (an optional argument with default "0")
+ *         string auth - the authentication token of the KBase account to associate this save command
+ *         bool asHash - a boolean indicating if metadata should be returned as a hash
+ * </pre>
  * 
  */
-@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @Generated("com.googlecode.jsonschema2pojo")
 @JsonPropertyOrder({
     "id",
@@ -50,8 +52,17 @@ public class SaveObjectByRefParams {
     private java.lang.String id;
     @JsonProperty("type")
     private java.lang.String type;
+    /**
+     * <p>Original spec-file type: ObjectData</p>
+     * <pre>
+     * Generic definition for object data stored in the workspace
+     * Data objects stored in the workspace could be either a string or a reference to a complex perl data structure. So we can't really formulate a strict type definition for this data.
+     * version - for complex data structures, the datastructure should include a version number to enable tracking of changes that may occur to the structure of the data over time
+     * </pre>
+     * 
+     */
     @JsonProperty("data")
-    private Object data;
+    private ObjectData data;
     @JsonProperty("command")
     private java.lang.String command;
     @JsonProperty("metadata")
@@ -59,17 +70,17 @@ public class SaveObjectByRefParams {
     @JsonProperty("reference")
     private java.lang.String reference;
     @JsonProperty("json")
-    private Integer json;
+    private Long json;
     @JsonProperty("compressed")
-    private Integer compressed;
+    private Long compressed;
     @JsonProperty("retrieveFromURL")
-    private Integer retrieveFromURL;
+    private Long retrieveFromURL;
     @JsonProperty("replace")
-    private Integer replace;
+    private Long replace;
     @JsonProperty("auth")
     private java.lang.String auth;
     @JsonProperty("asHash")
-    private Integer asHash;
+    private Long asHash;
     private Map<java.lang.String, Object> additionalProperties = new HashMap<java.lang.String, Object>();
 
     @JsonProperty("id")
@@ -102,17 +113,35 @@ public class SaveObjectByRefParams {
         return this;
     }
 
+    /**
+     * <p>Original spec-file type: ObjectData</p>
+     * <pre>
+     * Generic definition for object data stored in the workspace
+     * Data objects stored in the workspace could be either a string or a reference to a complex perl data structure. So we can't really formulate a strict type definition for this data.
+     * version - for complex data structures, the datastructure should include a version number to enable tracking of changes that may occur to the structure of the data over time
+     * </pre>
+     * 
+     */
     @JsonProperty("data")
-    public Object getData() {
+    public ObjectData getData() {
         return data;
     }
 
+    /**
+     * <p>Original spec-file type: ObjectData</p>
+     * <pre>
+     * Generic definition for object data stored in the workspace
+     * Data objects stored in the workspace could be either a string or a reference to a complex perl data structure. So we can't really formulate a strict type definition for this data.
+     * version - for complex data structures, the datastructure should include a version number to enable tracking of changes that may occur to the structure of the data over time
+     * </pre>
+     * 
+     */
     @JsonProperty("data")
-    public void setData(Object data) {
+    public void setData(ObjectData data) {
         this.data = data;
     }
 
-    public SaveObjectByRefParams withData(Object data) {
+    public SaveObjectByRefParams withData(ObjectData data) {
         this.data = data;
         return this;
     }
@@ -163,61 +192,61 @@ public class SaveObjectByRefParams {
     }
 
     @JsonProperty("json")
-    public Integer getJson() {
+    public Long getJson() {
         return json;
     }
 
     @JsonProperty("json")
-    public void setJson(Integer json) {
+    public void setJson(Long json) {
         this.json = json;
     }
 
-    public SaveObjectByRefParams withJson(Integer json) {
+    public SaveObjectByRefParams withJson(Long json) {
         this.json = json;
         return this;
     }
 
     @JsonProperty("compressed")
-    public Integer getCompressed() {
+    public Long getCompressed() {
         return compressed;
     }
 
     @JsonProperty("compressed")
-    public void setCompressed(Integer compressed) {
+    public void setCompressed(Long compressed) {
         this.compressed = compressed;
     }
 
-    public SaveObjectByRefParams withCompressed(Integer compressed) {
+    public SaveObjectByRefParams withCompressed(Long compressed) {
         this.compressed = compressed;
         return this;
     }
 
     @JsonProperty("retrieveFromURL")
-    public Integer getRetrieveFromURL() {
+    public Long getRetrieveFromURL() {
         return retrieveFromURL;
     }
 
     @JsonProperty("retrieveFromURL")
-    public void setRetrieveFromURL(Integer retrieveFromURL) {
+    public void setRetrieveFromURL(Long retrieveFromURL) {
         this.retrieveFromURL = retrieveFromURL;
     }
 
-    public SaveObjectByRefParams withRetrieveFromURL(Integer retrieveFromURL) {
+    public SaveObjectByRefParams withRetrieveFromURL(Long retrieveFromURL) {
         this.retrieveFromURL = retrieveFromURL;
         return this;
     }
 
     @JsonProperty("replace")
-    public Integer getReplace() {
+    public Long getReplace() {
         return replace;
     }
 
     @JsonProperty("replace")
-    public void setReplace(Integer replace) {
+    public void setReplace(Long replace) {
         this.replace = replace;
     }
 
-    public SaveObjectByRefParams withReplace(Integer replace) {
+    public SaveObjectByRefParams withReplace(Long replace) {
         this.replace = replace;
         return this;
     }
@@ -238,16 +267,16 @@ public class SaveObjectByRefParams {
     }
 
     @JsonProperty("asHash")
-    public Integer getAsHash() {
+    public Long getAsHash() {
         return asHash;
     }
 
     @JsonProperty("asHash")
-    public void setAsHash(Integer asHash) {
+    public void setAsHash(Long asHash) {
         this.asHash = asHash;
     }
 
-    public SaveObjectByRefParams withAsHash(Integer asHash) {
+    public SaveObjectByRefParams withAsHash(Long asHash) {
         this.asHash = asHash;
         return this;
     }
@@ -260,6 +289,11 @@ public class SaveObjectByRefParams {
     @JsonAnySetter
     public void setAdditionalProperties(java.lang.String name, Object value) {
         this.additionalProperties.put(name, value);
+    }
+
+    @Override
+    public java.lang.String toString() {
+        return ((((((((((((((((((((((((((("SaveObjectByRefParams"+" [id=")+ id)+", type=")+ type)+", data=")+ data)+", command=")+ command)+", metadata=")+ metadata)+", reference=")+ reference)+", json=")+ json)+", compressed=")+ compressed)+", retrieveFromURL=")+ retrieveFromURL)+", replace=")+ replace)+", auth=")+ auth)+", asHash=")+ asHash)+", additionalProperties=")+ additionalProperties)+"]");
     }
 
 }

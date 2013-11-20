@@ -4,20 +4,22 @@ package us.kbase.workspaceservice;
 import java.util.HashMap;
 import java.util.Map;
 import javax.annotation.Generated;
-import org.codehaus.jackson.annotate.JsonAnyGetter;
-import org.codehaus.jackson.annotate.JsonAnySetter;
-import org.codehaus.jackson.annotate.JsonProperty;
-import org.codehaus.jackson.annotate.JsonPropertyOrder;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 
 /**
+ * <p>Original spec-file type: get_user_settings_params</p>
+ * <pre>
  * Input parameters for the "get_user_settings" function.
- * 
- *         string auth - the authentication token of the KBase account changing workspace permissions; must have 'admin' privelages to workspace (an optional argument; user is "public" if auth is not provided)
+ *         string auth - the authentication token of the KBase account changing workspace permissions; must have 'admin' privelages to workspace
+ * </pre>
  * 
  */
-@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @Generated("com.googlecode.jsonschema2pojo")
 @JsonPropertyOrder({
     "auth"
@@ -51,6 +53,11 @@ public class GetUserSettingsParams {
     @JsonAnySetter
     public void setAdditionalProperties(String name, Object value) {
         this.additionalProperties.put(name, value);
+    }
+
+    @Override
+    public String toString() {
+        return ((((("GetUserSettingsParams"+" [auth=")+ auth)+", additionalProperties=")+ additionalProperties)+"]");
     }
 
 }

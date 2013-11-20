@@ -4,11 +4,11 @@ package us.kbase.meme;
 import java.util.HashMap;
 import java.util.Map;
 import javax.annotation.Generated;
-import org.codehaus.jackson.annotate.JsonAnyGetter;
-import org.codehaus.jackson.annotate.JsonAnySetter;
-import org.codehaus.jackson.annotate.JsonProperty;
-import org.codehaus.jackson.annotate.JsonPropertyOrder;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 
 /**
@@ -25,7 +25,7 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
  * </pre>
  * 
  */
-@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @Generated("com.googlecode.jsonschema2pojo")
 @JsonPropertyOrder({
     "sequence_id",
@@ -45,9 +45,9 @@ public class MastHit {
     @JsonProperty("pspm_id")
     private String pspmId;
     @JsonProperty("hit_start")
-    private Integer hitStart;
+    private Long hitStart;
     @JsonProperty("hit_end")
-    private Integer hitEnd;
+    private Long hitEnd;
     @JsonProperty("score")
     private Double score;
     @JsonProperty("hit_pvalue")
@@ -100,31 +100,31 @@ public class MastHit {
     }
 
     @JsonProperty("hit_start")
-    public Integer getHitStart() {
+    public Long getHitStart() {
         return hitStart;
     }
 
     @JsonProperty("hit_start")
-    public void setHitStart(Integer hitStart) {
+    public void setHitStart(Long hitStart) {
         this.hitStart = hitStart;
     }
 
-    public MastHit withHitStart(Integer hitStart) {
+    public MastHit withHitStart(Long hitStart) {
         this.hitStart = hitStart;
         return this;
     }
 
     @JsonProperty("hit_end")
-    public Integer getHitEnd() {
+    public Long getHitEnd() {
         return hitEnd;
     }
 
     @JsonProperty("hit_end")
-    public void setHitEnd(Integer hitEnd) {
+    public void setHitEnd(Long hitEnd) {
         this.hitEnd = hitEnd;
     }
 
-    public MastHit withHitEnd(Integer hitEnd) {
+    public MastHit withHitEnd(Long hitEnd) {
         this.hitEnd = hitEnd;
         return this;
     }
@@ -167,6 +167,11 @@ public class MastHit {
     @JsonAnySetter
     public void setAdditionalProperties(String name, Object value) {
         this.additionalProperties.put(name, value);
+    }
+
+    @Override
+    public String toString() {
+        return ((((((((((((((((("MastHit"+" [sequenceId=")+ sequenceId)+", strand=")+ strand)+", pspmId=")+ pspmId)+", hitStart=")+ hitStart)+", hitEnd=")+ hitEnd)+", score=")+ score)+", hitPvalue=")+ hitPvalue)+", additionalProperties=")+ additionalProperties)+"]");
     }
 
 }

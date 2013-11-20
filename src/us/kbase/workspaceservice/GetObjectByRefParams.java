@@ -4,23 +4,25 @@ package us.kbase.workspaceservice;
 import java.util.HashMap;
 import java.util.Map;
 import javax.annotation.Generated;
-import org.codehaus.jackson.annotate.JsonAnyGetter;
-import org.codehaus.jackson.annotate.JsonAnySetter;
-import org.codehaus.jackson.annotate.JsonProperty;
-import org.codehaus.jackson.annotate.JsonPropertyOrder;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 
 /**
+ * <p>Original spec-file type: get_object_by_ref_params</p>
+ * <pre>
  * Input parameters for the "get_object_by_ref" function.
- * 
  *         workspace_ref reference - reference to a specific instance of a specific object in a workspace (an essential argument)
- *         string auth - the authentication token of the KBase account to associate with this object retrieval command (an optional argument; user is "public" if auth is not provided)
- *         bool2 asHash - a bool2ean indicating if metadata should be returned as a hash
- *         bool2 asJSON - indicates that data should be returned in JSON format (an optional argument; default is '0')
+ *         string auth - the authentication token of the KBase account to associate with this object retrieval command (an optional argument)
+ *         bool asHash - a boolean indicating if metadata should be returned as a hash
+ *         bool asJSON - indicates that data should be returned in JSON format (an optional argument; default is '0')
+ * </pre>
  * 
  */
-@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @Generated("com.googlecode.jsonschema2pojo")
 @JsonPropertyOrder({
     "reference",
@@ -35,9 +37,9 @@ public class GetObjectByRefParams {
     @JsonProperty("auth")
     private String auth;
     @JsonProperty("asHash")
-    private Integer asHash;
+    private Long asHash;
     @JsonProperty("asJSON")
-    private Integer asJSON;
+    private Long asJSON;
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
     @JsonProperty("reference")
@@ -71,31 +73,31 @@ public class GetObjectByRefParams {
     }
 
     @JsonProperty("asHash")
-    public Integer getAsHash() {
+    public Long getAsHash() {
         return asHash;
     }
 
     @JsonProperty("asHash")
-    public void setAsHash(Integer asHash) {
+    public void setAsHash(Long asHash) {
         this.asHash = asHash;
     }
 
-    public GetObjectByRefParams withAsHash(Integer asHash) {
+    public GetObjectByRefParams withAsHash(Long asHash) {
         this.asHash = asHash;
         return this;
     }
 
     @JsonProperty("asJSON")
-    public Integer getAsJSON() {
+    public Long getAsJSON() {
         return asJSON;
     }
 
     @JsonProperty("asJSON")
-    public void setAsJSON(Integer asJSON) {
+    public void setAsJSON(Long asJSON) {
         this.asJSON = asJSON;
     }
 
-    public GetObjectByRefParams withAsJSON(Integer asJSON) {
+    public GetObjectByRefParams withAsJSON(Long asJSON) {
         this.asJSON = asJSON;
         return this;
     }
@@ -108,6 +110,11 @@ public class GetObjectByRefParams {
     @JsonAnySetter
     public void setAdditionalProperties(String name, Object value) {
         this.additionalProperties.put(name, value);
+    }
+
+    @Override
+    public String toString() {
+        return ((((((((((("GetObjectByRefParams"+" [reference=")+ reference)+", auth=")+ auth)+", asHash=")+ asHash)+", asJSON=")+ asJSON)+", additionalProperties=")+ additionalProperties)+"]");
     }
 
 }

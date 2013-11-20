@@ -1,31 +1,34 @@
 package us.kbase.util;
 
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
-import us.kbase.JsonClientCaller;
-import us.kbase.Tuple11;
+import us.kbase.common.service.JsonClientCaller;
+import us.kbase.common.service.Tuple11;
 import us.kbase.auth.AuthToken;
 import us.kbase.workspaceservice.AddTypeParams;
+import us.kbase.workspaceservice.ObjectData;
 import us.kbase.workspaceservice.SaveObjectParams;
-import us.kbase.workspaceservice.WorkspaceserviceClient;
+import us.kbase.workspaceservice.WorkspaceServiceClient;
 
 public class WSUtil {
 	
-	public static final String workspaceClientUrl = "http://kbase.us/services/workspace/";
+	public static final String WORKSPACE_URL = "http://kbase.us/services/workspace/";
 	public static final String userName = "aktest";
 	public static final String password = "1475rokegi";
 	public static final String workspaceName = "AKtest";
 	
-	private static WorkspaceserviceClient _wsClient = null;
+	private static WorkspaceServiceClient _wsClient = null;
 	private static AuthToken _token = null;
 	
 	
-	public static WorkspaceserviceClient wsClient() throws MalformedURLException{
+	public static WorkspaceServiceClient wsClient() throws MalformedURLException{
 		if(_wsClient == null)
 		{
-			_wsClient = new WorkspaceserviceClient(workspaceClientUrl);
+			URL workspaceUrl = new URL(WORKSPACE_URL);
+			_wsClient = new WorkspaceServiceClient(workspaceUrl);
 		}
 		return _wsClient;
 	}
@@ -38,7 +41,7 @@ public class WSUtil {
 	}
 	
 	
-	public static Integer registerDataType(String dataType) throws Exception{
+	public static Long registerDataType(String dataType) throws Exception{
 		AddTypeParams typeParams = new AddTypeParams();
 		typeParams.setType(dataType);
 		typeParams.setAuth( authToken().toString() );
@@ -46,13 +49,13 @@ public class WSUtil {
 		return wsClient().addType(typeParams);
 	}
 
-	public static Tuple11<String, String, String, Integer, String, String, String, String, String, String, Map<String,String>> saveObject(String id, Object data, boolean registerType) throws Exception {
+	public static Tuple11<String, String, String, Long, String, String, String, String, String, String, Map<String,String>> saveObject(String id, ObjectData data, boolean registerType) throws Exception {
 		String dataType = data.getClass().getSimpleName();
 		
 		if(registerType){
 			System.out.print("Registering data type " + dataType + ": ");
 			try{
-				Integer ret = registerDataType(dataType);
+				Long ret = registerDataType(dataType);
 				System.out.println(ret);
 			}
 			catch(Exception e){
@@ -62,17 +65,17 @@ public class WSUtil {
 		
 		SaveObjectParams params = new SaveObjectParams();
 		params.setAuth(authToken().toString());
-		params.setCompressed(0);
+		params.setCompressed(0L);
 		params.setData(data);
 		params.setId(id); 
-		params.setJson(0); 
+		params.setJson(0L); 
 		params.setType(dataType);
 		
 		Map<String, String> metadata = new HashMap<String, String>();
 		params.setMetadata(metadata);
 		
 		params.setWorkspace(workspaceName);
-		Tuple11<String, String, String, Integer, String, String, String, String, String, String, Map<String,String>> ret = wsClient().saveObject(params);
+		Tuple11<String, String, String, Long, String, String, String, String, String, String, Map<String,String>> ret = wsClient().saveObject(params);
 		
 		System.out.println("Saving object:");
 		System.out.println(ret.getE1());

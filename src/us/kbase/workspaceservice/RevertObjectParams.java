@@ -4,25 +4,27 @@ package us.kbase.workspaceservice;
 import java.util.HashMap;
 import java.util.Map;
 import javax.annotation.Generated;
-import org.codehaus.jackson.annotate.JsonAnyGetter;
-import org.codehaus.jackson.annotate.JsonAnySetter;
-import org.codehaus.jackson.annotate.JsonProperty;
-import org.codehaus.jackson.annotate.JsonPropertyOrder;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 
 /**
+ * <p>Original spec-file type: revert_object_params</p>
+ * <pre>
  * Input parameters for the "revert_object" function.
- * 
  *         object_type type - type of the object to be reverted (an essential argument)
  *         workspace_id workspace - ID of the workspace containing the object to be reverted (an essential argument)
  *         object_id id - ID of the object to be reverted (an essential argument)
  *         int instance - Previous version of the object to which the object should be reset (an essential argument)
- *         string auth - the authentication token of the KBase account to associate with this object reversion command (an optional argument; user is "public" if auth is not provided)
- *         bool2 asHash - a bool2ean indicating if metadata should be returned as a hash
+ *         string auth - the authentication token of the KBase account to associate with this object reversion command
+ *         bool asHash - a boolean indicating if metadata should be returned as a hash
+ * </pre>
  * 
  */
-@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @Generated("com.googlecode.jsonschema2pojo")
 @JsonPropertyOrder({
     "id",
@@ -41,11 +43,11 @@ public class RevertObjectParams {
     @JsonProperty("workspace")
     private String workspace;
     @JsonProperty("instance")
-    private Integer instance;
+    private Long instance;
     @JsonProperty("auth")
     private String auth;
     @JsonProperty("asHash")
-    private Integer asHash;
+    private Long asHash;
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
     @JsonProperty("id")
@@ -94,16 +96,16 @@ public class RevertObjectParams {
     }
 
     @JsonProperty("instance")
-    public Integer getInstance() {
+    public Long getInstance() {
         return instance;
     }
 
     @JsonProperty("instance")
-    public void setInstance(Integer instance) {
+    public void setInstance(Long instance) {
         this.instance = instance;
     }
 
-    public RevertObjectParams withInstance(Integer instance) {
+    public RevertObjectParams withInstance(Long instance) {
         this.instance = instance;
         return this;
     }
@@ -124,16 +126,16 @@ public class RevertObjectParams {
     }
 
     @JsonProperty("asHash")
-    public Integer getAsHash() {
+    public Long getAsHash() {
         return asHash;
     }
 
     @JsonProperty("asHash")
-    public void setAsHash(Integer asHash) {
+    public void setAsHash(Long asHash) {
         this.asHash = asHash;
     }
 
-    public RevertObjectParams withAsHash(Integer asHash) {
+    public RevertObjectParams withAsHash(Long asHash) {
         this.asHash = asHash;
         return this;
     }
@@ -146,6 +148,11 @@ public class RevertObjectParams {
     @JsonAnySetter
     public void setAdditionalProperties(String name, Object value) {
         this.additionalProperties.put(name, value);
+    }
+
+    @Override
+    public String toString() {
+        return ((((((((((((((("RevertObjectParams"+" [id=")+ id)+", type=")+ type)+", workspace=")+ workspace)+", instance=")+ instance)+", auth=")+ auth)+", asHash=")+ asHash)+", additionalProperties=")+ additionalProperties)+"]");
     }
 
 }

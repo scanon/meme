@@ -4,30 +4,32 @@ package us.kbase.workspaceservice;
 import java.util.HashMap;
 import java.util.Map;
 import javax.annotation.Generated;
-import org.codehaus.jackson.annotate.JsonAnyGetter;
-import org.codehaus.jackson.annotate.JsonAnySetter;
-import org.codehaus.jackson.annotate.JsonProperty;
-import org.codehaus.jackson.annotate.JsonPropertyOrder;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 
 /**
+ * <p>Original spec-file type: save_object_params</p>
+ * <pre>
  * Input parameters for the "save_objects function.
- * 
  *         object_type type - type of the object to be saved (an essential argument)
  *         workspace_id workspace - ID of the workspace where the object is to be saved (an essential argument)
  *         object_id id - ID behind which the object will be saved in the workspace (an essential argument)
  *         ObjectData data - string or reference to complex datastructure to be saved in the workspace (an essential argument)
  *         string command - the name of the KBase command that is calling the "save_object" function (an optional argument with default "unknown")
  *         mapping<string,string> metadata - a hash of metadata to be associated with the object (an optional argument with default "{}")
- *         string auth - the authentication token of the KBase account to associate this save command (an optional argument, user is "public" if auth is not provided)
- *         bool2 retrieveFromURL - a flag indicating that the "data" argument contains a URL from which the actual data should be downloaded (an optional argument with default "0")
- *         bool2 json - a flag indicating if the input data is encoded as a JSON string (an optional argument with default "0")
- *         bool2 compressed - a flag indicating if the input data in zipped (an optional argument with default "0")
- *         bool2 asHash - a bool2ean indicating if metadata should be returned as a hash
+ *         string auth - the authentication token of the KBase account to associate this save command
+ *         bool retrieveFromURL - a flag indicating that the "data" argument contains a URL from which the actual data should be downloaded (an optional argument with default "0")
+ *         bool json - a flag indicating if the input data is encoded as a JSON string (an optional argument with default "0")
+ *         bool compressed - a flag indicating if the input data in zipped (an optional argument with default "0")
+ *         bool asHash - a boolean indicating if metadata should be returned as a hash
+ * </pre>
  * 
  */
-@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @Generated("com.googlecode.jsonschema2pojo")
 @JsonPropertyOrder({
     "id",
@@ -48,8 +50,17 @@ public class SaveObjectParams {
     private java.lang.String id;
     @JsonProperty("type")
     private java.lang.String type;
+    /**
+     * <p>Original spec-file type: ObjectData</p>
+     * <pre>
+     * Generic definition for object data stored in the workspace
+     * Data objects stored in the workspace could be either a string or a reference to a complex perl data structure. So we can't really formulate a strict type definition for this data.
+     * version - for complex data structures, the datastructure should include a version number to enable tracking of changes that may occur to the structure of the data over time
+     * </pre>
+     * 
+     */
     @JsonProperty("data")
-    private Object data;
+    private ObjectData data;
     @JsonProperty("workspace")
     private java.lang.String workspace;
     @JsonProperty("command")
@@ -59,13 +70,13 @@ public class SaveObjectParams {
     @JsonProperty("auth")
     private java.lang.String auth;
     @JsonProperty("json")
-    private Integer json;
+    private Long json;
     @JsonProperty("compressed")
-    private Integer compressed;
+    private Long compressed;
     @JsonProperty("retrieveFromURL")
-    private Integer retrieveFromURL;
+    private Long retrieveFromURL;
     @JsonProperty("asHash")
-    private Integer asHash;
+    private Long asHash;
     private Map<java.lang.String, Object> additionalProperties = new HashMap<java.lang.String, Object>();
 
     @JsonProperty("id")
@@ -98,17 +109,35 @@ public class SaveObjectParams {
         return this;
     }
 
+    /**
+     * <p>Original spec-file type: ObjectData</p>
+     * <pre>
+     * Generic definition for object data stored in the workspace
+     * Data objects stored in the workspace could be either a string or a reference to a complex perl data structure. So we can't really formulate a strict type definition for this data.
+     * version - for complex data structures, the datastructure should include a version number to enable tracking of changes that may occur to the structure of the data over time
+     * </pre>
+     * 
+     */
     @JsonProperty("data")
-    public Object getData() {
+    public ObjectData getData() {
         return data;
     }
 
+    /**
+     * <p>Original spec-file type: ObjectData</p>
+     * <pre>
+     * Generic definition for object data stored in the workspace
+     * Data objects stored in the workspace could be either a string or a reference to a complex perl data structure. So we can't really formulate a strict type definition for this data.
+     * version - for complex data structures, the datastructure should include a version number to enable tracking of changes that may occur to the structure of the data over time
+     * </pre>
+     * 
+     */
     @JsonProperty("data")
-    public void setData(Object data) {
+    public void setData(ObjectData data) {
         this.data = data;
     }
 
-    public SaveObjectParams withData(Object data) {
+    public SaveObjectParams withData(ObjectData data) {
         this.data = data;
         return this;
     }
@@ -174,61 +203,61 @@ public class SaveObjectParams {
     }
 
     @JsonProperty("json")
-    public Integer getJson() {
+    public Long getJson() {
         return json;
     }
 
     @JsonProperty("json")
-    public void setJson(Integer json) {
+    public void setJson(Long json) {
         this.json = json;
     }
 
-    public SaveObjectParams withJson(Integer json) {
+    public SaveObjectParams withJson(Long json) {
         this.json = json;
         return this;
     }
 
     @JsonProperty("compressed")
-    public Integer getCompressed() {
+    public Long getCompressed() {
         return compressed;
     }
 
     @JsonProperty("compressed")
-    public void setCompressed(Integer compressed) {
+    public void setCompressed(Long compressed) {
         this.compressed = compressed;
     }
 
-    public SaveObjectParams withCompressed(Integer compressed) {
+    public SaveObjectParams withCompressed(Long compressed) {
         this.compressed = compressed;
         return this;
     }
 
     @JsonProperty("retrieveFromURL")
-    public Integer getRetrieveFromURL() {
+    public Long getRetrieveFromURL() {
         return retrieveFromURL;
     }
 
     @JsonProperty("retrieveFromURL")
-    public void setRetrieveFromURL(Integer retrieveFromURL) {
+    public void setRetrieveFromURL(Long retrieveFromURL) {
         this.retrieveFromURL = retrieveFromURL;
     }
 
-    public SaveObjectParams withRetrieveFromURL(Integer retrieveFromURL) {
+    public SaveObjectParams withRetrieveFromURL(Long retrieveFromURL) {
         this.retrieveFromURL = retrieveFromURL;
         return this;
     }
 
     @JsonProperty("asHash")
-    public Integer getAsHash() {
+    public Long getAsHash() {
         return asHash;
     }
 
     @JsonProperty("asHash")
-    public void setAsHash(Integer asHash) {
+    public void setAsHash(Long asHash) {
         this.asHash = asHash;
     }
 
-    public SaveObjectParams withAsHash(Integer asHash) {
+    public SaveObjectParams withAsHash(Long asHash) {
         this.asHash = asHash;
         return this;
     }
@@ -241,6 +270,11 @@ public class SaveObjectParams {
     @JsonAnySetter
     public void setAdditionalProperties(java.lang.String name, Object value) {
         this.additionalProperties.put(name, value);
+    }
+
+    @Override
+    public java.lang.String toString() {
+        return ((((((((((((((((((((((((("SaveObjectParams"+" [id=")+ id)+", type=")+ type)+", data=")+ data)+", workspace=")+ workspace)+", command=")+ command)+", metadata=")+ metadata)+", auth=")+ auth)+", json=")+ json)+", compressed=")+ compressed)+", retrieveFromURL=")+ retrieveFromURL)+", asHash=")+ asHash)+", additionalProperties=")+ additionalProperties)+"]");
     }
 
 }

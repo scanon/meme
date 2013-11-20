@@ -4,16 +4,17 @@ package us.kbase.workspaceservice;
 import java.util.HashMap;
 import java.util.Map;
 import javax.annotation.Generated;
-import org.codehaus.jackson.annotate.JsonAnyGetter;
-import org.codehaus.jackson.annotate.JsonAnySetter;
-import org.codehaus.jackson.annotate.JsonProperty;
-import org.codehaus.jackson.annotate.JsonPropertyOrder;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 
 /**
+ * <p>Original spec-file type: copy_object_params</p>
+ * <pre>
  * Input parameters for the "copy_object" function.
- * 
  *         object_type type - type of the object to be copied (an essential argument)
  *         workspace_id source_workspace - ID of the workspace containing the object to be copied (an essential argument)
  *         object_id source_id - ID of the object to be copied (an essential argument)
@@ -21,11 +22,12 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
  *         workspace_id new_workspace - ID of the workspace the object to be copied to (an essential argument)
  *         object_id new_id - ID the object is to be copied to (an essential argument)
  *         string new_workspace_url - URL of workspace server where object should be copied (an optional argument - object will be saved in the same server if not provided)
- *         string auth - the authentication token of the KBase account to associate with this object copy command (an optional argument; user is "public" if auth is not provided)
- *         bool2 asHash - a bool2ean indicating if metadata should be returned as a hash
+ *         string auth - the authentication token of the KBase account to associate with this object copy command (an optional argument)
+ *         bool asHash - a boolean indicating if metadata should be returned as a hash
+ * </pre>
  * 
  */
-@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @Generated("com.googlecode.jsonschema2pojo")
 @JsonPropertyOrder({
     "new_workspace_url",
@@ -49,7 +51,7 @@ public class CopyObjectParams {
     @JsonProperty("source_id")
     private String sourceId;
     @JsonProperty("instance")
-    private Integer instance;
+    private Long instance;
     @JsonProperty("type")
     private String type;
     @JsonProperty("source_workspace")
@@ -57,7 +59,7 @@ public class CopyObjectParams {
     @JsonProperty("auth")
     private String auth;
     @JsonProperty("asHash")
-    private Integer asHash;
+    private Long asHash;
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
     @JsonProperty("new_workspace_url")
@@ -121,16 +123,16 @@ public class CopyObjectParams {
     }
 
     @JsonProperty("instance")
-    public Integer getInstance() {
+    public Long getInstance() {
         return instance;
     }
 
     @JsonProperty("instance")
-    public void setInstance(Integer instance) {
+    public void setInstance(Long instance) {
         this.instance = instance;
     }
 
-    public CopyObjectParams withInstance(Integer instance) {
+    public CopyObjectParams withInstance(Long instance) {
         this.instance = instance;
         return this;
     }
@@ -181,16 +183,16 @@ public class CopyObjectParams {
     }
 
     @JsonProperty("asHash")
-    public Integer getAsHash() {
+    public Long getAsHash() {
         return asHash;
     }
 
     @JsonProperty("asHash")
-    public void setAsHash(Integer asHash) {
+    public void setAsHash(Long asHash) {
         this.asHash = asHash;
     }
 
-    public CopyObjectParams withAsHash(Integer asHash) {
+    public CopyObjectParams withAsHash(Long asHash) {
         this.asHash = asHash;
         return this;
     }
@@ -203,6 +205,11 @@ public class CopyObjectParams {
     @JsonAnySetter
     public void setAdditionalProperties(String name, Object value) {
         this.additionalProperties.put(name, value);
+    }
+
+    @Override
+    public String toString() {
+        return ((((((((((((((((((((("CopyObjectParams"+" [newWorkspaceUrl=")+ newWorkspaceUrl)+", newId=")+ newId)+", newWorkspace=")+ newWorkspace)+", sourceId=")+ sourceId)+", instance=")+ instance)+", type=")+ type)+", sourceWorkspace=")+ sourceWorkspace)+", auth=")+ auth)+", asHash=")+ asHash)+", additionalProperties=")+ additionalProperties)+"]");
     }
 
 }

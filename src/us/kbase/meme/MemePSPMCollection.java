@@ -1,16 +1,15 @@
 
 package us.kbase.meme;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.Generated;
-import org.codehaus.jackson.annotate.JsonAnyGetter;
-import org.codehaus.jackson.annotate.JsonAnySetter;
-import org.codehaus.jackson.annotate.JsonProperty;
-import org.codehaus.jackson.annotate.JsonPropertyOrder;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 
 /**
@@ -25,7 +24,7 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
  * </pre>
  * 
  */
-@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @Generated("com.googlecode.jsonschema2pojo")
 @JsonPropertyOrder({
     "id",
@@ -45,7 +44,7 @@ public class MemePSPMCollection {
     @JsonProperty("alphabet")
     private String alphabet;
     @JsonProperty("pspms")
-    private List<MemePSPM> pspms = new ArrayList<MemePSPM>();
+    private List<MemePSPM> pspms;
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
     @JsonProperty("id")
@@ -131,6 +130,11 @@ public class MemePSPMCollection {
     @JsonAnySetter
     public void setAdditionalProperties(String name, Object value) {
         this.additionalProperties.put(name, value);
+    }
+
+    @Override
+    public String toString() {
+        return ((((((((((((("MemePSPMCollection"+" [id=")+ id)+", timestamp=")+ timestamp)+", description=")+ description)+", alphabet=")+ alphabet)+", pspms=")+ pspms)+", additionalProperties=")+ additionalProperties)+"]");
     }
 
 }

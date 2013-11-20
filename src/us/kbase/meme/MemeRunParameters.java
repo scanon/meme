@@ -4,11 +4,11 @@ package us.kbase.meme;
 import java.util.HashMap;
 import java.util.Map;
 import javax.annotation.Generated;
-import org.codehaus.jackson.annotate.JsonAnyGetter;
-import org.codehaus.jackson.annotate.JsonAnySetter;
-import org.codehaus.jackson.annotate.JsonProperty;
-import org.codehaus.jackson.annotate.JsonPropertyOrder;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 
 /**
@@ -27,7 +27,7 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
  * </pre>
  * 
  */
-@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @Generated("com.googlecode.jsonschema2pojo")
 @JsonPropertyOrder({
     "mod",
@@ -45,21 +45,21 @@ public class MemeRunParameters {
     @JsonProperty("mod")
     private String mod;
     @JsonProperty("nmotifs")
-    private Integer nmotifs;
+    private Long nmotifs;
     @JsonProperty("minw")
-    private Integer minw;
+    private Long minw;
     @JsonProperty("maxw")
-    private Integer maxw;
+    private Long maxw;
     @JsonProperty("nsites")
-    private Integer nsites;
+    private Long nsites;
     @JsonProperty("minsites")
-    private Integer minsites;
+    private Long minsites;
     @JsonProperty("maxsites")
-    private Integer maxsites;
+    private Long maxsites;
     @JsonProperty("pal")
-    private Integer pal;
+    private Long pal;
     @JsonProperty("revcomp")
-    private Integer revcomp;
+    private Long revcomp;
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
     @JsonProperty("mod")
@@ -78,121 +78,121 @@ public class MemeRunParameters {
     }
 
     @JsonProperty("nmotifs")
-    public Integer getNmotifs() {
+    public Long getNmotifs() {
         return nmotifs;
     }
 
     @JsonProperty("nmotifs")
-    public void setNmotifs(Integer nmotifs) {
+    public void setNmotifs(Long nmotifs) {
         this.nmotifs = nmotifs;
     }
 
-    public MemeRunParameters withNmotifs(Integer nmotifs) {
+    public MemeRunParameters withNmotifs(Long nmotifs) {
         this.nmotifs = nmotifs;
         return this;
     }
 
     @JsonProperty("minw")
-    public Integer getMinw() {
+    public Long getMinw() {
         return minw;
     }
 
     @JsonProperty("minw")
-    public void setMinw(Integer minw) {
+    public void setMinw(Long minw) {
         this.minw = minw;
     }
 
-    public MemeRunParameters withMinw(Integer minw) {
+    public MemeRunParameters withMinw(Long minw) {
         this.minw = minw;
         return this;
     }
 
     @JsonProperty("maxw")
-    public Integer getMaxw() {
+    public Long getMaxw() {
         return maxw;
     }
 
     @JsonProperty("maxw")
-    public void setMaxw(Integer maxw) {
+    public void setMaxw(Long maxw) {
         this.maxw = maxw;
     }
 
-    public MemeRunParameters withMaxw(Integer maxw) {
+    public MemeRunParameters withMaxw(Long maxw) {
         this.maxw = maxw;
         return this;
     }
 
     @JsonProperty("nsites")
-    public Integer getNsites() {
+    public Long getNsites() {
         return nsites;
     }
 
     @JsonProperty("nsites")
-    public void setNsites(Integer nsites) {
+    public void setNsites(Long nsites) {
         this.nsites = nsites;
     }
 
-    public MemeRunParameters withNsites(Integer nsites) {
+    public MemeRunParameters withNsites(Long nsites) {
         this.nsites = nsites;
         return this;
     }
 
     @JsonProperty("minsites")
-    public Integer getMinsites() {
+    public Long getMinsites() {
         return minsites;
     }
 
     @JsonProperty("minsites")
-    public void setMinsites(Integer minsites) {
+    public void setMinsites(Long minsites) {
         this.minsites = minsites;
     }
 
-    public MemeRunParameters withMinsites(Integer minsites) {
+    public MemeRunParameters withMinsites(Long minsites) {
         this.minsites = minsites;
         return this;
     }
 
     @JsonProperty("maxsites")
-    public Integer getMaxsites() {
+    public Long getMaxsites() {
         return maxsites;
     }
 
     @JsonProperty("maxsites")
-    public void setMaxsites(Integer maxsites) {
+    public void setMaxsites(Long maxsites) {
         this.maxsites = maxsites;
     }
 
-    public MemeRunParameters withMaxsites(Integer maxsites) {
+    public MemeRunParameters withMaxsites(Long maxsites) {
         this.maxsites = maxsites;
         return this;
     }
 
     @JsonProperty("pal")
-    public Integer getPal() {
+    public Long getPal() {
         return pal;
     }
 
     @JsonProperty("pal")
-    public void setPal(Integer pal) {
+    public void setPal(Long pal) {
         this.pal = pal;
     }
 
-    public MemeRunParameters withPal(Integer pal) {
+    public MemeRunParameters withPal(Long pal) {
         this.pal = pal;
         return this;
     }
 
     @JsonProperty("revcomp")
-    public Integer getRevcomp() {
+    public Long getRevcomp() {
         return revcomp;
     }
 
     @JsonProperty("revcomp")
-    public void setRevcomp(Integer revcomp) {
+    public void setRevcomp(Long revcomp) {
         this.revcomp = revcomp;
     }
 
-    public MemeRunParameters withRevcomp(Integer revcomp) {
+    public MemeRunParameters withRevcomp(Long revcomp) {
         this.revcomp = revcomp;
         return this;
     }
@@ -205,6 +205,11 @@ public class MemeRunParameters {
     @JsonAnySetter
     public void setAdditionalProperties(String name, Object value) {
         this.additionalProperties.put(name, value);
+    }
+
+    @Override
+    public String toString() {
+        return ((((((((((((((((((((("MemeRunParameters"+" [mod=")+ mod)+", nmotifs=")+ nmotifs)+", minw=")+ minw)+", maxw=")+ maxw)+", nsites=")+ nsites)+", minsites=")+ minsites)+", maxsites=")+ maxsites)+", pal=")+ pal)+", revcomp=")+ revcomp)+", additionalProperties=")+ additionalProperties)+"]");
     }
 
 }

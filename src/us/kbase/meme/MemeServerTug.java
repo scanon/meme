@@ -154,59 +154,59 @@ public class MemeServerTug {
 		}
 		
 		if ( line.hasOption("nmotifs")){
-			params.setNmotifs(Integer.parseInt(line.getOptionValue("nmotifs")));
+			params.setNmotifs(Long.parseLong(line.getOptionValue("nmotifs")));
 		}
 		else {
-			params.setNmotifs(0);
+			params.setNmotifs(0L);
 		}
 		
 		if ( line.hasOption("minw")){
-			params.setMinw(Integer.parseInt(line.getOptionValue("minw")));
+			params.setMinw(Long.parseLong(line.getOptionValue("minw")));
 		}
 		else {
-			params.setMinw(0);
+			params.setMinw(0L);
 		}
 		
 		if ( line.hasOption("maxw")){
-			params.setMaxw(Integer.parseInt(line.getOptionValue("maxw")));
+			params.setMaxw(Long.parseLong(line.getOptionValue("maxw")));
 		}
 		else {
-			params.setMaxw(0);
+			params.setMaxw(0L);
 		}
 
 		if ( line.hasOption("nsites")){
-			params.setNsites(Integer.parseInt(line.getOptionValue("nsites")));
+			params.setNsites(Long.parseLong(line.getOptionValue("nsites")));
 		}
 		else {
-			params.setNsites(0);
+			params.setNsites(0L);
 		}
 
 		if ( line.hasOption("minsites")){
-			params.setMinsites(Integer.parseInt(line.getOptionValue("minsites")));
+			params.setMinsites(Long.parseLong(line.getOptionValue("minsites")));
 		}
 		else {
-			params.setMinsites(0);
+			params.setMinsites(0L);
 		}
 
 		if ( line.hasOption("maxsites")){
-			params.setMaxsites(Integer.parseInt(line.getOptionValue("maxsites")));
+			params.setMaxsites(Long.parseLong(line.getOptionValue("maxsites")));
 		}
 		else {
-			params.setMaxsites(0);
+			params.setMaxsites(0L);
 		}
 
 		if ( line.hasOption("pal")){
-			params.setPal(Integer.parseInt(line.getOptionValue("pal")));
+			params.setPal(Long.parseLong(line.getOptionValue("pal")));
 		} 
 		else {
-			params.setPal(0);
+			params.setPal(0L);
 		}
 
 		if ( line.hasOption("revcomp")){
-			params.setRevcomp(Integer.parseInt(line.getOptionValue("revcomp")));
+			params.setRevcomp(Long.parseLong(line.getOptionValue("revcomp")));
 		} 
 		else {
-			params.setRevcomp(0);
+			params.setRevcomp(0L);
 		}
 
 		returnVal = MemeServerImpl.findMotifsWithMemeFromWs(line.getOptionValue("ws"), 
@@ -239,24 +239,24 @@ public class MemeServerTug {
 		}
 
 		if ( line.hasOption("min_overlap")){
-			params.setMinOverlap(Integer.parseInt(line.getOptionValue("min_overlap")));
+			params.setMinOverlap(Long.parseLong(line.getOptionValue("min_overlap")));
 		}
 		else {
-			params.setMinOverlap(0);
+			params.setMinOverlap(0L);
 		}
 
 		if ( line.hasOption("evalue")){
-			params.setEvalue(Integer.parseInt(line.getOptionValue("evalue")));
+			params.setEvalue(Long.parseLong(line.getOptionValue("evalue")));
 		} 
 		else {
-			params.setEvalue(0);
+			params.setEvalue(0L);
 		}
 		
 		if ( line.hasOption("internal")){
-			params.setInternal(Integer.parseInt(line.getOptionValue("internal")));
+			params.setInternal(Long.parseLong(line.getOptionValue("internal")));
 		} 
 		else {
-			params.setInternal(0);
+			params.setInternal(0L);
 		}
 		
 		if (line.hasOption("target")) {
@@ -295,24 +295,24 @@ public class MemeServerTug {
 		}
 
 		if ( line.hasOption("min_overlap")){
-			params.setMinOverlap(Integer.parseInt(line.getOptionValue("min_overlap")));
+			params.setMinOverlap(Long.parseLong(line.getOptionValue("min_overlap")));
 		}
 		else {
-			params.setMinOverlap(0);
+			params.setMinOverlap(0L);
 		}
 
 		if ( line.hasOption("evalue")){
-			params.setEvalue(1);
+			params.setEvalue(Long.parseLong(line.getOptionValue("evalue")));
 		} 
 		else {
-			params.setEvalue(0);
+			params.setEvalue(0L);
 		}
 
 		if ( line.hasOption("internal")){
-			params.setInternal(1);
+			params.setInternal(Long.parseLong(line.getOptionValue("internal")));
 		} 
 		else {
-			params.setInternal(0);
+			params.setInternal(0L);
 		}
 
 		String pspm = "";

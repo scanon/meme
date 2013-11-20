@@ -1,16 +1,15 @@
 
 package us.kbase.meme;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.Generated;
-import org.codehaus.jackson.annotate.JsonAnyGetter;
-import org.codehaus.jackson.annotate.JsonAnySetter;
-import org.codehaus.jackson.annotate.JsonProperty;
-import org.codehaus.jackson.annotate.JsonPropertyOrder;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 
 /**
@@ -28,7 +27,7 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
  * </pre>
  * 
  */
-@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @Generated("com.googlecode.jsonschema2pojo")
 @JsonPropertyOrder({
     "id",
@@ -46,7 +45,7 @@ public class MemeMotif {
     @JsonProperty("description")
     private String description;
     @JsonProperty("width")
-    private Integer width;
+    private Long width;
     @JsonProperty("llr")
     private Double llr;
     @JsonProperty("evalue")
@@ -54,7 +53,7 @@ public class MemeMotif {
     @JsonProperty("raw_output")
     private String rawOutput;
     @JsonProperty("sites")
-    private List<MemeSite> sites = new ArrayList<MemeSite>();
+    private List<MemeSite> sites;
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
     @JsonProperty("id")
@@ -88,16 +87,16 @@ public class MemeMotif {
     }
 
     @JsonProperty("width")
-    public Integer getWidth() {
+    public Long getWidth() {
         return width;
     }
 
     @JsonProperty("width")
-    public void setWidth(Integer width) {
+    public void setWidth(Long width) {
         this.width = width;
     }
 
-    public MemeMotif withWidth(Integer width) {
+    public MemeMotif withWidth(Long width) {
         this.width = width;
         return this;
     }
@@ -170,6 +169,11 @@ public class MemeMotif {
     @JsonAnySetter
     public void setAdditionalProperties(String name, Object value) {
         this.additionalProperties.put(name, value);
+    }
+
+    @Override
+    public String toString() {
+        return ((((((((((((((((("MemeMotif"+" [id=")+ id)+", description=")+ description)+", width=")+ width)+", llr=")+ llr)+", evalue=")+ evalue)+", rawOutput=")+ rawOutput)+", sites=")+ sites)+", additionalProperties=")+ additionalProperties)+"]");
     }
 
 }

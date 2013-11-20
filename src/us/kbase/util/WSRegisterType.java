@@ -1,11 +1,17 @@
 package us.kbase.util;
 
 import java.net.MalformedURLException;
+import java.net.URL;
+//import java.util.ArrayList;
+//import java.util.List;
+//import java.util.Map;
 
-import us.kbase.JsonClientCaller;
+import us.kbase.common.service.JsonClientCaller;
 import us.kbase.auth.AuthToken;
+//	import us.kbase.workspace.CompileTypespecParams;
+//	import us.kbase.workspace.WorkspaceClient;
 import us.kbase.workspaceservice.AddTypeParams;
-import us.kbase.workspaceservice.WorkspaceserviceClient;
+import us.kbase.workspaceservice.WorkspaceServiceClient;
 
 public class WSRegisterType {
 	
@@ -27,23 +33,24 @@ public class WSRegisterType {
 
 */		
 
-	public static final String workspaceClientUrl = "http://kbase.us/services/workspace/";
+	public static final String WS_SERVICE_URL = "http://kbase.us/services/workspace/";
 	public static final String userName = "aktest";
 	public static final String password = "1475rokegi";
 	public static final String workspaceName = "AKtest";
 	
-	private static WorkspaceserviceClient _wsClient = null;
+	private static WorkspaceServiceClient _wsClient = null;
 	private static AuthToken _token = null;
 	
 	public WSRegisterType (String dataType) throws Exception{
-		Integer i = registerDataType(dataType);
-		System.out.println(String.valueOf(i));
+		Long version = registerDataType(dataType);
+		System.out.println(version);
 	}
 	
-	public static WorkspaceserviceClient wsClient() throws MalformedURLException{
+	public static WorkspaceServiceClient wsClient() throws MalformedURLException{
 		if(_wsClient == null)
 		{
-			_wsClient = new WorkspaceserviceClient(workspaceClientUrl);
+			URL url = new URL(WS_SERVICE_URL);
+			_wsClient = new WorkspaceServiceClient(url);
 		}
 		return _wsClient;
 	}
@@ -55,8 +62,7 @@ public class WSRegisterType {
 		return _token; 	  
 	}
 	
-	
-	public static Integer registerDataType(String dataType) throws Exception{
+	public static Long registerDataType(String dataType) throws Exception{
 		AddTypeParams typeParams = new AddTypeParams();
 		System.out.println("Registering data type: "+dataType);
 		typeParams.setType(dataType);

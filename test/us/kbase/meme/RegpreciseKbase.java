@@ -6,7 +6,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import us.kbase.util.WSUtil;
+
+import us.kbase.auth.AuthToken;
+import us.kbase.common.service.JsonClientCaller;
+import us.kbase.common.service.UObject;
+
 
 public class RegpreciseKbase {
 
@@ -76,8 +80,8 @@ public class RegpreciseKbase {
 				result.setSourceId(line.substring(6));
 			}
 			else if (line.matches("letter-probability matrix: alength=.*")){
-				result.setWidth(Integer.parseInt(line.substring(line.indexOf("w= ")+3, line.indexOf("nsites=")-1)));
-				result.setNsites(Integer.parseInt(line.substring(line.indexOf("nsites= ")+8, line.indexOf("E= ")-1)));
+				result.setWidth(Long.parseLong(line.substring(line.indexOf("w= ")+3, line.indexOf("nsites=")-1)));
+				result.setNsites(Long.parseLong(line.substring(line.indexOf("nsites= ")+8, line.indexOf("E= ")-1)));
 				result.setEvalue(Double.parseDouble(line.substring(line.indexOf("E= ")+3)));
 			}
 			else {
@@ -114,8 +118,12 @@ public class RegpreciseKbase {
 		//parse, make pspms, compile collection
 		MemePSPMCollection collection = parseRegpreciseFile (regpreciseFile);
 
-		//write to ws
-		WSUtil.saveObject(collection.getId(), collection, false);
+		//write to workspace
+		String userName = "aktest";
+		String password = "1475rokegi";
+		AuthToken token = JsonClientCaller.requestTokenFromKBase(userName, password.toCharArray());
+		MemeServerImpl.saveObjectToWorkspace(UObject.transformObjectToObject(collection, UObject.class), collection.getClass().getSimpleName(), "AKtest", "kb_pspmcollection_regprecise", token.getTokenData());
+
 
 	}
 

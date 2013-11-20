@@ -4,11 +4,11 @@ package us.kbase.meme;
 import java.util.HashMap;
 import java.util.Map;
 import javax.annotation.Generated;
-import org.codehaus.jackson.annotate.JsonAnyGetter;
-import org.codehaus.jackson.annotate.JsonAnySetter;
-import org.codehaus.jackson.annotate.JsonProperty;
-import org.codehaus.jackson.annotate.JsonPropertyOrder;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 
 /**
@@ -24,7 +24,7 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
  * </pre>
  * 
  */
-@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @Generated("com.googlecode.jsonschema2pojo")
 @JsonPropertyOrder({
     "source_sequence_id",
@@ -39,7 +39,7 @@ public class MemeSite {
     @JsonProperty("source_sequence_id")
     private String sourceSequenceId;
     @JsonProperty("start")
-    private Integer start;
+    private Long start;
     @JsonProperty("pvalue")
     private Double pvalue;
     @JsonProperty("left_flank")
@@ -66,16 +66,16 @@ public class MemeSite {
     }
 
     @JsonProperty("start")
-    public Integer getStart() {
+    public Long getStart() {
         return start;
     }
 
     @JsonProperty("start")
-    public void setStart(Integer start) {
+    public void setStart(Long start) {
         this.start = start;
     }
 
-    public MemeSite withStart(Integer start) {
+    public MemeSite withStart(Long start) {
         this.start = start;
         return this;
     }
@@ -148,6 +148,11 @@ public class MemeSite {
     @JsonAnySetter
     public void setAdditionalProperties(String name, Object value) {
         this.additionalProperties.put(name, value);
+    }
+
+    @Override
+    public String toString() {
+        return ((((((((((((((("MemeSite"+" [sourceSequenceId=")+ sourceSequenceId)+", start=")+ start)+", pvalue=")+ pvalue)+", leftFlank=")+ leftFlank)+", rightFlank=")+ rightFlank)+", sequence=")+ sequence)+", additionalProperties=")+ additionalProperties)+"]");
     }
 
 }

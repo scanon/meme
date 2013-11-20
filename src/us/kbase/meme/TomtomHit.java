@@ -4,11 +4,11 @@ package us.kbase.meme;
 import java.util.HashMap;
 import java.util.Map;
 import javax.annotation.Generated;
-import org.codehaus.jackson.annotate.JsonAnyGetter;
-import org.codehaus.jackson.annotate.JsonAnySetter;
-import org.codehaus.jackson.annotate.JsonProperty;
-import org.codehaus.jackson.annotate.JsonPropertyOrder;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 
 /**
@@ -28,7 +28,7 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
  * </pre>
  * 
  */
-@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @Generated("com.googlecode.jsonschema2pojo")
 @JsonPropertyOrder({
     "query_pspm_id",
@@ -49,7 +49,7 @@ public class TomtomHit {
     @JsonProperty("target_pspm_id")
     private String targetPspmId;
     @JsonProperty("optimal_offset")
-    private Integer optimalOffset;
+    private Long optimalOffset;
     @JsonProperty("pvalue")
     private Double pvalue;
     @JsonProperty("evalue")
@@ -57,7 +57,7 @@ public class TomtomHit {
     @JsonProperty("qvalue")
     private Double qvalue;
     @JsonProperty("overlap")
-    private Integer overlap;
+    private Long overlap;
     @JsonProperty("query_consensus")
     private String queryConsensus;
     @JsonProperty("target_consensus")
@@ -97,16 +97,16 @@ public class TomtomHit {
     }
 
     @JsonProperty("optimal_offset")
-    public Integer getOptimalOffset() {
+    public Long getOptimalOffset() {
         return optimalOffset;
     }
 
     @JsonProperty("optimal_offset")
-    public void setOptimalOffset(Integer optimalOffset) {
+    public void setOptimalOffset(Long optimalOffset) {
         this.optimalOffset = optimalOffset;
     }
 
-    public TomtomHit withOptimalOffset(Integer optimalOffset) {
+    public TomtomHit withOptimalOffset(Long optimalOffset) {
         this.optimalOffset = optimalOffset;
         return this;
     }
@@ -157,16 +157,16 @@ public class TomtomHit {
     }
 
     @JsonProperty("overlap")
-    public Integer getOverlap() {
+    public Long getOverlap() {
         return overlap;
     }
 
     @JsonProperty("overlap")
-    public void setOverlap(Integer overlap) {
+    public void setOverlap(Long overlap) {
         this.overlap = overlap;
     }
 
-    public TomtomHit withOverlap(Integer overlap) {
+    public TomtomHit withOverlap(Long overlap) {
         this.overlap = overlap;
         return this;
     }
@@ -224,6 +224,11 @@ public class TomtomHit {
     @JsonAnySetter
     public void setAdditionalProperties(String name, Object value) {
         this.additionalProperties.put(name, value);
+    }
+
+    @Override
+    public String toString() {
+        return ((((((((((((((((((((((("TomtomHit"+" [queryPspmId=")+ queryPspmId)+", targetPspmId=")+ targetPspmId)+", optimalOffset=")+ optimalOffset)+", pvalue=")+ pvalue)+", evalue=")+ evalue)+", qvalue=")+ qvalue)+", overlap=")+ overlap)+", queryConsensus=")+ queryConsensus)+", targetConsensus=")+ targetConsensus)+", strand=")+ strand)+", additionalProperties=")+ additionalProperties)+"]");
     }
 
 }

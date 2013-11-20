@@ -1,16 +1,15 @@
 
 package us.kbase.meme;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.Generated;
-import org.codehaus.jackson.annotate.JsonAnyGetter;
-import org.codehaus.jackson.annotate.JsonAnySetter;
-import org.codehaus.jackson.annotate.JsonProperty;
-import org.codehaus.jackson.annotate.JsonPropertyOrder;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 
 /**
@@ -29,7 +28,7 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
  * </pre>
  * 
  */
-@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @Generated("com.googlecode.jsonschema2pojo")
 @JsonPropertyOrder({
     "id",
@@ -55,13 +54,13 @@ public class MemePSPM {
     @JsonProperty("alphabet")
     private String alphabet;
     @JsonProperty("width")
-    private Integer width;
+    private Long width;
     @JsonProperty("nsites")
-    private Integer nsites;
+    private Long nsites;
     @JsonProperty("evalue")
-    private Double evalue;
+    private java.lang.Double evalue;
     @JsonProperty("matrix")
-    private List<List<Double>> matrix = new ArrayList<List<Double>>();
+    private List<List<Double>> matrix;
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
     @JsonProperty("id")
@@ -140,46 +139,46 @@ public class MemePSPM {
     }
 
     @JsonProperty("width")
-    public Integer getWidth() {
+    public Long getWidth() {
         return width;
     }
 
     @JsonProperty("width")
-    public void setWidth(Integer width) {
+    public void setWidth(Long width) {
         this.width = width;
     }
 
-    public MemePSPM withWidth(Integer width) {
+    public MemePSPM withWidth(Long width) {
         this.width = width;
         return this;
     }
 
     @JsonProperty("nsites")
-    public Integer getNsites() {
+    public Long getNsites() {
         return nsites;
     }
 
     @JsonProperty("nsites")
-    public void setNsites(Integer nsites) {
+    public void setNsites(Long nsites) {
         this.nsites = nsites;
     }
 
-    public MemePSPM withNsites(Integer nsites) {
+    public MemePSPM withNsites(Long nsites) {
         this.nsites = nsites;
         return this;
     }
 
     @JsonProperty("evalue")
-    public Double getEvalue() {
+    public java.lang.Double getEvalue() {
         return evalue;
     }
 
     @JsonProperty("evalue")
-    public void setEvalue(Double evalue) {
+    public void setEvalue(java.lang.Double evalue) {
         this.evalue = evalue;
     }
 
-    public MemePSPM withEvalue(Double evalue) {
+    public MemePSPM withEvalue(java.lang.Double evalue) {
         this.evalue = evalue;
         return this;
     }
@@ -207,6 +206,11 @@ public class MemePSPM {
     @JsonAnySetter
     public void setAdditionalProperties(String name, Object value) {
         this.additionalProperties.put(name, value);
+    }
+
+    @Override
+    public String toString() {
+        return ((((((((((((((((((((("MemePSPM"+" [id=")+ id)+", sourceId=")+ sourceId)+", sourceType=")+ sourceType)+", description=")+ description)+", alphabet=")+ alphabet)+", width=")+ width)+", nsites=")+ nsites)+", evalue=")+ evalue)+", matrix=")+ matrix)+", additionalProperties=")+ additionalProperties)+"]");
     }
 
 }

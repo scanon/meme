@@ -4,23 +4,25 @@ package us.kbase.workspaceservice;
 import java.util.HashMap;
 import java.util.Map;
 import javax.annotation.Generated;
-import org.codehaus.jackson.annotate.JsonAnyGetter;
-import org.codehaus.jackson.annotate.JsonAnySetter;
-import org.codehaus.jackson.annotate.JsonProperty;
-import org.codehaus.jackson.annotate.JsonPropertyOrder;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 
 /**
+ * <p>Original spec-file type: set_global_workspace_permissions_params</p>
+ * <pre>
  * Input parameters for the "set_global_workspace_permissions" function.
- * 
  *         workspace_id workspace - ID of the workspace for which permissions will be set (an essential argument)
  *         permission new_permission - New default permissions to which the workspace should be set. Accepted values are 'a' => admin, 'w' => write, 'r' => read, 'n' => none (an essential argument)
- *         string auth - the authentication token of the KBase account changing workspace default permissions; must have 'admin' privelages to workspace (an optional argument; user is "public" if auth is not provided)
- *         bool2 asHash - a bool2ean indicating if metadata should be returned as a hash
+ *         string auth - the authentication token of the KBase account changing workspace default permissions; must have 'admin' privelages to workspace
+ *         bool asHash - a boolean indicating if metadata should be returned as a hash
+ * </pre>
  * 
  */
-@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @Generated("com.googlecode.jsonschema2pojo")
 @JsonPropertyOrder({
     "new_permission",
@@ -37,7 +39,7 @@ public class SetGlobalWorkspacePermissionsParams {
     @JsonProperty("auth")
     private String auth;
     @JsonProperty("asHash")
-    private Integer asHash;
+    private Long asHash;
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
     @JsonProperty("new_permission")
@@ -86,16 +88,16 @@ public class SetGlobalWorkspacePermissionsParams {
     }
 
     @JsonProperty("asHash")
-    public Integer getAsHash() {
+    public Long getAsHash() {
         return asHash;
     }
 
     @JsonProperty("asHash")
-    public void setAsHash(Integer asHash) {
+    public void setAsHash(Long asHash) {
         this.asHash = asHash;
     }
 
-    public SetGlobalWorkspacePermissionsParams withAsHash(Integer asHash) {
+    public SetGlobalWorkspacePermissionsParams withAsHash(Long asHash) {
         this.asHash = asHash;
         return this;
     }
@@ -108,6 +110,11 @@ public class SetGlobalWorkspacePermissionsParams {
     @JsonAnySetter
     public void setAdditionalProperties(String name, Object value) {
         this.additionalProperties.put(name, value);
+    }
+
+    @Override
+    public String toString() {
+        return ((((((((((("SetGlobalWorkspacePermissionsParams"+" [newPermission=")+ newPermission)+", workspace=")+ workspace)+", auth=")+ auth)+", asHash=")+ asHash)+", additionalProperties=")+ additionalProperties)+"]");
     }
 
 }

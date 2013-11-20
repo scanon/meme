@@ -4,26 +4,28 @@ package us.kbase.workspaceservice;
 import java.util.HashMap;
 import java.util.Map;
 import javax.annotation.Generated;
-import org.codehaus.jackson.annotate.JsonAnyGetter;
-import org.codehaus.jackson.annotate.JsonAnySetter;
-import org.codehaus.jackson.annotate.JsonProperty;
-import org.codehaus.jackson.annotate.JsonPropertyOrder;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 
 /**
+ * <p>Original spec-file type: get_object_params</p>
+ * <pre>
  * Input parameters for the "get_object" function.
- * 
  *         object_type type - type of the object to be retrieved (an essential argument)
  *         workspace_id workspace - ID of the workspace containing the object to be retrieved (an essential argument)
  *         object_id id - ID of the object to be retrieved (an essential argument)
  *         int instance - Version of the object to be retrieved, enabling retrieval of any previous version of an object (an optional argument; the current version is retrieved if no version is provides)
- *         string auth - the authentication token of the KBase account to associate with this object retrieval command (an optional argument; user is "public" if auth is not provided)
- *         bool2 asHash - a bool2ean indicating if metadata should be returned as a hash
- *         bool2 asJSON - indicates that data should be returned in JSON format (an optional argument; default is '0')
+ *         string auth - the authentication token of the KBase account to associate with this object retrieval command (an optional argument)
+ *         bool asHash - a boolean indicating if metadata should be returned as a hash
+ *         bool asJSON - indicates that data should be returned in JSON format (an optional argument; default is '0')
+ * </pre>
  * 
  */
-@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @Generated("com.googlecode.jsonschema2pojo")
 @JsonPropertyOrder({
     "id",
@@ -43,13 +45,13 @@ public class GetObjectParams {
     @JsonProperty("workspace")
     private String workspace;
     @JsonProperty("instance")
-    private Integer instance;
+    private Long instance;
     @JsonProperty("auth")
     private String auth;
     @JsonProperty("asHash")
-    private Integer asHash;
+    private Long asHash;
     @JsonProperty("asJSON")
-    private Integer asJSON;
+    private Long asJSON;
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
     @JsonProperty("id")
@@ -98,16 +100,16 @@ public class GetObjectParams {
     }
 
     @JsonProperty("instance")
-    public Integer getInstance() {
+    public Long getInstance() {
         return instance;
     }
 
     @JsonProperty("instance")
-    public void setInstance(Integer instance) {
+    public void setInstance(Long instance) {
         this.instance = instance;
     }
 
-    public GetObjectParams withInstance(Integer instance) {
+    public GetObjectParams withInstance(Long instance) {
         this.instance = instance;
         return this;
     }
@@ -128,31 +130,31 @@ public class GetObjectParams {
     }
 
     @JsonProperty("asHash")
-    public Integer getAsHash() {
+    public Long getAsHash() {
         return asHash;
     }
 
     @JsonProperty("asHash")
-    public void setAsHash(Integer asHash) {
+    public void setAsHash(Long asHash) {
         this.asHash = asHash;
     }
 
-    public GetObjectParams withAsHash(Integer asHash) {
+    public GetObjectParams withAsHash(Long asHash) {
         this.asHash = asHash;
         return this;
     }
 
     @JsonProperty("asJSON")
-    public Integer getAsJSON() {
+    public Long getAsJSON() {
         return asJSON;
     }
 
     @JsonProperty("asJSON")
-    public void setAsJSON(Integer asJSON) {
+    public void setAsJSON(Long asJSON) {
         this.asJSON = asJSON;
     }
 
-    public GetObjectParams withAsJSON(Integer asJSON) {
+    public GetObjectParams withAsJSON(Long asJSON) {
         this.asJSON = asJSON;
         return this;
     }
@@ -165,6 +167,11 @@ public class GetObjectParams {
     @JsonAnySetter
     public void setAdditionalProperties(String name, Object value) {
         this.additionalProperties.put(name, value);
+    }
+
+    @Override
+    public String toString() {
+        return ((((((((((((((((("GetObjectParams"+" [id=")+ id)+", type=")+ type)+", workspace=")+ workspace)+", instance=")+ instance)+", auth=")+ auth)+", asHash=")+ asHash)+", asJSON=")+ asJSON)+", additionalProperties=")+ additionalProperties)+"]");
     }
 
 }

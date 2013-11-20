@@ -1,16 +1,15 @@
 
 package us.kbase.meme;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.annotation.Generated;
-import org.codehaus.jackson.annotate.JsonAnyGetter;
-import org.codehaus.jackson.annotate.JsonAnySetter;
-import org.codehaus.jackson.annotate.JsonProperty;
-import org.codehaus.jackson.annotate.JsonPropertyOrder;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 
 /**
@@ -28,7 +27,7 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
  * </pre>
  * 
  */
-@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @Generated("com.googlecode.jsonschema2pojo")
 @JsonPropertyOrder({
     "id",
@@ -49,15 +48,15 @@ public class TomtomRunResult {
     @JsonProperty("thresh")
     private Double thresh;
     @JsonProperty("evalue")
-    private Integer evalue;
+    private Long evalue;
     @JsonProperty("dist")
     private String dist;
     @JsonProperty("internal")
-    private Integer internal;
+    private Long internal;
     @JsonProperty("min_overlap")
-    private Integer minOverlap;
+    private Long minOverlap;
     @JsonProperty("hits")
-    private List<TomtomHit> hits = new ArrayList<TomtomHit>();
+    private List<TomtomHit> hits;
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
     @JsonProperty("id")
@@ -106,16 +105,16 @@ public class TomtomRunResult {
     }
 
     @JsonProperty("evalue")
-    public Integer getEvalue() {
+    public Long getEvalue() {
         return evalue;
     }
 
     @JsonProperty("evalue")
-    public void setEvalue(Integer evalue) {
+    public void setEvalue(Long evalue) {
         this.evalue = evalue;
     }
 
-    public TomtomRunResult withEvalue(Integer evalue) {
+    public TomtomRunResult withEvalue(Long evalue) {
         this.evalue = evalue;
         return this;
     }
@@ -136,31 +135,31 @@ public class TomtomRunResult {
     }
 
     @JsonProperty("internal")
-    public Integer getInternal() {
+    public Long getInternal() {
         return internal;
     }
 
     @JsonProperty("internal")
-    public void setInternal(Integer internal) {
+    public void setInternal(Long internal) {
         this.internal = internal;
     }
 
-    public TomtomRunResult withInternal(Integer internal) {
+    public TomtomRunResult withInternal(Long internal) {
         this.internal = internal;
         return this;
     }
 
     @JsonProperty("min_overlap")
-    public Integer getMinOverlap() {
+    public Long getMinOverlap() {
         return minOverlap;
     }
 
     @JsonProperty("min_overlap")
-    public void setMinOverlap(Integer minOverlap) {
+    public void setMinOverlap(Long minOverlap) {
         this.minOverlap = minOverlap;
     }
 
-    public TomtomRunResult withMinOverlap(Integer minOverlap) {
+    public TomtomRunResult withMinOverlap(Long minOverlap) {
         this.minOverlap = minOverlap;
         return this;
     }
@@ -188,6 +187,11 @@ public class TomtomRunResult {
     @JsonAnySetter
     public void setAdditionalProperties(String name, Object value) {
         this.additionalProperties.put(name, value);
+    }
+
+    @Override
+    public String toString() {
+        return ((((((((((((((((((("TomtomRunResult"+" [id=")+ id)+", timestamp=")+ timestamp)+", thresh=")+ thresh)+", evalue=")+ evalue)+", dist=")+ dist)+", internal=")+ internal)+", minOverlap=")+ minOverlap)+", hits=")+ hits)+", additionalProperties=")+ additionalProperties)+"]");
     }
 
 }

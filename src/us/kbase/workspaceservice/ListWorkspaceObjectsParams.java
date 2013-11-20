@@ -4,24 +4,26 @@ package us.kbase.workspaceservice;
 import java.util.HashMap;
 import java.util.Map;
 import javax.annotation.Generated;
-import org.codehaus.jackson.annotate.JsonAnyGetter;
-import org.codehaus.jackson.annotate.JsonAnySetter;
-import org.codehaus.jackson.annotate.JsonProperty;
-import org.codehaus.jackson.annotate.JsonPropertyOrder;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
+import com.fasterxml.jackson.annotation.JsonAnySetter;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 
 /**
+ * <p>Original spec-file type: list_workspace_objects_params</p>
+ * <pre>
  * Input parameters for the "list_workspace_objects" function.
- * 
  *         workspace_id workspace - ID of the workspace for which objects should be listed (an essential argument)
  *         string type - type of the objects to be listed (an optional argument; all object types will be listed if left unspecified)
- *         bool2 showDeletedObject - a flag that, if set to '1', causes any deleted objects to be included in the output (an optional argument; default is '0')
- *         string auth - the authentication token of the KBase account listing workspace objects; must have at least 'read' privelages (an optional argument; user is "public" if auth is not provided)
- *         bool2 asHash - a bool2ean indicating if metadata should be returned as a hash
+ *         bool showDeletedObject - a flag that, if set to '1', causes any deleted objects to be included in the output (an optional argument; default is '0')
+ *         string auth - the authentication token of the KBase account listing workspace objects; must have at least 'read' privileges (an optional argument)
+ *         bool asHash - a boolean indicating if metadata should be returned as a hash
+ * </pre>
  * 
  */
-@JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
+@JsonInclude(JsonInclude.Include.NON_NULL)
 @Generated("com.googlecode.jsonschema2pojo")
 @JsonPropertyOrder({
     "workspace",
@@ -37,11 +39,11 @@ public class ListWorkspaceObjectsParams {
     @JsonProperty("type")
     private String type;
     @JsonProperty("showDeletedObject")
-    private Integer showDeletedObject;
+    private Long showDeletedObject;
     @JsonProperty("auth")
     private String auth;
     @JsonProperty("asHash")
-    private Integer asHash;
+    private Long asHash;
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
     @JsonProperty("workspace")
@@ -75,16 +77,16 @@ public class ListWorkspaceObjectsParams {
     }
 
     @JsonProperty("showDeletedObject")
-    public Integer getShowDeletedObject() {
+    public Long getShowDeletedObject() {
         return showDeletedObject;
     }
 
     @JsonProperty("showDeletedObject")
-    public void setShowDeletedObject(Integer showDeletedObject) {
+    public void setShowDeletedObject(Long showDeletedObject) {
         this.showDeletedObject = showDeletedObject;
     }
 
-    public ListWorkspaceObjectsParams withShowDeletedObject(Integer showDeletedObject) {
+    public ListWorkspaceObjectsParams withShowDeletedObject(Long showDeletedObject) {
         this.showDeletedObject = showDeletedObject;
         return this;
     }
@@ -105,16 +107,16 @@ public class ListWorkspaceObjectsParams {
     }
 
     @JsonProperty("asHash")
-    public Integer getAsHash() {
+    public Long getAsHash() {
         return asHash;
     }
 
     @JsonProperty("asHash")
-    public void setAsHash(Integer asHash) {
+    public void setAsHash(Long asHash) {
         this.asHash = asHash;
     }
 
-    public ListWorkspaceObjectsParams withAsHash(Integer asHash) {
+    public ListWorkspaceObjectsParams withAsHash(Long asHash) {
         this.asHash = asHash;
         return this;
     }
@@ -127,6 +129,11 @@ public class ListWorkspaceObjectsParams {
     @JsonAnySetter
     public void setAdditionalProperties(String name, Object value) {
         this.additionalProperties.put(name, value);
+    }
+
+    @Override
+    public String toString() {
+        return ((((((((((((("ListWorkspaceObjectsParams"+" [workspace=")+ workspace)+", type=")+ type)+", showDeletedObject=")+ showDeletedObject)+", auth=")+ auth)+", asHash=")+ asHash)+", additionalProperties=")+ additionalProperties)+"]");
     }
 
 }
