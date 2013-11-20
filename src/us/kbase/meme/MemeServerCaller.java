@@ -37,20 +37,20 @@ public class MemeServerCaller {
 	private static ObjectMapper mapper;
 	
 
-	public static boolean isAuthAllowedForHttp() {
+/*	private static boolean isAuthAllowedForHttp() {
 		return isAuthAllowedForHttp;
 	}
-	
-	public static void setAuthAllowedForHttp(boolean AllowedForHttp) {
+*/	
+	private static void setAuthAllowedForHttp(boolean AllowedForHttp) {
 		isAuthAllowedForHttp = AllowedForHttp;
 	}
 	
-	public static UserAndJobStateClient jobClient() throws TokenFormatException, UnauthorizedException, IOException {
+	private static UserAndJobStateClient jobClient() throws TokenFormatException, UnauthorizedException, IOException {
 		if(_jobClient == null)
 		{
 			URL jobServiceUrl = new URL (JOB_SERVICE);
 			_jobClient = new UserAndJobStateClient (jobServiceUrl, JOB_ACCOUNT, JOB_PASSWORD);
-			_jobClient.setAuthAllowedForHttp(true);
+			setAuthAllowedForHttp(true);
 		}
 		return _jobClient;
 	} 
@@ -173,7 +173,7 @@ public class MemeServerCaller {
 
     public static String compareMotifsWithTomtomFromWs(String wsId, String queryId, String targetId, TomtomRunParameters params, AuthToken authPart) throws Exception {
         String returnVal = null;
-        returnVal = MemeServerImpl.compareMotifsWithTomtomFromWs(wsId, queryId, targetId, params, authPart.getTokenData());
+        returnVal = MemeServerImpl.compareMotifsWithTomtomFromWs(wsId, queryId, targetId, params, authPart.toString());
         return returnVal;
     }
 
@@ -193,7 +193,7 @@ public class MemeServerCaller {
 
     public static String compareMotifsWithTomtomByCollectionFromWs(String wsId, String queryId, String targetId, String pspmId, TomtomRunParameters params, AuthToken authPart) throws Exception {
         String returnVal = null;
-        returnVal = MemeServerImpl.compareMotifsWithTomtomByCollectionFromWs(wsId, queryId, targetId, pspmId, params, authPart.getTokenData());
+        returnVal = MemeServerImpl.compareMotifsWithTomtomByCollectionFromWs(wsId, queryId, targetId, pspmId, params, authPart.toString());
         return returnVal;
     }
 
@@ -211,7 +211,7 @@ public class MemeServerCaller {
 
     public static String findSitesWithMastFromWs(String wsId, String queryId, String targetId, Double mt, AuthToken authPart) throws Exception {
         String returnVal = null;
-        returnVal = MemeServerImpl.findSitesWithMastFromWs(wsId, queryId, targetId, mt, authPart.getTokenData());
+        returnVal = MemeServerImpl.findSitesWithMastFromWs(wsId, queryId, targetId, mt, authPart.toString());
         return returnVal;
     }
 
@@ -231,7 +231,7 @@ public class MemeServerCaller {
 
     public static String findSitesWithMastByCollectionFromWs(String wsId, String queryId, String targetId, String pspmId, Double mt, AuthToken authPart) throws Exception {
         String returnVal = null;
-        returnVal = MemeServerImpl.findSitesWithMastByCollectionFromWs(wsId, queryId, targetId, pspmId, mt, authPart.getTokenData());
+        returnVal = MemeServerImpl.findSitesWithMastByCollectionFromWs(wsId, queryId, targetId, pspmId, mt, authPart.toString());
         return returnVal;
     }
 
@@ -251,7 +251,7 @@ public class MemeServerCaller {
 
     public static String getPspmCollectionFromMemeResultFromWs(String wsId, String memeRunResultId, AuthToken authPart) throws Exception {
         String returnVal = null;
-        returnVal = MemeServerImpl.getPspmCollectionFromMemeResultFromWs(wsId, memeRunResultId, authPart.getTokenData());
+        returnVal = MemeServerImpl.getPspmCollectionFromMemeResultFromWs(wsId, memeRunResultId, authPart.toString());
         return returnVal;
     }
 

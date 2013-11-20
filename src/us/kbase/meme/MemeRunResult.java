@@ -63,7 +63,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @JsonPropertyOrder({
     "id",
     "timestamp",
-    "version",
+    "meme_version",
     "input_file_name",
     "alphabet",
     "training_set",
@@ -107,8 +107,8 @@ public class MemeRunResult {
     private java.lang.String id;
     @JsonProperty("timestamp")
     private java.lang.String timestamp;
-    @JsonProperty("version")
-    private java.lang.String version;
+    @JsonProperty("meme_version")
+    private java.lang.String memeVersion;
     @JsonProperty("input_file_name")
     private java.lang.String inputFileName;
     @JsonProperty("alphabet")
@@ -213,18 +213,18 @@ public class MemeRunResult {
         return this;
     }
 
-    @JsonProperty("version")
-    public java.lang.String getVersion() {
-        return version;
+    @JsonProperty("meme_version")
+    public java.lang.String getMemeVersion() {
+        return memeVersion;
     }
 
-    @JsonProperty("version")
-    public void setVersion(java.lang.String version) {
-        this.version = version;
+    @JsonProperty("meme_version")
+    public void setMemeVersion(java.lang.String memeVersion) {
+        this.memeVersion = memeVersion;
     }
 
-    public MemeRunResult withVersion(java.lang.String version) {
-        this.version = version;
+    public MemeRunResult withMemeVersion(java.lang.String memeVersion) {
+        this.memeVersion = memeVersion;
         return this;
     }
 
@@ -780,7 +780,7 @@ public class MemeRunResult {
 
     @Override
     public java.lang.String toString() {
-        return ((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((("MemeRunResult"+" [id=")+ id)+", timestamp=")+ timestamp)+", version=")+ version)+", inputFileName=")+ inputFileName)+", alphabet=")+ alphabet)+", trainingSet=")+ trainingSet)+", commandLine=")+ commandLine)+", mod=")+ mod)+", nmotifs=")+ nmotifs)+", evt=")+ evt)+", objectFunction=")+ objectFunction)+", minw=")+ minw)+", maxw=")+ maxw)+", minic=")+ minic)+", wg=")+ wg)+", ws=")+ ws)+", endgaps=")+ endgaps)+", minsites=")+ minsites)+", maxsites=")+ maxsites)+", wnsites=")+ wnsites)+", prob=")+ prob)+", spmap=")+ spmap)+", spfuzz=")+ spfuzz)+", substring=")+ substring)+", branching=")+ branching)+", wbranch=")+ wbranch)+", prior=")+ prior)+", b=")+ b)+", maxiter=")+ maxiter)+", distance=")+ distance)+", n=")+ n)+", nCap=")+ nCap)+", strands=")+ strands)+", seed=")+ seed)+", seqfrac=")+ seqfrac)+", letterFreq=")+ letterFreq)+", bgFreq=")+ bgFreq)+", motifs=")+ motifs)+", rawOutput=")+ rawOutput)+", additionalProperties=")+ additionalProperties)+"]");
+        return ((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((("MemeRunResult"+" [id=")+ id)+", timestamp=")+ timestamp)+", memeVersion=")+ memeVersion)+", inputFileName=")+ inputFileName)+", alphabet=")+ alphabet)+", trainingSet=")+ trainingSet)+", commandLine=")+ commandLine)+", mod=")+ mod)+", nmotifs=")+ nmotifs)+", evt=")+ evt)+", objectFunction=")+ objectFunction)+", minw=")+ minw)+", maxw=")+ maxw)+", minic=")+ minic)+", wg=")+ wg)+", ws=")+ ws)+", endgaps=")+ endgaps)+", minsites=")+ minsites)+", maxsites=")+ maxsites)+", wnsites=")+ wnsites)+", prob=")+ prob)+", spmap=")+ spmap)+", spfuzz=")+ spfuzz)+", substring=")+ substring)+", branching=")+ branching)+", wbranch=")+ wbranch)+", prior=")+ prior)+", b=")+ b)+", maxiter=")+ maxiter)+", distance=")+ distance)+", n=")+ n)+", nCap=")+ nCap)+", strands=")+ strands)+", seed=")+ seed)+", seqfrac=")+ seqfrac)+", letterFreq=")+ letterFreq)+", bgFreq=")+ bgFreq)+", motifs=")+ motifs)+", rawOutput=")+ rawOutput)+", additionalProperties=")+ additionalProperties)+"]");
     }
 
 }

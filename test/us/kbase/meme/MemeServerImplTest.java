@@ -57,7 +57,7 @@ public class MemeServerImplTest {
 	private final String JOB_SERVICE = "http://140.221.84.180:7083";
 	private final String JOB_ACCOUNT = "memejobs";
 	private final String JOB_PASSWORD = "1475_rokegi";
-	private String jobId = "528ac64ee4b0702f7611d8de";
+	private String jobId = null;
 	
 	@Before
 	public void setUp() throws Exception {
@@ -661,7 +661,7 @@ public class MemeServerImplTest {
 	public static void displayCollection(MemeRunResult collection) {
 		System.out.println("KBase collection ID = "+collection.getId());
 		System.out.println("timestamp = "+collection.getTimestamp());
-		System.out.println("versionMeme = "+collection.getVersion());
+		System.out.println("versionMeme = "+collection.getMemeVersion());
 		System.out.println("inputDatafile = "+collection.getInputFileName());
 		System.out.println("alphabetMeme = "+collection.getAlphabet());
 		System.out.println("trainingSetMeme = "+collection.getTrainingSet().toString());

@@ -22,7 +22,6 @@ import us.kbase.workspaceservice.GetObjectParams;
 import us.kbase.generaltypes.Sequence;
 import us.kbase.generaltypes.SequenceSet;
 import us.kbase.util.WSUtil;
-import us.kbase.workspaceservice.ObjectData;
 
 public class MemeClientTest {
 	
@@ -78,7 +77,6 @@ public class MemeClientTest {
 		URL serviceUrl = new URL(serverUrl);
 		MEMEClient client = new MEMEClient(serviceUrl, USER_NAME, PASSWORD);
 		client.setAuthAllowedForHttp(true);
-    	WSUtil.saveObject(testSequenceSet.getSequenceSetId(), UObject.transformObjectToObject(testSequenceSet, ObjectData.class), false);
 		assertNotNull(client);
 	}
 
@@ -364,10 +362,14 @@ public class MemeClientTest {
 
 	@Test
 	public final void testCompareMotifsWithTomtomByCollectionFromWs() throws Exception {
-		URL serviceUrl = new URL(serverUrl);
-		MEMEClient client = new MEMEClient(serviceUrl, USER_NAME, PASSWORD);
-		client.setAuthAllowedForHttp(true);
 		
+		URL serviceUrl = new URL(serverUrl);
+		AuthToken token = AuthService.login(USER_NAME, new String(PASSWORD)).getToken();
+		System.out.println(token.toString());
+
+		MEMEClient client = new MEMEClient(serviceUrl, token);
+		client.setAuthAllowedForHttp(true);
+
 		
 		TomtomRunParameters paramsTomtom = new TomtomRunParameters();
 		paramsTomtom.setDist("pearson");
@@ -379,7 +381,6 @@ public class MemeClientTest {
 //		String resultId = client.compareMotifsWithTomtomByCollectionFromWs("AKtest", "kb|memepspmcollection.2", "RegPreciseMotifs_20131006", "", paramsTomtom);
 		String resultId = client.compareMotifsWithTomtomByCollectionFromWs("AKtest", "kb|memepspmcollection.2", "kb|memepspmcollection.2", "", paramsTomtom);
 
-		AuthToken token = AuthService.login(USER_NAME, new String(PASSWORD)).getToken();
 /*		
 		List<ObjectIdentity> objectIds = new ArrayList<ObjectIdentity>();
 		ObjectIdentity objectIdentity = new ObjectIdentity().withWorkspace("AKtest").withName(resultId);
@@ -597,7 +598,7 @@ public class MemeClientTest {
 		assertFalse(result.getPspms().size() == 0);
 		assertEquals("ACGT", result.getAlphabet());
 		//Write result to WS
-		MemeServerImpl.saveObjectToWorkspace(UObject.transformObjectToObject(result, UObject.class), result.getClass().getSimpleName(), "AKtest", result.getId(), token.getTokenData());
+		MemeServerImpl.saveObjectToWorkspace(UObject.transformObjectToObject(result, UObject.class), result.getClass().getSimpleName(), "AKtest", result.getId(), token.toString());
 
 		
 //		WSUtil.saveObject(result.getId(), result, false);

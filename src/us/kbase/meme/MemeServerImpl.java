@@ -364,7 +364,7 @@ public class MemeServerImpl {
 				cumulativeOutput += line+"\n";
 				if (!trainingSetSection) {
 					if (line.matches("^MEME version.*")){
-						memeRunResult.setVersion(line);
+						memeRunResult.setMemeVersion(line);
 					} else if (line.contains("TRAINING SET")){
 						trainingSetSection = true;
 					} else {}

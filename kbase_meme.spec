@@ -150,7 +150,7 @@ module MEME
 	typedef structure{
 		string id;
 		string timestamp;
-		string version;
+		string meme_version;
 		string input_file_name;
 		string alphabet;
 		list<string> training_set;

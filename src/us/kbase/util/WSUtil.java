@@ -7,6 +7,7 @@ import java.util.Map;
 
 import us.kbase.common.service.JsonClientCaller;
 import us.kbase.common.service.Tuple11;
+import us.kbase.auth.AuthService;
 import us.kbase.auth.AuthToken;
 import us.kbase.workspaceservice.AddTypeParams;
 import us.kbase.workspaceservice.ObjectData;
@@ -35,7 +36,8 @@ public class WSUtil {
 	
 	public static AuthToken authToken() throws Exception{
 		if(_token == null){
-			_token = JsonClientCaller.requestTokenFromKBase(userName, password.toCharArray()); 
+//			_token = JsonClientCaller.requestTokenFromKBase(userName, password.toCharArray());
+			_token = AuthService.login(userName, new String(password)).getToken();
 		}
 		return _token; 	  
 	}
