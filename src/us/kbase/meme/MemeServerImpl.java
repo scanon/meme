@@ -113,7 +113,7 @@ public class MemeServerImpl {
 		InitProgress initProgress = new InitProgress();
 		initProgress.setPtype("task");
 		initProgress.setMax(3L);
-		date.setTime(date.getTime()+100000L);
+		date.setTime(date.getTime()+1000000L);
 	
 		try {
 			//System.out.println(dateFormat.format(date));
