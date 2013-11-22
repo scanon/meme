@@ -25,7 +25,6 @@ import us.kbase.common.service.UnauthorizedException;
 import us.kbase.generaltypes.SequenceSet;
 import us.kbase.userandjobstate.UserAndJobStateClient;
 
-@SuppressWarnings("unused")
 public class MemeServerCaller {
 
 	private static final String JOB_SERVICE = "http://140.221.84.180:7083";
@@ -37,11 +36,9 @@ public class MemeServerCaller {
 	private static Integer connectionReadTimeOut = 30 * 60 * 1000;
 	private static boolean isAuthAllowedForHttp = false;
 	private static ObjectMapper mapper = new ObjectMapper().registerModule(new JacksonTupleModule());
+	private static boolean deployCluster = true;
 
-/*	private static boolean isAuthAllowedForHttp() {
-		return isAuthAllowedForHttp;
-	}
-*/	
+	
 	protected static void setAuthAllowedForHttp(boolean AllowedForHttp) {
 		isAuthAllowedForHttp = AllowedForHttp;
 	}
@@ -153,34 +150,33 @@ public class MemeServerCaller {
         //Ask for job id
         returnVal = jobClient(authPart).createJob();
         
-        String result = MemeServerImpl.findMotifsWithMemeJobFromWs(wsId, sequenceSetId, params, returnVal, authPart.toString());
+        if (deployCluster == false) { 
+        	String result = MemeServerImpl.findMotifsWithMemeJobFromWs(wsId, sequenceSetId, params, returnVal, authPart.toString());
+        	System.out.println(result);            
+        } else {
+        	//Call tug
+        	Map<String, String> jsonArgs = new HashMap<String, String>();
+        	jsonArgs.put("target", "cloud");
+        	jsonArgs.put("application", "meme");
+        	jsonArgs.put("method", "find_motifs_with_meme_job_from_ws");
+        	jsonArgs.put("job_id", returnVal);
+        	jsonArgs.put("workspace", wsId);
+        	jsonArgs.put("seq_id", sequenceSetId);
+        	jsonArgs.put("mod", params.getMod());
+        	jsonArgs.put("nmotifs", params.getNmotifs().toString());
+        	jsonArgs.put("minw", params.getMinw().toString());
+        	jsonArgs.put("maxw", params.getMaxw().toString());
+        	jsonArgs.put("pal", params.getPal().toString());
+        	jsonArgs.put("revcomp", params.getRevcomp().toString());
+        	jsonArgs.put("nsites", params.getNsites().toString());
+        	jsonArgs.put("minsites", params.getMinsites().toString());
+        	jsonArgs.put("maxsites", params.getMaxsites().toString());
+        	jsonArgs.put("token", authPart.toString());
+                
+        	String result = jsonCall(jsonArgs, authPart);
+        	System.out.println(result);
+        }
 
-/*      Uncomment before compilation for cluster 
-
-        //Call tug
-        Map<String, String> jsonArgs = new HashMap<String, String>();
-        jsonArgs.put("target", "cloud");
-        jsonArgs.put("application", "meme");
-        jsonArgs.put("method", "find_motifs_with_meme_job_from_ws");
-        jsonArgs.put("job_id", returnVal);
-        jsonArgs.put("workspace", wsId);
-        jsonArgs.put("seq_id", sequenceSetId);
-        jsonArgs.put("mod", params.getMod());
-        jsonArgs.put("nmotifs", params.getNmotifs().toString());
-        jsonArgs.put("minw", params.getMinw().toString());
-        jsonArgs.put("maxw", params.getMaxw().toString());
-        jsonArgs.put("pal", params.getPal().toString());
-        jsonArgs.put("revcomp", params.getRevcomp().toString());
-        jsonArgs.put("nsites", params.getNsites().toString());
-        jsonArgs.put("minsites", params.getMinsites().toString());
-        jsonArgs.put("maxsites", params.getMaxsites().toString());
-        jsonArgs.put("token", authPart.toString());
-        
-        
-        String result = jsonCall(jsonArgs, authPart);
-*/
-        
-        System.out.println(result);
         return returnVal;
     }
 
@@ -202,31 +198,31 @@ public class MemeServerCaller {
         
         //Ask for job id
         returnVal = jobClient(authPart).createJob();
-        String result = MemeServerImpl.compareMotifsWithTomtomJobFromWs(wsId, queryId, targetId, params, returnVal, authPart.toString());
 
-/*      Uncomment before compilation for cluster 
-
-        //Call tug
-        Map<String, String> jsonArgs = new HashMap<String, String>();
-        jsonArgs.put("target", "cloud");
-        jsonArgs.put("application", "meme");
-        jsonArgs.put("method", "compare_motifs_with_tomtom_job_from_ws");
-        jsonArgs.put("job_id", returnVal);
-        jsonArgs.put("workspace", wsId);
-        jsonArgs.put("queryId", queryId);
-        jsonArgs.put("targetId", targetId);
-        jsonArgs.put("thresh", params.getThresh().toString());
-        jsonArgs.put("evalue", params.getEvalue().toString());
-        jsonArgs.put("dist", params.getDist());
-        jsonArgs.put("min_overlap", params.getMinOverlap().toString());
-        jsonArgs.put("internal", params.getInternal().toString());
-        jsonArgs.put("token", authPart.toString());
-        
-        
-        String result = jsonCall(jsonArgs, authPart);
-*/
-        System.out.println(result);
-
+        if (deployCluster == false) { 
+        	String result = MemeServerImpl.compareMotifsWithTomtomJobFromWs(wsId, queryId, targetId, params, returnVal, authPart.toString());
+        	System.out.println(result);
+        } else {
+        	//Call tug
+        	Map<String, String> jsonArgs = new HashMap<String, String>();
+        	jsonArgs.put("target", "cloud");
+        	jsonArgs.put("application", "meme");
+        	jsonArgs.put("method", "compare_motifs_with_tomtom_job_from_ws");
+        	jsonArgs.put("job_id", returnVal);
+        	jsonArgs.put("workspace", wsId);
+        	jsonArgs.put("queryId", queryId);
+        	jsonArgs.put("targetId", targetId);
+        	jsonArgs.put("thresh", params.getThresh().toString());
+        	jsonArgs.put("evalue", params.getEvalue().toString());
+        	jsonArgs.put("dist", params.getDist());
+        	jsonArgs.put("min_overlap", params.getMinOverlap().toString());
+        	jsonArgs.put("internal", params.getInternal().toString());
+        	jsonArgs.put("token", authPart.toString());
+                
+        	String result = jsonCall(jsonArgs, authPart);
+        	System.out.println(result);
+		}
+		
         //END compare_motifs_with_tomtom_job_from_ws
         return returnVal;
     }
@@ -249,33 +245,31 @@ public class MemeServerCaller {
         //Ask for job id
         returnVal = jobClient(authPart).createJob();
 
-//Comment before compilation on cluster        
-        String result = MemeServerImpl.compareMotifsWithTomtomJobByCollectionFromWs(wsId, queryId, targetId, pspmId, params, returnVal, authPart.toString());
+        if (deployCluster == false) { 
+        	String result = MemeServerImpl.compareMotifsWithTomtomJobByCollectionFromWs(wsId, queryId, targetId, pspmId, params, returnVal, authPart.toString());
+            System.out.println(result);
+        } else {
 
-/*      Uncomment before compilation for cluster 
-
-        //Call tug
-        Map<String, String> jsonArgs = new HashMap<String, String>();
-        jsonArgs.put("target", "cloud");
-        jsonArgs.put("application", "meme");
-        jsonArgs.put("method", "compare_motifs_with_tomtom_job_from_ws");
-        jsonArgs.put("job_id", returnVal);
-        jsonArgs.put("workspace", wsId);
-        jsonArgs.put("queryId", queryId);
-        jsonArgs.put("targetId", targetId);
-        jsonArgs.put("thresh", params.getThresh().toString());
-        jsonArgs.put("evalue", params.getEvalue().toString());
-        jsonArgs.put("dist", params.getDist());
-        jsonArgs.put("min_overlap", params.getMinOverlap().toString());
-        jsonArgs.put("internal", params.getInternal().toString());
-        jsonArgs.put("pspm", pspmId);
-        jsonArgs.put("token", authPart.toString());
-        
+        	//Call tug
+        	Map<String, String> jsonArgs = new HashMap<String, String>();
+        	jsonArgs.put("target", "cloud");
+        	jsonArgs.put("application", "meme");
+        	jsonArgs.put("method", "compare_motifs_with_tomtom_job_from_ws");
+        	jsonArgs.put("job_id", returnVal);
+        	jsonArgs.put("workspace", wsId);
+        	jsonArgs.put("queryId", queryId);
+        	jsonArgs.put("targetId", targetId);
+        	jsonArgs.put("thresh", params.getThresh().toString());
+        	jsonArgs.put("evalue", params.getEvalue().toString());
+        	jsonArgs.put("dist", params.getDist());
+        	jsonArgs.put("min_overlap", params.getMinOverlap().toString());
+        	jsonArgs.put("internal", params.getInternal().toString());
+        	jsonArgs.put("pspm", pspmId);
+        	jsonArgs.put("token", authPart.toString());
         
         String result = jsonCall(jsonArgs, authPart);
-*/
         System.out.println(result);
-        
+        }
         return returnVal;
     }
 
@@ -297,26 +291,24 @@ public class MemeServerCaller {
         //Ask for job id
         returnVal = jobClient(authPart).createJob();
         
-      //Comment before compilation on cluster        
-        String result = MemeServerImpl.findSitesWithMastJobFromWs(wsId, queryId, targetId, mt, returnVal, authPart.toString());
-
-/*      Uncomment before compilation for cluster 
-
-        Map<String, String> jsonArgs = new HashMap<String, String>();
-        jsonArgs.put("target", "cloud");
-        jsonArgs.put("application", "meme");
-        jsonArgs.put("method", "find_sites_with_mast_job_from_ws");
-        jsonArgs.put("job_id", returnVal);
-        jsonArgs.put("workspace", wsId);
-        jsonArgs.put("queryId", queryId);
-        jsonArgs.put("targetId", targetId);
-        jsonArgs.put("thresh", mt.toString());
-        jsonArgs.put("token", authPart.toString());
+        if (deployCluster == false) { 
+        	String result = MemeServerImpl.findSitesWithMastJobFromWs(wsId, queryId, targetId, mt, returnVal, authPart.toString());
+        	System.out.println(result);
+        } else {
+        	Map<String, String> jsonArgs = new HashMap<String, String>();
+        	jsonArgs.put("target", "cloud");
+        	jsonArgs.put("application", "meme");
+        	jsonArgs.put("method", "find_sites_with_mast_job_from_ws");
+        	jsonArgs.put("job_id", returnVal);
+        	jsonArgs.put("workspace", wsId);
+        	jsonArgs.put("queryId", queryId);
+        	jsonArgs.put("targetId", targetId);
+        	jsonArgs.put("thresh", mt.toString());
+        	jsonArgs.put("token", authPart.toString());
         
-        
-        String result = jsonCall(jsonArgs, authPart);
-*/
-        System.out.println(result);
+        	String result = jsonCall(jsonArgs, authPart);
+        	System.out.println(result);
+        }
 
         //END find_sites_with_mast_job_from_ws
         return returnVal;
@@ -340,27 +332,26 @@ public class MemeServerCaller {
 
         returnVal = jobClient(authPart).createJob();
 
-        //Comment before compilation on cluster        
-        String result = MemeServerImpl.findSitesWithMastJobByCollectionFromWs(wsId, queryId, targetId, pspmId, mt, returnVal, authPart.toString());
+        if (deployCluster == false) { 
+        	String result = MemeServerImpl.findSitesWithMastJobByCollectionFromWs(wsId, queryId, targetId, pspmId, mt, returnVal, authPart.toString());
+        	System.out.println(result);
+        } else {
 
-/*      Uncomment before compilation for cluster 
-
-        Map<String, String> jsonArgs = new HashMap<String, String>();
-        jsonArgs.put("target", "cloud");
-        jsonArgs.put("application", "meme");
-        jsonArgs.put("method", "find_sites_with_mast_job_from_ws");
-        jsonArgs.put("job_id", returnVal);
-        jsonArgs.put("workspace", wsId);
-        jsonArgs.put("queryId", queryId);
-        jsonArgs.put("targetId", targetId);
-        jsonArgs.put("thresh", mt.toString());
-        jsonArgs.put("pspm", pspmId);
-        jsonArgs.put("token", authPart.toString());
+        	Map<String, String> jsonArgs = new HashMap<String, String>();
+        	jsonArgs.put("target", "cloud");
+        	jsonArgs.put("application", "meme");
+        	jsonArgs.put("method", "find_sites_with_mast_job_from_ws");
+        	jsonArgs.put("job_id", returnVal);
+        	jsonArgs.put("workspace", wsId);
+        	jsonArgs.put("queryId", queryId);
+        	jsonArgs.put("targetId", targetId);
+        	jsonArgs.put("thresh", mt.toString());
+        	jsonArgs.put("pspm", pspmId);
+        	jsonArgs.put("token", authPart.toString());
         
-        
-        String result = jsonCall(jsonArgs, authPart);
-*/
-        System.out.println(result);
+        	String result = jsonCall(jsonArgs, authPart);
+        	System.out.println(result);
+        }
         
         //END find_sites_with_mast_job_by_collection_from_ws
         return returnVal;
@@ -383,24 +374,23 @@ public class MemeServerCaller {
         //BEGIN get_pspm_collection_from_meme_result_job_from_ws
         returnVal = jobClient(authPart).createJob();
 
-        //Comment before compilation on cluster        
-        String result = MemeServerImpl.getPspmCollectionFromMemeJobResultFromWs(wsId, memeRunResultId, returnVal, authPart.toString());
+        if (deployCluster == false) { 
+        	String result = MemeServerImpl.getPspmCollectionFromMemeJobResultFromWs(wsId, memeRunResultId, returnVal, authPart.toString());
+        	System.out.println(result);
+        } else {
 
-/*      Uncomment before compilation for cluster 
-
-        Map<String, String> jsonArgs = new HashMap<String, String>();
-        jsonArgs.put("target", "cloud");
-        jsonArgs.put("application", "meme");
-        jsonArgs.put("method", "get_pspm_collection_from_meme_result_from_ws");
-        jsonArgs.put("job_id", returnVal);
-        jsonArgs.put("workspace", wsId);
-        jsonArgs.put("queryId", memeRunResultId);
-        jsonArgs.put("token", authPart.toString());
+        	Map<String, String> jsonArgs = new HashMap<String, String>();
+        	jsonArgs.put("target", "cloud");
+        	jsonArgs.put("application", "meme");
+        	jsonArgs.put("method", "get_pspm_collection_from_meme_result_from_ws");
+        	jsonArgs.put("job_id", returnVal);
+        	jsonArgs.put("workspace", wsId);
+        	jsonArgs.put("queryId", memeRunResultId);
+        	jsonArgs.put("token", authPart.toString());
         
-        String result = jsonCall(jsonArgs, authPart);
-*/
-
-        System.out.println(result);        
+        	String result = jsonCall(jsonArgs, authPart);
+        	System.out.println(result);
+        }
         
         //END get_pspm_collection_from_meme_result_job_from_ws
         return returnVal;
