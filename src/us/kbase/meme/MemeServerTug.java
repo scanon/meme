@@ -24,6 +24,12 @@ public class MemeServerTug {
                 .withArgName("NAME")
                 .create() );
 		
+		options.addOption( OptionBuilder.withLongOpt( "job" )
+                .withDescription( "job ID" )
+                .hasArg(true)
+                .withArgName("job")
+                .create() );
+
 		options.addOption( OptionBuilder.withLongOpt( "ws" )
                 .withDescription( "workspace ID" )
                 .hasArg(true)
@@ -209,9 +215,10 @@ public class MemeServerTug {
 			params.setRevcomp(0L);
 		}
 
-		returnVal = MemeServerImpl.findMotifsWithMemeFromWs(line.getOptionValue("ws"), 
+		returnVal = MemeServerImpl.findMotifsWithMemeJobFromWs(line.getOptionValue("ws"), 
 							line.getOptionValue("query"), 
-							params, 
+							params,
+							line.getOptionValue("job"),
 							line.getOptionValue("token"));
 		
 		return returnVal;
@@ -260,10 +267,11 @@ public class MemeServerTug {
 		}
 		
 		if (line.hasOption("target")) {
-			returnVal = MemeServerImpl.compareMotifsWithTomtomFromWs(line.getOptionValue("ws"), 
+			returnVal = MemeServerImpl.compareMotifsWithTomtomJobFromWs(line.getOptionValue("ws"), 
 								line.getOptionValue("query"), 
 								line.getOptionValue("target"), 
 								params, 
+								line.getOptionValue("job"),
 								line.getOptionValue("token"));
 		}
 		else {
@@ -321,11 +329,12 @@ public class MemeServerTug {
 		}
 		
 		if (line.hasOption("target")) {
-			returnVal = MemeServerImpl.compareMotifsWithTomtomByCollectionFromWs(line.getOptionValue("ws"), 
+			returnVal = MemeServerImpl.compareMotifsWithTomtomJobByCollectionFromWs(line.getOptionValue("ws"), 
 								line.getOptionValue("query"), 
 								line.getOptionValue("target"), 
 								pspm, 
 								params, 
+								line.getOptionValue("job"),
 								line.getOptionValue("token"));
 		
 		}
@@ -350,10 +359,11 @@ public class MemeServerTug {
 		}
 
 		if (line.hasOption("target")) {
-			returnVal = MemeServerImpl.findSitesWithMastFromWs(line.getOptionValue("ws"), 
+			returnVal = MemeServerImpl.findSitesWithMastJobFromWs(line.getOptionValue("ws"), 
 								line.getOptionValue("query"), 
 								line.getOptionValue("target"), 
 								mt, 
+								line.getOptionValue("job"),
 								line.getOptionValue("token"));
 		}
 		else {
@@ -381,11 +391,12 @@ public class MemeServerTug {
 		}
 
 		if (line.hasOption("target")) {
-			returnVal = MemeServerImpl.findSitesWithMastByCollectionFromWs(line.getOptionValue("ws"), 
+			returnVal = MemeServerImpl.findSitesWithMastJobByCollectionFromWs(line.getOptionValue("ws"), 
 								line.getOptionValue("query"), 
 								line.getOptionValue("target"), 
 								pspm, 
 								mt, 
+								line.getOptionValue("job"),
 								line.getOptionValue("token"));
 		}
 		else {
@@ -397,8 +408,9 @@ public class MemeServerTug {
 
 	private String generateCollection (CommandLine line) throws Exception {
 		String returnVal = null;
-		returnVal = MemeServerImpl.getPspmCollectionFromMemeResultFromWs(line.getOptionValue("ws"), 
+		returnVal = MemeServerImpl.getPspmCollectionFromMemeJobResultFromWs(line.getOptionValue("ws"), 
 				line.getOptionValue("query"), 
+				line.getOptionValue("job"),
 				line.getOptionValue("token"));		
 		return returnVal;
 	}
@@ -422,7 +434,7 @@ public class MemeServerTug {
 		    	if ( validateInput(line)){
 		    		serverMethod = line.getOptionValue( "method" );
 
-		    		if (serverMethod.equalsIgnoreCase("find_motifs_with_meme_from_ws")){
+		    		if (serverMethod.equalsIgnoreCase("find_motifs_with_meme_job_from_ws")){
 		    			returnVal = runMeme(line);
 		    		}
 		    		else if (serverMethod.equalsIgnoreCase("compare_motifs_with_tomtom_from_ws")){
@@ -475,8 +487,16 @@ public class MemeServerTug {
 				if (line.hasOption("token")){
 
 					if (line.hasOption("query")){
-						returnVal = true;
-					}
+
+						if (line.hasOption("job")){
+
+							returnVal = true;
+						}
+						else {
+							System.err.println( "Job ID required");
+						}
+						
+					} 
 					else {
 						System.err.println( "Query ID required");
 					}

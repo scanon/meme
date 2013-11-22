@@ -2,6 +2,7 @@ package us.kbase.meme;
 
 import static org.junit.Assert.*;
 
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -14,13 +15,18 @@ import org.junit.Test;
 import us.kbase.auth.AuthService;
 import us.kbase.auth.AuthToken;
 //import us.kbase.common.service.JsonClientCaller;
+import us.kbase.common.service.JsonClientException;
+import us.kbase.common.service.Tuple7;
 import us.kbase.common.service.UObject;
+import us.kbase.common.service.UnauthorizedException;
 //		import us.kbase.workspace.ObjectData;
 //		import us.kbase.workspace.ObjectIdentity;
 import us.kbase.workspaceservice.GetObjectOutput;
 import us.kbase.workspaceservice.GetObjectParams;
 import us.kbase.generaltypes.Sequence;
 import us.kbase.generaltypes.SequenceSet;
+import us.kbase.userandjobstate.Results;
+import us.kbase.userandjobstate.UserAndJobStateClient;
 import us.kbase.util.WSUtil;
 
 public class MemeClientTest {
@@ -33,6 +39,7 @@ public class MemeClientTest {
 	private String serverUrl = "http://127.0.0.1:7108";
 	private static final String USER_NAME = "aktest";
 	private static final String PASSWORD = "1475rokegi";
+	private final String JOB_SERVICE = "http://140.221.84.180:7083";
 	
 	@Before
 	public void setUp() throws Exception {
@@ -146,7 +153,7 @@ public class MemeClientTest {
 		
 		//AuthToken token = JsonClientCaller.requestTokenFromKBase(USER_NAME, PASSWORD.toCharArray());
 		AuthToken token = AuthService.login(USER_NAME, new String(PASSWORD)).getToken();
-		System.out.println(token.toString());
+//		System.out.println(token.toString());
 		String id = "KBase.SequenceSet.12345";
 		URL serviceUrl = new URL(serverUrl);
 //		MEMEClient client = new MEMEClient(serviceUrl, USER_NAME, PASSWORD);
@@ -229,9 +236,11 @@ public class MemeClientTest {
 	@Test
 	public final void testFindMotifsWithMemeJobFromWs() throws MalformedURLException, Exception {
 		
+		String resultId = null;
+		
 		//AuthToken token = JsonClientCaller.requestTokenFromKBase(USER_NAME, PASSWORD.toCharArray());
 		AuthToken token = AuthService.login(USER_NAME, new String(PASSWORD)).getToken();
-		System.out.println(token.toString());
+//		System.out.println(token.toString());
 		String id = "KBase.SequenceSet.12345";
 		URL serviceUrl = new URL(serverUrl);
 //		MEMEClient client = new MEMEClient(serviceUrl, USER_NAME, PASSWORD);
@@ -259,23 +268,79 @@ public class MemeClientTest {
 
 		
 		String jobId = memeClient.findMotifsWithMemeJobFromWs("AKtest", id, params);
+		System.out.println("Job ID = " + jobId);
+		assertNotNull(jobId);
 		
+		URL jobServiceUrl = null;
+		UserAndJobStateClient client = null;
+
+		try {
+			jobServiceUrl = new URL(JOB_SERVICE);
+		} catch (MalformedURLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		try {
+			client = new UserAndJobStateClient(jobServiceUrl, token);
+		} catch (UnauthorizedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		client.setAuthAllowedForHttp(true);
+		
+		String status = "";
+		
+		while (!status.equalsIgnoreCase("finished")){
+			
+			try {
+			    Thread.sleep(2000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		
+			try {
+				Tuple7<String,String,String,Long,String,Long,Long> t = client.getJobStatus(jobId); 
+				//System.out.println(t.getE1());
+				//System.out.println(t.getE2());
+				status = t.getE3();
+				//System.out.println(t.getE3());//Status
+				//System.out.println(t.getE4());
+				//System.out.println(t.getE5());
+				//System.out.println(t.getE6());
+				//System.out.println(t.getE7());
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (JsonClientException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+		try {
+			Results res = client.getResults(jobId);			
+			resultId = res.getWorkspaceids().get(0);
+			System.out.println("Result ID = " + resultId);
+			assertNotNull(resultId);
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (JsonClientException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		String[] resultIdParts = resultId.split("/");
+		resultId = resultIdParts[1];
 //Read result from WS
-		
-/*		List<ObjectIdentity> objectIds = new ArrayList<ObjectIdentity>();
-		ObjectIdentity objectIdentity = new ObjectIdentity().withWorkspace("AKtest").withName(resultId);
-		objectIds.add(objectIdentity);
-		List<ObjectData> output = MemeServerImpl.wsClient(token.toString()).getObjects(objectIds);
-		
-		MemeRunResult result = UObject.transformObjectToObject(output.get(0).getData(), MemeRunResult.class);
-*/
-		String resultId = null;
 		
 		GetObjectParams objectParams = new GetObjectParams().withType("MemeRunResult").withId(resultId).withWorkspace(WSUtil.workspaceName).withAuth(WSUtil.authToken().toString());   
 		GetObjectOutput output = WSUtil.wsClient().getObject(objectParams);
 		MemeRunResult result = UObject.transformObjectToObject(output.getData(), MemeRunResult.class);
-		
-		assertNotNull(jobId);
 
 		assertEquals(Long.valueOf("0"),result.getSeed());
 		assertEquals(Long.valueOf("1"),result.getSeqfrac());
@@ -315,6 +380,7 @@ public class MemeClientTest {
 		assertEquals("ACTGGTTTTG",result.getMotifs().get(0).getSites().get(0).getLeftFlank());
 		assertEquals("TCACGATTTTCAGGACATTCGTGA",result.getMotifs().get(0).getSites().get(0).getSequence());
 		assertEquals("CCGCGTTGGC",result.getMotifs().get(0).getSites().get(0).getRightFlank());
+
 	}
 	
 	

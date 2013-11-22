@@ -107,7 +107,6 @@ public class JsonClientCaller {
 		HttpURLConnection conn = setupCall(authRequired);
 		OutputStream os = conn.getOutputStream();
 		JsonGenerator g = mapper.getFactory().createGenerator(os, JsonEncoding.UTF8);
-
 		g.writeStartObject();
 		g.writeObjectField("params", arg);
 		g.writeStringField("method", method);
@@ -117,6 +116,16 @@ public class JsonClientCaller {
 		g.writeEndObject();
 		g.close();
 
+/*		JsonGenerator g2 = mapper.getFactory().createGenerator(System.out, JsonEncoding.UTF8);
+		g2.writeStartObject();
+		g2.writeObjectField("params", arg);
+		g2.writeStringField("method", method);
+		g2.writeStringField("version", "1.1");
+		g2.writeStringField("id", id);
+		g2.writeEndObject();
+		g2.close();
+*/		
+		
 		int code = conn.getResponseCode();
 		conn.getResponseMessage();
 

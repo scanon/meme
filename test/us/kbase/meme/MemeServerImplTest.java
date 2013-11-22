@@ -22,6 +22,7 @@ import us.kbase.generaltypes.Sequence;
 import us.kbase.userandjobstate.InitProgress;
 import us.kbase.userandjobstate.Results;
 import us.kbase.userandjobstate.UserAndJobStateClient;
+import us.kbase.util.WSUtil;
 
 //import us.kbase.workspace.CompileTypespecParams;
 //import us.kbase.workspace.ListModulesParams;
@@ -37,7 +38,9 @@ import us.kbase.workspaceservice.GetObjectParams;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 //import java.util.Map;
 import java.io.IOException;
 import java.io.FileReader;
@@ -55,9 +58,9 @@ public class MemeServerImplTest {
 	private final String USER_NAME = "aktest";
 	private final String PASSWORD = "1475rokegi";
 	private final String JOB_SERVICE = "http://140.221.84.180:7083";
-	private final String JOB_ACCOUNT = "memejobs";
-	private final String JOB_PASSWORD = "1475_rokegi";
-	private String jobId = null;
+	//private final String JOB_ACCOUNT = "memejobs";
+	//private final String JOB_PASSWORD = "1475_rokegi";
+	private String jobId = "528ec2eae4b0702f7611d8f7";
 	
 	@Before
 	public void setUp() throws Exception {
@@ -361,10 +364,10 @@ public class MemeServerImplTest {
 		params.setPal(1L);
 		params.setRevcomp(0L);
 		
-		MemeRunResult result = MemeServerImpl.findMotifsWithMeme(testSequenceSet, params);
+		MemeRunResult result = MemeServerImpl.findMotifsWithMeme(testSequenceSet, params, null, null);
 
 		
-		displayCollection(result);
+		//displayCollection(result);
 
 		assertEquals(Long.valueOf("0"),result.getSeed());
 		assertEquals(Long.valueOf("1"),result.getSeqfrac());
@@ -406,7 +409,78 @@ public class MemeServerImplTest {
 		assertEquals("TCACGATTTTCAGGACATTCGTGA",result.getMotifs().get(0).getSites().get(0).getSequence());
 		assertEquals("CCGCGTTGGC",result.getMotifs().get(0).getSites().get(0).getRightFlank());
 	}
-	
+
+	@Test
+	public void testSearchMotifsFromSequencesWithMemeJob() throws Exception {
+		AuthToken token = AuthService.login(USER_NAME, new String(PASSWORD)).getToken();
+		String jobId = MemeServerImpl.jobClient(token.toString()).createJob();
+		System.out.println(jobId);
+		assertNotNull(jobId);
+
+		MemeRunParameters params = new MemeRunParameters();
+		params.setMod("oops");
+		params.setNmotifs(2L);
+		params.setMinw(14L);
+		params.setMaxw(24L);
+		params.setNsites(0L);
+		params.setMinsites(0L);
+		params.setMaxsites(0L);
+		params.setPal(1L);
+		params.setRevcomp(0L);
+		
+		String wsId = "AKtest";
+		
+		String resultId = MemeServerImpl.findMotifsWithMemeJobFromWs (wsId, testSequenceSet.getSequenceSetId(), params, jobId, token.toString());
+		
+		GetObjectParams objectParams = new GetObjectParams().withType("SequenceSet").withId(resultId).withWorkspace(wsId).withAuth(token.toString());
+		GetObjectOutput output = MemeServerImpl.wsClient(token.toString()).getObject(objectParams);
+		MemeRunResult result = UObject.transformObjectToObject(output.getData(), MemeRunResult.class);
+
+
+		
+		//displayCollection(result);
+
+		assertEquals(Long.valueOf("0"),result.getSeed());
+		assertEquals(Long.valueOf("1"),result.getSeqfrac());
+		assertEquals("+",result.getStrands());
+		assertEquals(Long.valueOf("1500"),result.getN());
+		assertEquals(Long.valueOf("6"),result.getNCap());
+		assertEquals(Double.valueOf("0.00001"),result.getDistance());
+		assertEquals("dirichlet",result.getPrior());
+		assertEquals(Double.valueOf("0.01"),result.getB());
+		assertEquals(Long.valueOf("50"),result.getMaxiter());
+		assertEquals("yes",result.getSubstring());
+		assertEquals("no",result.getBranching());
+		assertEquals("no",result.getWbranch());
+		assertEquals(Long.valueOf("1"),result.getProb());
+		assertEquals("uni",result.getSpmap());
+		assertEquals("0.5",result.getSpfuzz());
+		assertEquals(Long.valueOf("6"),result.getMinsites());
+		assertEquals(Long.valueOf("6"),result.getMaxsites());
+		assertEquals(Double.valueOf("0.8"),result.getWnsites());
+		assertEquals(Long.valueOf("11"),result.getWg());
+		assertEquals(Long.valueOf("1"),result.getWs());
+		assertEquals("yes",result.getEndgaps());
+		assertEquals(Long.valueOf("14"),result.getMinw());
+		assertEquals(Long.valueOf("24"),result.getMaxw());
+		assertEquals(Double.valueOf("0.00"),result.getMinic());
+		assertEquals("E-value of product of p-values",result.getObjectFunction());
+		assertEquals("oops",result.getMod());
+		assertEquals(Long.valueOf("2"),result.getNmotifs());
+		assertEquals("inf",result.getEvt());
+		assertEquals("MOTIF  1	width =   24   sites =   6   llr = 90   E-value = 2.3e+003",result.getMotifs().get(0).getDescription());
+		assertEquals(Long.valueOf("24"),result.getMotifs().get(0).getWidth());
+		assertEquals(6,result.getMotifs().get(0).getSites().size());
+		assertEquals(Double.valueOf("90"),result.getMotifs().get(0).getLlr());
+		assertEquals(Double.valueOf("2300"),result.getMotifs().get(0).getEvalue());
+		assertEquals("393587",result.getMotifs().get(0).getSites().get(0).getSourceSequenceId());
+		assertEquals(Long.valueOf("134"),result.getMotifs().get(0).getSites().get(0).getStart());
+		assertEquals(Double.valueOf("0.000000000152"),result.getMotifs().get(0).getSites().get(0).getPvalue());
+		assertEquals("ACTGGTTTTG",result.getMotifs().get(0).getSites().get(0).getLeftFlank());
+		assertEquals("TCACGATTTTCAGGACATTCGTGA",result.getMotifs().get(0).getSites().get(0).getSequence());
+		assertEquals("CCGCGTTGGC",result.getMotifs().get(0).getSites().get(0).getRightFlank());
+	}
+
 	@Test
 	public void testGenerateTomtomCommandLine() {
 		String result = MemeServerImpl.generateTomtomCommandLine("1.meme", "2.meme", 0.5, 1L, "allr", 1L, 15L, "");
@@ -467,7 +541,7 @@ public class MemeServerImplTest {
 		params.setPal(1L);
 		params.setRevcomp(0L);
 		
-		memeRunResult = MemeServerImpl.findMotifsWithMeme(testSequenceSet, params);
+		memeRunResult = MemeServerImpl.findMotifsWithMeme(testSequenceSet, params, null, null);
 		MemePSPMCollection memePspmCollection = MemeServerImpl.getPspmCollectionFromMemeResult(memeRunResult);
 
 		TomtomRunParameters paramsTomtom = new TomtomRunParameters();
@@ -477,7 +551,7 @@ public class MemeServerImplTest {
 		paramsTomtom.setInternal(0L);
 		paramsTomtom.setMinOverlap(0L);
 
-		TomtomRunResult result = MemeServerImpl.compareMotifsWithTomtomByCollection(memePspmCollection, memePspmCollection, "", paramsTomtom);
+		TomtomRunResult result = MemeServerImpl.compareMotifsWithTomtomByCollection(memePspmCollection, memePspmCollection, "", paramsTomtom, null, null);
 		
 		assertNotNull(result.getHits().get(0).getTargetPspmId());
 		assertEquals(result.getHits().get(0).getTargetPspmId(),result.getHits().get(0).getQueryPspmId());
@@ -491,6 +565,40 @@ public class MemeServerImplTest {
 		assertEquals("+",result.getHits().get(0).getStrand());
 	}
 	
+	@Test
+	public void testCompareMotifsWithTomtomJobByCollectionFromWs() throws Exception {
+		
+		AuthToken token = AuthService.login(USER_NAME, new String(PASSWORD)).getToken();
+
+		TomtomRunParameters paramsTomtom = new TomtomRunParameters();
+		paramsTomtom.setDist("pearson");
+		paramsTomtom.setThresh(0.00);
+		paramsTomtom.setEvalue(0L);
+		paramsTomtom.setInternal(0L);
+		paramsTomtom.setMinOverlap(0L);
+		
+		String jobId = MemeServerImpl.jobClient(token.toString()).createJob();
+		System.out.println(jobId);
+		assertNotNull(jobId);
+		
+		String resultId = MemeServerImpl.compareMotifsWithTomtomJobByCollectionFromWs("AKtest", "kb|memepspmcollection.2", "kb|memepspmcollection.2", "", paramsTomtom, jobId, token.toString());
+
+		GetObjectParams params = new GetObjectParams().withType("TomtomRunResult").withId(resultId).withWorkspace("AKtest").withAuth(token.toString());   
+		GetObjectOutput output = WSUtil.wsClient().getObject(params);
+		TomtomRunResult result = UObject.transformObjectToObject(output.getData(), TomtomRunResult.class);
+		
+		assertNotNull(result.getHits().get(0).getTargetPspmId());
+		assertEquals(result.getHits().get(0).getTargetPspmId(),result.getHits().get(0).getQueryPspmId());
+		assertEquals(Long.valueOf("0"),result.getHits().get(0).getOptimalOffset());
+		assertEquals(Double.valueOf("3.89353E-37"),result.getHits().get(0).getPvalue());
+		assertEquals(Double.valueOf("7.78706e-37"),result.getHits().get(0).getEvalue());
+		assertEquals(Double.valueOf("7.78706e-37"),result.getHits().get(0).getQvalue());
+		assertEquals(Long.valueOf("24"),result.getHits().get(0).getOverlap());
+		assertEquals("TCACGCTCGTCATGACGAGCGTGA",result.getHits().get(0).getQueryConsensus());
+		assertEquals("TCACGCTCGTCATGACGAGCGTGA",result.getHits().get(0).getTargetConsensus());
+		assertEquals("+",result.getHits().get(0).getStrand());
+	}
+
 	@Test
 	public void testRunMast() throws IOException {
 		String testFileName = "test/testoutput.txt";
@@ -550,7 +658,7 @@ public class MemeServerImplTest {
 
 
 	@Test
-	public void testfindSitesWithMastByCollection() throws Exception {
+	public void testFindSitesWithMastByCollection() throws Exception {
 		MemeRunParameters params = new MemeRunParameters();
 		params.setMod("oops");
 		params.setNmotifs(2L);
@@ -562,10 +670,10 @@ public class MemeServerImplTest {
 		params.setPal(1L);
 		params.setRevcomp(0L);
 		
-		memeRunResult = MemeServerImpl.findMotifsWithMeme(testSequenceSet, params);
+		memeRunResult = MemeServerImpl.findMotifsWithMeme(testSequenceSet, params, null, null);
 		MemePSPMCollection memePspmCollection = MemeServerImpl.getPspmCollectionFromMemeResult(memeRunResult);
 
-		MastRunResult result = MemeServerImpl.findSitesWithMastByCollection(memePspmCollection, testSequenceSet, "", 0.0005);
+		MastRunResult result = MemeServerImpl.findSitesWithMastByCollection(memePspmCollection, testSequenceSet, "", 0.0005, null, null);
 
 		assertNotNull(result);
 		assertFalse(result.getHits().size() == 0);
@@ -576,6 +684,50 @@ public class MemeServerImplTest {
 		assertEquals(Long.valueOf("78"), result.getHits().get(0).getHitEnd());
 		assertEquals(Double.valueOf("1416.26"), result.getHits().get(0).getScore());
 		assertEquals(Double.valueOf("0.0000101"), result.getHits().get(0).getHitPvalue());
+	}
+
+	
+	@Test
+	public void testFindSitesWithMastJobByCollectionFromWs() throws Exception {
+
+		
+		AuthToken token = AuthService.login(USER_NAME, new String(PASSWORD)).getToken();
+		String jobId = MemeServerImpl.jobClient(token.toString()).createJob();
+		
+		String resultId = MemeServerImpl.findSitesWithMastJobByCollectionFromWs("AKtest", "kb|memepspmcollection.2", testSequenceSet.getSequenceSetId(), "1", 0.0005, jobId, token.toString());
+		
+		GetObjectParams params = new GetObjectParams().withType("MastRunResult").withId(resultId).withWorkspace("AKtest").withAsJSON(1L).withAuth(token.toString());
+		GetObjectOutput output = MemeServerImpl.wsClient(token.toString()).getObject(params);
+		MastRunResult result = UObject.transformObjectToObject(output.getData(), MastRunResult.class);
+		
+
+		assertNotNull(result);
+		assertFalse(result.getHits().size() == 0);
+		assertEquals("209110", result.getHits().get(0).getSequenceId());
+		assertEquals("+", result.getHits().get(0).getStrand());
+		assertEquals("2", result.getHits().get(0).getPspmId());
+		assertEquals(Long.valueOf("65"), result.getHits().get(0).getHitStart());
+		assertEquals(Long.valueOf("78"), result.getHits().get(0).getHitEnd());
+		assertEquals(Double.valueOf("1416.26"), result.getHits().get(0).getScore());
+		assertEquals(Double.valueOf("0.0000101"), result.getHits().get(0).getHitPvalue());
+	}
+
+	@Test
+	public void testGetPspmCollectionFromMemeJobResultFromWs() throws Exception{
+
+		AuthToken token = AuthService.login(USER_NAME, new String(PASSWORD)).getToken();
+		String jobId = MemeServerImpl.jobClient(token.toString()).createJob();
+		String inputId = "kb|memerunresult.202";
+		String resultId = MemeServerImpl.getPspmCollectionFromMemeJobResultFromWs("AKtest", inputId, jobId, token.toString());
+				
+		GetObjectParams objectParams = new GetObjectParams().withType("MemePSPMCollection").withId(resultId).withWorkspace("AKtest").withAuth(token.toString());   
+		GetObjectOutput output = WSUtil.wsClient().getObject(objectParams);
+		MemePSPMCollection result = UObject.transformObjectToObject(output.getData(), MemePSPMCollection.class);
+
+		assertNotNull(result);
+		assertFalse(result.getPspms().size() == 0);
+		assertEquals("ACGT", result.getAlphabet());
+
 	}
 	
 	@Test
@@ -752,7 +904,7 @@ public class MemeServerImplTest {
 			e1.printStackTrace();
 		}
 		try {
-			client = new UserAndJobStateClient(jobServiceUrl, JOB_ACCOUNT, JOB_PASSWORD);
+			client = new UserAndJobStateClient(jobServiceUrl, USER_NAME, PASSWORD);
 		} catch (UnauthorizedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -775,28 +927,10 @@ public class MemeServerImplTest {
 	}
 
 	@Test
-	public void testStartJob() throws AuthException, IOException {
-		URL jobServiceUrl = null;
-		UserAndJobStateClient client = null;
-		AuthToken token = AuthService.login(JOB_ACCOUNT, new String(JOB_PASSWORD)).getToken();
+	public void testStartJob() throws AuthException, IOException, JsonClientException {
+		//AuthToken token = AuthService.login(JOB_ACCOUNT, new String(JOB_PASSWORD)).getToken();
+		AuthToken token = AuthService.login(USER_NAME, new String(PASSWORD)).getToken();
 		
-		try {
-			jobServiceUrl = new URL(JOB_SERVICE);
-		} catch (MalformedURLException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		try {
-			client = new UserAndJobStateClient(jobServiceUrl, token);
-		} catch (UnauthorizedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		client.setAuthAllowedForHttp(true);
-		try {
 			String status = "Starting...";
 			String desc = "Test job";
 
@@ -805,25 +939,19 @@ public class MemeServerImplTest {
 			initProgress.setMax(2L);
 
 			Date date = new Date();
-			date.setTime(date.getTime()+10000L);
+			date.setTime(date.getTime()+100000L);
 			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
-			client.startJob(jobId, token.toString(), status, desc, initProgress, dateFormat.format(date));
+			MemeServerImpl.jobClient(token.toString()).startJob(jobId, token.toString(), status, desc, initProgress, dateFormat.format(date));
 			System.out.println(jobId);
 			assertNotNull(jobId);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (JsonClientException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 	}
 
 	@Test
 	public void testUpdateJob() throws AuthException, IOException {
 		URL jobServiceUrl = null;
 		UserAndJobStateClient client = null;
-		AuthToken token = AuthService.login(JOB_ACCOUNT, new String(JOB_PASSWORD)).getToken();
+		//AuthToken token = AuthService.login(JOB_ACCOUNT, new String(JOB_PASSWORD)).getToken();
+		AuthToken token = AuthService.login(USER_NAME, new String(PASSWORD)).getToken();
 		
 		try {
 			jobServiceUrl = new URL(JOB_SERVICE);
@@ -862,7 +990,8 @@ public class MemeServerImplTest {
 	public void testUpdateJobProgress() throws AuthException, IOException {
 		URL jobServiceUrl = null;
 		UserAndJobStateClient client = null;
-		AuthToken token = AuthService.login(JOB_ACCOUNT, new String(JOB_PASSWORD)).getToken();
+		//AuthToken token = AuthService.login(JOB_ACCOUNT, new String(JOB_PASSWORD)).getToken();
+		AuthToken token = AuthService.login(USER_NAME, new String(PASSWORD)).getToken();
 		
 		try {
 			jobServiceUrl = new URL(JOB_SERVICE);
@@ -901,7 +1030,8 @@ public class MemeServerImplTest {
 	public void testGetJobInfo() throws AuthException, IOException {
 		URL jobServiceUrl = null;
 		UserAndJobStateClient client = null;
-		AuthToken token = AuthService.login(JOB_ACCOUNT, new String(JOB_PASSWORD)).getToken();
+		//AuthToken token = AuthService.login(JOB_ACCOUNT, new String(JOB_PASSWORD)).getToken();
+		AuthToken token = AuthService.login(USER_NAME, new String(PASSWORD)).getToken();
 		
 		try {
 			jobServiceUrl = new URL(JOB_SERVICE);
@@ -949,7 +1079,8 @@ public class MemeServerImplTest {
 	public void testGetJobDescription() throws AuthException, IOException {
 		URL jobServiceUrl = null;
 		UserAndJobStateClient client = null;
-		AuthToken token = AuthService.login(JOB_ACCOUNT, new String(JOB_PASSWORD)).getToken();
+		//AuthToken token = AuthService.login(JOB_ACCOUNT, new String(JOB_PASSWORD)).getToken();
+		AuthToken token = AuthService.login(USER_NAME, new String(PASSWORD)).getToken();
 		
 		try {
 			jobServiceUrl = new URL(JOB_SERVICE);
@@ -988,7 +1119,8 @@ public class MemeServerImplTest {
 	public void testGetJobStatus() throws AuthException, IOException {
 		URL jobServiceUrl = null;
 		UserAndJobStateClient client = null;
-		AuthToken token = AuthService.login(JOB_ACCOUNT, new String(JOB_PASSWORD)).getToken();
+		//AuthToken token = AuthService.login(JOB_ACCOUNT, new String(JOB_PASSWORD)).getToken();
+		AuthToken token = AuthService.login(USER_NAME, new String(PASSWORD)).getToken();
 		
 		try {
 			jobServiceUrl = new URL(JOB_SERVICE);
@@ -1010,7 +1142,7 @@ public class MemeServerImplTest {
 			Tuple7<String,String,String,Long,String,Long,Long> t = client.getJobStatus(jobId); 
 			System.out.println(t.getE1());
 			System.out.println(t.getE2());
-			System.out.println(t.getE3());
+			System.out.println(t.getE3());//Status
 			System.out.println(t.getE4());
 			System.out.println(t.getE5());
 			System.out.println(t.getE6());
@@ -1029,7 +1161,8 @@ public class MemeServerImplTest {
 	public void testCompleteJob() throws AuthException, IOException {
 		URL jobServiceUrl = null;
 		UserAndJobStateClient client = null;
-		AuthToken token = AuthService.login(JOB_ACCOUNT, new String(JOB_PASSWORD)).getToken();
+		//AuthToken token = AuthService.login(JOB_ACCOUNT, new String(JOB_PASSWORD)).getToken();
+		AuthToken token = AuthService.login(USER_NAME, new String(PASSWORD)).getToken();
 		
 		try {
 			jobServiceUrl = new URL(JOB_SERVICE);
@@ -1074,7 +1207,8 @@ public class MemeServerImplTest {
 	public void testGetResults() throws AuthException, IOException {
 		URL jobServiceUrl = null;
 		UserAndJobStateClient client = null;
-		AuthToken token = AuthService.login(JOB_ACCOUNT, new String(JOB_PASSWORD)).getToken();
+		//AuthToken token = AuthService.login(JOB_ACCOUNT, new String(JOB_PASSWORD)).getToken();
+		AuthToken token = AuthService.login(USER_NAME, new String(PASSWORD)).getToken();
 		
 		try {
 			jobServiceUrl = new URL(JOB_SERVICE);
@@ -1115,40 +1249,45 @@ public class MemeServerImplTest {
 	}
 
 	@Test
-	public void testDeleteJob() throws AuthException, IOException {
-		URL jobServiceUrl = null;
-		UserAndJobStateClient client = null;
-		AuthToken token = AuthService.login(JOB_ACCOUNT, new String(JOB_PASSWORD)).getToken();
+	public void testDeleteJob() throws AuthException, IOException, UnauthorizedException, JsonClientException {
+		String jobId = "528ed46ae4b0702f7611d8fb";
+
+//		AuthToken token = AuthService.login(JOB_ACCOUNT, new String(JOB_PASSWORD)).getToken();
+		AuthToken token = AuthService.login(USER_NAME, new String(PASSWORD)).getToken();
 		
-		try {
-			jobServiceUrl = new URL(JOB_SERVICE);
-		} catch (MalformedURLException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}
-		try {
-			client = new UserAndJobStateClient(jobServiceUrl, token);
-		} catch (UnauthorizedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		client.setAuthAllowedForHttp(true);
-		try {
-			client.forceDeleteJob(token.toString(), jobId); 
-			assertNotNull(jobId);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (JsonClientException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+			MemeServerImpl.jobClient(token.toString()).forceDeleteJob(token.toString(), jobId); 
 	}
 
-/*	@Test
+	@Test
+	public void testJsonCall() throws IOException, JsonClientException, AuthException {
+		
+		AuthToken token = AuthService.login(USER_NAME, new String(PASSWORD)).getToken();
+        Map<String, String> jsonArgs = new HashMap<String, String>();
+        jsonArgs.put("target", "cloud");
+        jsonArgs.put("application", "meme");
+        jsonArgs.put("method", "find_motifs_with_meme_job_from_ws");
+        jsonArgs.put("job_id", "12345");
+        jsonArgs.put("workspace", "AKtest");
+        jsonArgs.put("seq_id", "KBase.SequenceSet.12345");
+        jsonArgs.put("mod", "oops");
+        jsonArgs.put("nmotifs", "2");
+        jsonArgs.put("minw", "14");
+        jsonArgs.put("maxw", "24");
+        jsonArgs.put("pal", "1");
+        jsonArgs.put("revcomp", "0");
+        jsonArgs.put("nsites", "0");
+        jsonArgs.put("minsites", "0");
+        jsonArgs.put("maxsites", "0");
+        jsonArgs.put("token", token.toString());
+
+        MemeServerCaller.setAuthAllowedForHttp(true);
+		String result = MemeServerCaller.jsonCall(jsonArgs, token);
+		System.out.println(result);
+
+	}
+	
+
+	/*	@Test
 	public void testCreateWS() throws AuthException, IOException, JsonClientException {
 		WSUtil.createWorkspace("AKtest2", "AK test workspace");
 	}
