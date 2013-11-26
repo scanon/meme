@@ -1250,7 +1250,7 @@ public class MemeServerImplTest {
 
 	@Test
 	public void testDeleteJob() throws AuthException, IOException, UnauthorizedException, JsonClientException {
-		String jobId = "528ed46ae4b0702f7611d8fb";
+		String jobId = "52904a4fe4b0702f7611d90f";
 
 //		AuthToken token = AuthService.login(JOB_ACCOUNT, new String(JOB_PASSWORD)).getToken();
 		AuthToken token = AuthService.login(USER_NAME, new String(PASSWORD)).getToken();
@@ -1286,7 +1286,13 @@ public class MemeServerImplTest {
 
 	}
 	
-
+	@Test
+	public final void testGetKbaseId() throws Exception {
+		String id = MemeServerImpl.getKbaseId("MemeMotif");
+		System.out.println(id);
+		assertNotNull(id);
+		
+	}
 	/*	@Test
 	public void testCreateWS() throws AuthException, IOException, JsonClientException {
 		WSUtil.createWorkspace("AKtest2", "AK test workspace");

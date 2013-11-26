@@ -437,19 +437,19 @@ public class MemeServerTug {
 		    		if (serverMethod.equalsIgnoreCase("find_motifs_with_meme_job_from_ws")){
 		    			returnVal = runMeme(line);
 		    		}
-		    		else if (serverMethod.equalsIgnoreCase("compare_motifs_with_tomtom_from_ws")){
+		    		else if (serverMethod.equalsIgnoreCase("compare_motifs_with_tomtom_job_from_ws")){
 		    			returnVal = runTomtomWithMatrix(line);
 		    		}
-		    		else if (serverMethod.equalsIgnoreCase("compare_motifs_with_tomtom_by_collection_from_ws")){
+		    		else if (serverMethod.equalsIgnoreCase("compare_motifs_with_tomtom_job_by_collection_from_ws")){
 		    			returnVal = runTomtomWithCollection(line);
 		    		}
-		    		else if (serverMethod.equalsIgnoreCase("find_sites_with_mast_from_ws")){
+		    		else if (serverMethod.equalsIgnoreCase("find_sites_with_mast_job_from_ws")){
 		    			returnVal = runMastWithMatrix(line);
 		    		}
-		    		else if (serverMethod.equalsIgnoreCase("find_sites_with_mast_by_collection_from_ws")){
+		    		else if (serverMethod.equalsIgnoreCase("find_sites_with_mast_job_by_collection_from_ws")){
 		    			returnVal = runMastWithCollection(line);
 		    		}
-		    		else if (serverMethod.equalsIgnoreCase("get_pspm_collection_from_meme_result_from_ws")){
+		    		else if (serverMethod.equalsIgnoreCase("get_pspm_collection_from_meme_result_job_from_ws")){
 		    			returnVal = generateCollection(line);
 		    		}
 		    		else {

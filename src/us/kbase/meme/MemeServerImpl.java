@@ -1148,19 +1148,19 @@ public class MemeServerImpl {
 		IDServerAPIClient idClient = new IDServerAPIClient(idServerUrl);
 		
 		if (entityType.equals("MemeRunResult")) {
-			returnVal = "kb|memerunresult." + idClient.allocateIdRange("memerunresult", 0L).toString();
+			returnVal = "kb|memerunresult." + idClient.allocateIdRange("memerunresult", 1L).toString();
 		} else if (entityType.equals("MemeMotif")) {
-			returnVal = "kb|mememotif." + idClient.allocateIdRange("mememotif", 0L).toString();
+			returnVal = "kb|mememotif." + idClient.allocateIdRange("mememotif", 1L).toString();
 		} else if (entityType.equals("MemeSite")) {
-			returnVal = "kb|memesite." + idClient.allocateIdRange("memesite", 0L).toString();
+			returnVal = "kb|memesite." + idClient.allocateIdRange("memesite", 1L).toString();
 		} else if (entityType.equals("MemePSPMCollection")) {
-			returnVal = "kb|memepspmcollection." + idClient.allocateIdRange("memepspmcollection", 0L).toString();
+			returnVal = "kb|memepspmcollection." + idClient.allocateIdRange("memepspmcollection", 1L).toString();
 		} else if (entityType.equals("MemePSPM")) {
-			returnVal = "kb|memepspm." + idClient.allocateIdRange("memepspm", 0L).toString();
+			returnVal = "kb|memepspm." + idClient.allocateIdRange("memepspm", 1L).toString();
 		} else if (entityType.equals("TomtomRunResult")) {
-			returnVal = "kb|tomtomrunresult." + idClient.allocateIdRange("tomtomrunresult", 0L).toString();
+			returnVal = "kb|tomtomrunresult." + idClient.allocateIdRange("tomtomrunresult", 1L).toString();
 		} else if (entityType.equals("MastRunResult")) {
-			returnVal = "kb|mastrunresult." + idClient.allocateIdRange("mastrunresult", 0L).toString();
+			returnVal = "kb|mastrunresult." + idClient.allocateIdRange("mastrunresult", 1L).toString();
 		} else {
 		}
 		return returnVal;
