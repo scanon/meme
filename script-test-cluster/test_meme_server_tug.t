@@ -50,31 +50,31 @@ print $test_command."\n\n";
 system ($test_command);
 
 #3 get_pspm_collection_from_meme_result_from_ws
-my $job = $job_client->create_job();
+$job = $job_client->create_job();
 $test_command = $command_line." --method get_pspm_collection_from_meme_result_job_from_ws --job $job --ws $ws --query $meme_run_result_id --token \"$auth_token\"";
 print $test_command."\n\n";
 system ($test_command);
 
 #4 compare_motifs_with_tomtom_by_collection_from_ws
-my $job = $job_client->create_job();
+$job = $job_client->create_job();
 $test_command = $command_line." --method compare_motifs_with_tomtom_job_by_collection_from_ws --job $job --ws $ws --query $meme_pspm_collection_id --target $meme_pspm_collection_id --thresh 0.000001 --evalue 1 --dist pearson --min_overlap 12 --token \"$auth_token\"";
 print $test_command."\n\n";
 system ($test_command);
 
 #5 compare_motifs_with_tomtom_from_ws
-my $job = $job_client->create_job();
+$job = $job_client->create_job();
 $test_command = $command_line." --method compare_motifs_with_tomtom_job_from_ws --job $job --ws $ws --query $meme_pspm_id --target $meme_pspm_collection_id --thresh 0.000001 --evalue 1 --dist pearson --min_overlap 12 --token \"$auth_token\"";
 print $test_command."\n\n";
 system ($test_command);
 
 #6 find_sites_with_mast_from_ws
-my $job = $job_client->create_job();
+$job = $job_client->create_job();
 $test_command = $command_line." --method find_sites_with_mast_job_from_ws --job $job --ws $ws --query $meme_pspm_id --target $sequence_set_id --thresh 0.001 --token \"$auth_token\"";
 print $test_command."\n\n";
 system ($test_command);
 
 #7 find_sites_with_mast_by_collection_from_ws
-my $job = $job_client->create_job();
+$job = $job_client->create_job();
 $test_command = $command_line." --method find_sites_with_mast_job_by_collection_from_ws --job $job --ws $ws --query $meme_pspm_collection_id --target $sequence_set_id --thresh 0.001 --token \"$auth_token\"";
 print $test_command."\n\n";
 system ($test_command);
