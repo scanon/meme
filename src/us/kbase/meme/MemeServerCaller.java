@@ -36,7 +36,7 @@ public class MemeServerCaller {
 	private static Integer connectionReadTimeOut = 30 * 60 * 1000;
 	private static boolean isAuthAllowedForHttp = false;
 	private static ObjectMapper mapper = new ObjectMapper().registerModule(new JacksonTupleModule());
-	private static boolean deployCluster = true;
+	private static boolean deployCluster = false;
 
 	
 	protected static void setAuthAllowedForHttp(boolean AllowedForHttp) {

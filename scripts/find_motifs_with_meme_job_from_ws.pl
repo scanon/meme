@@ -4,11 +4,11 @@ use Carp;
 
 =head1 NAME
 
-    find_motifs_with_meme_from_ws - search motifs in a set of sequences stored in workspace using MEME
+    find_motifs_with_meme_job_from_ws - search motifs in a set of sequences stored in workspace using MEME
 
 =head1 SYNOPSIS
 
-    find_motifs_with_meme_from_ws [--url=http://140.221.84.195:7049/ --ws=<workspace ID> --input=<sequence set ID> --mod=<oops|zoops|anr> --nmotifs=<nmotifs> --minw=<minw> --maxw=<maxw> --nsites=<nsites> --minsites=<minsites> --maxsites=<maxsites> --pal --revcomp --user=<username> --pw=<password>]
+    find_motifs_with_meme_job_from_ws [--url=http://140.221.84.195:7049/ --ws=<workspace ID> --input=<sequence set ID> --mod=<oops|zoops|anr> --nmotifs=<nmotifs> --minw=<minw> --maxw=<maxw> --nsites=<nsites> --minsites=<minsites> --maxsites=<maxsites> --pal --revcomp --user=<username> --pw=<password>]
 
 =head1 DESCRIPTION
 
@@ -16,7 +16,7 @@ use Carp;
 
 =head2 Documentation for underlying call
 
-    Returns KBase ID of MemeRunResult object stored in workspace.
+    Returns Job object ID that keeps ID of MemeRunResult object stored in workspace.
 
 =head1 OPTIONS
 
@@ -74,9 +74,9 @@ use Carp;
 
 =head1 EXAMPLE
 
-    find_motifs_with_meme_from_ws --url=http://140.221.84.195:7049/ --ws=AKtest --input=KBase.SequenceSet.12345 --mod=oops --nmotifs=2 --minw=14 --maxw=28
-    find_motifs_with_meme_from_ws --help
-    find_motifs_with_meme_from_ws --version
+    find_motifs_with_meme_job_from_ws --url=http://140.221.84.195:7049/ --ws=AKtest --input=KBase.SequenceSet.12345 --mod=oops --nmotifs=2 --minw=14 --maxw=28
+    find_motifs_with_meme_job_from_ws --help
+    find_motifs_with_meme_job_from_ws --version
 
 =head1 VERSION
 
@@ -89,7 +89,7 @@ use Bio::KBase::meme::Client;
 use Bio::KBase::AuthToken;
 use Bio::KBase::AuthUser;
 
-my $usage = "Usage: find_motifs_with_meme_from_ws [--url=http://140.221.84.195:7049/ --ws=<workspace ID> --input=<sequence set ID> --mod=<oops|zoops|anr> --nmotifs=<nmotifs> --minw=<minw> --maxw=<maxw> --nsites=<nsites> --minsites=<minsites> --maxsites=<maxsites> --pal --revcomp --user=<username> --pw=<password>]\n";
+my $usage = "Usage: find_motifs_with_meme_job_from_ws [--url=http://140.221.84.195:7049/ --ws=<workspace ID> --input=<sequence set ID> --mod=<oops|zoops|anr> --nmotifs=<nmotifs> --minw=<minw> --maxw=<maxw> --nsites=<nsites> --minsites=<minsites> --maxsites=<maxsites> --pal --revcomp --user=<username> --pw=<password>]\n";
 
 my $url        = "http://140.221.84.195:7049/";
 my $input      = "";
@@ -128,19 +128,19 @@ GetOptions("help"       => \$help,
 
 if($help){
 print "NAME\n";
-print "find_motifs_with_meme_from_ws - This command reconstructs motifs with MEME in a set of sequences stored in workspace.\n";
+print "find_motifs_with_meme_job_from_ws - This command reconstructs motifs with MEME in a set of sequences stored in workspace.\n";
 print "\n";
 print "\n";
 print "VERSION\n";
 print "1.0\n";
 print "\n";
 print "SYNOPSIS\n";
-print "find_motifs_with_meme_from_ws [--url=http://140.221.84.195:7049/ --ws=<workspace ID> --input=<sequence set ID> --mod=<oops|zoops|anr> --nmotifs=<nmotifs> --minw=<minw> --maxw=<maxw> --nsites=<nsites> --minsites=<minsites> --maxsites=<maxsites> --pal --revcomp --user=<username> --pw=<password>]\n";
+print "find_motifs_with_meme_job_from_ws [--url=http://140.221.84.195:7049/ --ws=<workspace ID> --input=<sequence set ID> --mod=<oops|zoops|anr> --nmotifs=<nmotifs> --minw=<minw> --maxw=<maxw> --nsites=<nsites> --minsites=<minsites> --maxsites=<maxsites> --pal --revcomp --user=<username> --pw=<password>]\n";
 print "\n";
 print "DESCRIPTION\n";
 print "INPUT:            This command requires the URL of the service, ID of a sequence set and parameters.\n";
 print "\n";
-print "OUTPUT:           This command returns KBase ID of MEME run result.\n";
+print "OUTPUT:           This command returns Job object ID.\n";
 print "\n";
 print "PARAMETERS:\n";
 print "--url             The URL of the service, --url=http://140.221.84.195:7049/, required.\n";
@@ -177,9 +177,9 @@ print "--version         Print version information. \n";
 print "\n";
 print " \n";
 print "EXAMPLES \n";
-print "find_motifs_with_meme_from_ws --url=http://140.221.84.195:7049/ --ws=AKtest --input=KBase.SequenceSet.012345 --mod=oops --nmotifs=2 --minw=14 --maxw=28 \n";
+print "find_motifs_with_meme_job_from_ws --url=http://140.221.84.195:7049/ --ws=AKtest --input=KBase.SequenceSet.012345 --mod=oops --nmotifs=2 --minw=14 --maxw=28 \n";
 print "\n";
-print "This command will return a collection of two motifs with length between 14 and 28 bp.\n";
+print "This command will return a Job object ID.\n";
 print "\n";
 print "\n";
 print "Report bugs to aekazakov\@lbl.gov\n";
@@ -188,7 +188,7 @@ exit(0);
 
 if($version)
 {
-    print "find_motifs_with_meme_from_ws 1.0\n";
+    print "find_motifs_with_meme_job_from_ws 1.0\n";
     print "Copyright (C) 2013 DOE Systems Biology Knowledgebase\n";
     print "License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>.\n";
     print "This is free software: you are free to change and redistribute it.\n";
@@ -225,7 +225,7 @@ my $meme_run_parameters = {
 };
 
 my $obj = {
-	method => "MEME.find_motifs_with_meme_from_ws",
+	method => "MEME.find_motifs_with_meme_job_from_ws",
 	params => [$ws, $input, $meme_run_parameters],
 };
 
@@ -248,5 +248,4 @@ else {
 	exit(1);
 }
 exit(1);
-
 

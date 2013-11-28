@@ -4,19 +4,21 @@ use Carp;
 
 =head1 NAME
 
-get_pspm_collection_from_meme_result_from_ws - converts MEME run result into collection of position-specific probability matrices
+find_sites_with_mast_job_from_ws - search a sequence database for occurences of known motifs by MAST
 
 =head1 SYNOPSIS
 
-get_pspm_collection_from_meme_result_from_ws [--url=http://140.221.84.195:7049/ --ws=<workspace ID> --input=<MemeRunResult ID> --user=<username> --pw=<password>]
+find_sites_with_mast_job_from_ws [--url=http://140.221.84.195:7049/ --ws=<workspace ID> --query=<MemePSPM ID> --target=<sequence set ID> --mt=<mt> --user=<username> --pw=<password>]
 
 =head1 DESCRIPTION
 
-A command for conversion of MEME run result into a collection of PSPMs (position-specific probability matrices)
+Search a set of nucleotide sequences for occurences of known motifs. This program assumes 
+exactly one occurrence of each motif per sequence, and each sequence in the database is assigned 
+a p-value, based on the product of the p-values of the individual motif occurrences in that sequence. 
 
 =head2 Documentation for underlying call
 
-Returns KBase ID of MemePSPMCollection.
+Returns Job object ID that keeps ID of a list of MAST hits.
 
 =head1 OPTIONS
 
@@ -31,8 +33,14 @@ print help information
 =item B<--version>
 print version information
 
-=item B<--input>
-KBase ID of the MemeRunResult
+=item B<--query>
+KBase ID of the query PSPM
+
+=item B<--target>
+workspace ID of the sequence set
+
+=item B<--mt>
+show motif matches with p-value < <mt>
 
 =item B<--user>
 User name for access to workspace
@@ -44,9 +52,9 @@ Password for access to workspace
 
 =head1 EXAMPLE
 
-get_pspm_collection_from_meme_result_from_ws --url=http://140.221.84.195:7049/ --ws=AKtest --input="kb|memerunresult.3" 
-get_pspm_collection_from_meme_result_from_ws --help
-get_pspm_collection_from_meme_result_from_ws --version
+find_sites_with_mast_job_from_ws --url=http://140.221.84.195:7049/ --ws=AKtest --query="kb|memepspm.1" --target="KBase.SequenceSet.12345" --mt=0.001 
+find_sites_with_mast_job_from_ws --help
+find_sites_with_mast_job_from_ws --version
 
 =head1 VERSION
 
@@ -60,11 +68,13 @@ use Bio::KBase::AuthToken;
 use Bio::KBase::AuthUser;
 
 
-my $usage = "Usage: get_pspm_collection_from_meme_result_from_ws [--url=http://140.221.84.195:7049/ --ws=<workspace ID> --input=<MemeRunResult ID> --user=<username> --pw=<password>]\n";
+my $usage = "Usage: find_sites_with_mast_job_from_ws [--url=http://140.221.84.195:7049/ --ws=<workspace ID> --query=<MemePSPM ID> --target=<sequence set ID> --mt=<mt> --user=<username> --pw=<password>]\n";
 
 my $url       = "http://140.221.84.195:7049/";
 my $ws   	  = "";
-my $input     = "";
+my $query     = "";
+my $target    = "";
+my $mt        = 0;
 my $user       = "";
 my $pw         = "";
 my $help      = 0;
@@ -73,7 +83,9 @@ my $version   = 0;
 GetOptions("help"       	=> \$help,
            "version"    	=> \$version,
            "ws=s"           => \$ws,
-           "input=s"        => \$input,
+           "query=s"        => \$query,
+           "target=s"       => \$target,
+           "mt=f"    		=> \$mt,
            "user=s"         => \$user,
            "pw=s"           => \$pw,
            "url=s"     		=> \$url) or 
@@ -81,26 +93,30 @@ GetOptions("help"       	=> \$help,
            
 if($help){
 print "NAME\n";
-print "get_pspm_collection_from_meme_result_from_ws - converts MEME run result into collection of position-specific probability matrices\n";
+print "find_sites_with_mast_job_from_ws - search a sequence database for occurences of known motifs by MAST.\n";
 print "\n";
 print "\n";
 print "VERSION\n";
 print "1.0\n";
 print "\n";
 print "SYNOPSIS\n";
-print "get_pspm_collection_from_meme_result_from_ws [--url=http://140.221.84.195:7049/ --ws=<workspace ID> --input=<MemeRunResult ID> --user=<username> --pw=<password>]\n";
+print "find_sites_with_mast_job_from_ws [--url=http://140.221.84.195:7049/ --ws=<workspace ID> --query=<MemePSPM ID> --target=<sequence set ID> --mt=<mt> --user=<username> --pw=<password>]\n";
 print "\n";
 print "DESCRIPTION\n";
-print "INPUT:            This command requires the URL of the service, workspace ID, ID of MemeRunresult, .\n";
+print "INPUT:            This command requires the URL of the service, ID of query PSPM, ID of target sequence set, p-value threshold .\n";
 print "\n";
-print "OUTPUT:           The output of this command is KBase ID of MemePSPMCollection.\n";
+print "OUTPUT:           The output of this command is Job object ID that keeps ID of a list of MAST hits.\n";
 print "\n";
 print "PARAMETERS:\n";
 print "--url             The URL of the service, --url=http://140.221.84.195:7049/, required.\n";
 print "\n";
 print "--ws              Workspace ID, required.\n";
 print "\n";
-print "--input           KBase ID of the MemeRunResult , required.\n";
+print "--query           KBase ID of the query PSPM , required.\n";
+print "\n";
+print "--target          KBase ID of the target sequence set, required.\n";
+print "\n";
+print "--mt              Show motif matches with p-value < <mt>, required.\n";
 print "\n";
 print "--user            User name for access to workspace.\n";
 print "\n";
@@ -112,7 +128,9 @@ print "--version         Print version information. \n";
 print "\n";
 print " \n";
 print "EXAMPLES \n";
-print "get_pspm_collection_from_meme_result_from_ws --url=http://140.221.84.195:7049/ --ws=AKtest --input=\"kb|memerunresult.3\"\n";
+print "find_sites_with_mast_job_from_ws --url=http://140.221.84.195:7049/ --ws=AKtest --query=\"kb|memepspm.1\" --target=\"KBase.SequenceSet.12345\" --mt=0.001\n";
+print "\n";
+print "This command will return Job object ID.\n";
 print "\n";
 print " \n";
 print "Report bugs to aekazakov\@lbl.gov\n";
@@ -121,7 +139,7 @@ exit(0);
 
 if($version)
 {
-    print "get_pspm_collection_from_meme_result_from_ws\n";
+    print "find_sites_with_mast_job_from_ws\n";
     print "Copyright (C) 2013 DOE Systems Biology Knowledgebase\n";
     print "License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>.\n";
     print "This is free software: you are free to change and redistribute it.\n";
@@ -146,8 +164,8 @@ if ($token->error_message){
 };
 
 my $obj = {
-	method => "MEME.get_pspm_collection_from_meme_result_from_ws",
-	params => [$ws, $input],
+	method => "MEME.find_sites_with_mast_job_from_ws",
+	params => [$ws, $query, $target, $mt],
 };
 
 my $client = Bio::KBase::meme::Client::RpcClient->new;
@@ -170,5 +188,4 @@ else {
 	exit(1);
 }
 exit(1);
-
 

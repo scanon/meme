@@ -4,11 +4,11 @@ use Carp;
 
 =head1 NAME
 
-get_pspm_collection_from_meme_result_from_ws - converts MEME run result into collection of position-specific probability matrices
+get_pspm_collection_from_meme_result_job_from_ws - converts MEME run result into collection of position-specific probability matrices
 
 =head1 SYNOPSIS
 
-get_pspm_collection_from_meme_result_from_ws [--url=http://140.221.84.195:7049/ --ws=<workspace ID> --input=<MemeRunResult ID> --user=<username> --pw=<password>]
+get_pspm_collection_from_meme_result_job_from_ws [--url=http://140.221.84.195:7049/ --ws=<workspace ID> --input=<MemeRunResult ID> --user=<username> --pw=<password>]
 
 =head1 DESCRIPTION
 
@@ -16,7 +16,7 @@ A command for conversion of MEME run result into a collection of PSPMs (position
 
 =head2 Documentation for underlying call
 
-Returns KBase ID of MemePSPMCollection.
+Returns Job object ID that keeps KBase ID of MemePSPMCollection.
 
 =head1 OPTIONS
 
@@ -44,9 +44,9 @@ Password for access to workspace
 
 =head1 EXAMPLE
 
-get_pspm_collection_from_meme_result_from_ws --url=http://140.221.84.195:7049/ --ws=AKtest --input="kb|memerunresult.3" 
-get_pspm_collection_from_meme_result_from_ws --help
-get_pspm_collection_from_meme_result_from_ws --version
+get_pspm_collection_from_meme_result_job_from_ws --url=http://140.221.84.195:7049/ --ws=AKtest --input="kb|memerunresult.3" 
+get_pspm_collection_from_meme_result_job_from_ws --help
+get_pspm_collection_from_meme_result_job_from_ws --version
 
 =head1 VERSION
 
@@ -60,7 +60,7 @@ use Bio::KBase::AuthToken;
 use Bio::KBase::AuthUser;
 
 
-my $usage = "Usage: get_pspm_collection_from_meme_result_from_ws [--url=http://140.221.84.195:7049/ --ws=<workspace ID> --input=<MemeRunResult ID> --user=<username> --pw=<password>]\n";
+my $usage = "Usage: get_pspm_collection_from_meme_result_job_from_ws [--url=http://140.221.84.195:7049/ --ws=<workspace ID> --input=<MemeRunResult ID> --user=<username> --pw=<password>]\n";
 
 my $url       = "http://140.221.84.195:7049/";
 my $ws   	  = "";
@@ -81,19 +81,19 @@ GetOptions("help"       	=> \$help,
            
 if($help){
 print "NAME\n";
-print "get_pspm_collection_from_meme_result_from_ws - converts MEME run result into collection of position-specific probability matrices\n";
+print "get_pspm_collection_from_meme_result_job_from_ws - converts MEME run result into collection of position-specific probability matrices\n";
 print "\n";
 print "\n";
 print "VERSION\n";
 print "1.0\n";
 print "\n";
 print "SYNOPSIS\n";
-print "get_pspm_collection_from_meme_result_from_ws [--url=http://140.221.84.195:7049/ --ws=<workspace ID> --input=<MemeRunResult ID> --user=<username> --pw=<password>]\n";
+print "get_pspm_collection_from_meme_result_job_from_ws [--url=http://140.221.84.195:7049/ --ws=<workspace ID> --input=<MemeRunResult ID> --user=<username> --pw=<password>]\n";
 print "\n";
 print "DESCRIPTION\n";
 print "INPUT:            This command requires the URL of the service, workspace ID, ID of MemeRunresult, .\n";
 print "\n";
-print "OUTPUT:           The output of this command is KBase ID of MemePSPMCollection.\n";
+print "OUTPUT:           The output of this command is Job object ID.\n";
 print "\n";
 print "PARAMETERS:\n";
 print "--url             The URL of the service, --url=http://140.221.84.195:7049/, required.\n";
@@ -112,8 +112,9 @@ print "--version         Print version information. \n";
 print "\n";
 print " \n";
 print "EXAMPLES \n";
-print "get_pspm_collection_from_meme_result_from_ws --url=http://140.221.84.195:7049/ --ws=AKtest --input=\"kb|memerunresult.3\"\n";
+print "get_pspm_collection_from_meme_result_job_from_ws --url=http://140.221.84.195:7049/ --ws=AKtest --input=\"kb|memerunresult.3\"\n";
 print "\n";
+print "This command will return Job object ID.\n";
 print " \n";
 print "Report bugs to aekazakov\@lbl.gov\n";
 exit(0);
@@ -121,7 +122,7 @@ exit(0);
 
 if($version)
 {
-    print "get_pspm_collection_from_meme_result_from_ws\n";
+    print "get_pspm_collection_from_meme_result_job_from_ws\n";
     print "Copyright (C) 2013 DOE Systems Biology Knowledgebase\n";
     print "License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>.\n";
     print "This is free software: you are free to change and redistribute it.\n";
@@ -146,7 +147,7 @@ if ($token->error_message){
 };
 
 my $obj = {
-	method => "MEME.get_pspm_collection_from_meme_result_from_ws",
+	method => "MEME.get_pspm_collection_from_meme_result_job_from_ws",
 	params => [$ws, $input],
 };
 
@@ -170,5 +171,4 @@ else {
 	exit(1);
 }
 exit(1);
-
 
