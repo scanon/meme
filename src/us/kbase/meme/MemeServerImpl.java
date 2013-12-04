@@ -51,7 +51,7 @@ import us.kbase.workspaceservice.WorkspaceServiceClient;
 
 public class MemeServerImpl {
 	private static Integer temporaryFileId = 0;
-	private static final String WORK_DIRECTORY = "."; 
+	private static final String WORK_DIRECTORY = "/var/tmp/meme"; 
 	private static final String ID_SERVICE_URL = "http://kbase.us/services/idserver";
 	private static final String WS_SERVICE_URL = "http://kbase.us/services/workspace";
 	private static final String JOB_SERVICE_URL = "http://140.221.84.180:7083";

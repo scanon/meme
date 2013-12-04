@@ -1250,7 +1250,7 @@ public class MemeServerImplTest {
 
 	@Test
 	public void testDeleteJob() throws AuthException, IOException, UnauthorizedException, JsonClientException {
-		String jobId = "52904a4fe4b0702f7611d90f";
+		String jobId = "529cf887e4b0702f7611d948";
 
 //		AuthToken token = AuthService.login(JOB_ACCOUNT, new String(JOB_PASSWORD)).getToken();
 		AuthToken token = AuthService.login(USER_NAME, new String(PASSWORD)).getToken();
@@ -1293,6 +1293,14 @@ public class MemeServerImplTest {
 		assertNotNull(id);
 		
 	}
+
+	@Test
+	public void testGetToken() throws AuthException, IOException, JsonClientException {
+		AuthToken token = AuthService.login(USER_NAME, new String(PASSWORD)).getToken();
+		System.out.println(token.toString());
+		assertNotNull(token.toString());
+	}
+
 	/*	@Test
 	public void testCreateWS() throws AuthException, IOException, JsonClientException {
 		WSUtil.createWorkspace("AKtest2", "AK test workspace");

@@ -6,6 +6,7 @@ KB_TOP ?= /kb/deployment
 TARGET ?= $(KB_TOP)
 CURR_DIR = $(shell pwd)
 TARGET_DIR = $(TARGET)/services/$(SERVICE_NAME)
+WORK_DIR = /var/tmp/meme
 TARGET_PORT = 7108
 THREADPOOL_SIZE = 20
 SERVICE_NAME = $(shell basename $(CURR_DIR))
@@ -30,6 +31,8 @@ compile-cluster: src lib
 	./make_jar.sh $(MAIN_CLASS)
 
 deploy-cluster-logic:
+	rm -r $(WORK_DIR)
+	mkdir -p $(WORK_DIR)
 	rm -r $(DEPLOY_CLUSTER)
 	mkdir $(DEPLOY_CLUSTER)
 	mkdir $(DEPLOY_CLUSTER)/lib
@@ -104,6 +107,8 @@ compile: src lib
 
 distrib:
 	@echo "Target folder: $(TARGET_DIR)"
+	rm -r $(WORK_DIR)
+	mkdir -p $(WORK_DIR)
 	mkdir -p $(TARGET_DIR)
 	cp -f ./dist/service.war $(TARGET_DIR)
 	cp -f ./glassfish_start_service.sh $(TARGET_DIR)
