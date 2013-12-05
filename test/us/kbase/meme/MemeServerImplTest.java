@@ -60,7 +60,7 @@ public class MemeServerImplTest {
 	private final String JOB_SERVICE = "http://140.221.84.180:7083";
 	//private final String JOB_ACCOUNT = "memejobs";
 	//private final String JOB_PASSWORD = "1475_rokegi";
-	private String jobId = "528ec2eae4b0702f7611d8f7";
+	private String jobId = "";
 	
 	@Before
 	public void setUp() throws Exception {
@@ -1250,7 +1250,7 @@ public class MemeServerImplTest {
 
 	@Test
 	public void testDeleteJob() throws AuthException, IOException, UnauthorizedException, JsonClientException {
-		String jobId = "529cf887e4b0702f7611d948";
+		String jobId = "529ff386e4b0565cd80fb6f2";
 
 //		AuthToken token = AuthService.login(JOB_ACCOUNT, new String(JOB_PASSWORD)).getToken();
 		AuthToken token = AuthService.login(USER_NAME, new String(PASSWORD)).getToken();

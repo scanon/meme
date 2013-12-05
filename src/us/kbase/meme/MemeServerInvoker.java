@@ -2,7 +2,7 @@ package us.kbase.meme;
 
 import org.apache.commons.cli.*;
 
-public class MemeServerTug {
+public class MemeServerInvoker {
 
 	/**
 	 * @param args
@@ -11,7 +11,7 @@ public class MemeServerTug {
 	Options options = new Options();
 
 	@SuppressWarnings("static-access")
-	public MemeServerTug() {
+	public MemeServerInvoker() {
 
 		options.addOption( OptionBuilder.withLongOpt( "help" )
                 .withDescription( "print this message" )
@@ -527,7 +527,7 @@ public class MemeServerTug {
 		//AuthToken authToken = AuthService.login("aktest", "1475rokegi").getToken();
 		//System.out.println(authToken.toString());
 		
-		MemeServerTug tug = new MemeServerTug();
+		MemeServerInvoker tug = new MemeServerInvoker();
 		tug.run(args);
 
 	    

@@ -5,14 +5,19 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
+/*import java.util.List;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;*/
 
 import javax.net.ssl.HttpsURLConnection;
 
 import com.fasterxml.jackson.core.JsonEncoding;
 import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -32,11 +37,11 @@ public class MemeServerCaller {
 	//private static final String JOB_PASSWORD = "1475_rokegi";
 	private static UserAndJobStateClient _jobClient = null;
 	
-	private static final String CLUSTER_SERVICE = "http://kbase.us/services/cs_test/jobs/";
+	private static final String CLUSTER_SERVICE = "https://198.128.58.82/services/cs_test/jobs";
 	private static Integer connectionReadTimeOut = 30 * 60 * 1000;
 	private static boolean isAuthAllowedForHttp = false;
 	private static ObjectMapper mapper = new ObjectMapper().registerModule(new JacksonTupleModule());
-	private static boolean deployCluster = false;
+	private static boolean deployCluster = true;
 
 	
 	protected static void setAuthAllowedForHttp(boolean AllowedForHttp) {
@@ -56,7 +61,22 @@ public class MemeServerCaller {
 	private static HttpURLConnection setupCall(AuthToken accessToken) throws IOException, JsonClientException {
 		URL clusterServiceUrl = new URL(CLUSTER_SERVICE);
 		HttpURLConnection conn = (HttpURLConnection) clusterServiceUrl.openConnection();
-		conn.setConnectTimeout(10000);
+
+		//TrustModifier bypasses HTTPS certificate check. Don't use this in production!
+		try {
+			TrustModifier.relaxHostChecking(conn);
+		} catch (KeyManagementException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (NoSuchAlgorithmException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (KeyStoreException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		conn.setConnectTimeout(100000);
 		if (connectionReadTimeOut != null) {
 			conn.setReadTimeout(connectionReadTimeOut);
 		}
@@ -71,7 +91,7 @@ public class MemeServerCaller {
 			if (accessToken == null || accessToken.isExpired()) {
 				throw new UnauthorizedException("This method requires authentication but token was not set");
 			}
-			conn.setRequestProperty("Authorization", accessToken.toString());
+			conn.setRequestProperty("Authorization", " OAuth " + accessToken.toString());
 		}
 		return conn;
 	}
@@ -80,7 +100,8 @@ public class MemeServerCaller {
 		HttpURLConnection conn = setupCall(token);
 		OutputStream os = conn.getOutputStream();
 		JsonGenerator g = mapper.getFactory().createGenerator(os, JsonEncoding.UTF8);
-
+		
+		g.writeRaw("data=");
 		g.writeStartObject();
 		for (Map.Entry<String, String> entry : arg.entrySet())
 		{
@@ -89,7 +110,9 @@ public class MemeServerCaller {
 		g.writeEndObject();
 		g.close();
 
-		JsonGenerator g2 = mapper.getFactory().createGenerator(System.out, JsonEncoding.UTF8);
+/*	Make a copy of JSON data and display it
+ 		JsonGenerator g2 = mapper.getFactory().createGenerator(System.out, JsonEncoding.UTF8);
+		g2.writeRaw("data=");
 		g2.writeStartObject();
 		for (Map.Entry<String, String> entry : arg.entrySet())
 		{
@@ -97,9 +120,10 @@ public class MemeServerCaller {
 		}
 		g2.writeEndObject();
 		g2.close();
+*/
+		String res = null;
 		
 
-		
 		int code = conn.getResponseCode();
 		conn.getResponseMessage();
 
@@ -108,23 +132,33 @@ public class MemeServerCaller {
 			istream = conn.getErrorStream();
 		} else {
 			istream = conn.getInputStream();
+		 }
+		
+/*	Display HTTPS response instead of processing it as JSON  	
+ 		InputStreamReader is = new InputStreamReader(new UnclosableInputStream(conn.getInputStream()));
+		StringBuilder sb=new StringBuilder();
+		BufferedReader br = new BufferedReader(is);
+		String read = br.readLine();
+		while(read != null) {
+		    System.out.println(read);
+		    sb.append(read);
+		    read =br.readLine();
+
 		}
 
+		System.out.println(sb.toString());
+
+*/
+		
+
 		JsonNode node = mapper.readTree(new UnclosableInputStream(istream));
-		System.out.println(node.toString());
 		
 		if (node.has("error")) {
-			Map<String, String> ret_error = mapper.readValue(mapper.treeAsTokens(node.get("error")), 
-					new TypeReference<Map<String, String>>(){});
-			
-			String data = ret_error.get("data") == null ? ret_error.get("error") : ret_error.get("data");
-			throw new ServerException(ret_error.get("message"),
-					new Integer(ret_error.get("code")), ret_error.get("name"),
-					data);
+			String ret_error = mapper.readValue(mapper.treeAsTokens(node.get("error")),	String.class);
+			if (ret_error != "") throw new ServerException(ret_error, 500, "Error on cloud");
 		}
-		String res = null;
-		if (node.has("result"))
-			res = mapper.readValue(mapper.treeAsTokens(node.get("result")), String.class);
+		if (node.has("id"))
+			res = "Cluster job ID = " + mapper.readValue(mapper.treeAsTokens(node.get("id")), String.class);
 		if (res == null)
 			throw new ServerException("An unknown server error occured", 0, "Unknown", null);
 		return res;
@@ -146,15 +180,15 @@ public class MemeServerCaller {
     public static String findMotifsWithMemeJobFromWs(String wsId, String sequenceSetId, MemeRunParameters params, AuthToken authPart) throws Exception {
 
     	String returnVal = null;
-
         //Ask for job id
         returnVal = jobClient(authPart).createJob();
+        System.out.println(returnVal);
         
         if (deployCluster == false) { 
         	String result = MemeServerImpl.findMotifsWithMemeJobFromWs(wsId, sequenceSetId, params, returnVal, authPart.toString());
         	System.out.println(result);            
         } else {
-        	//Call tug
+        	//Call invoker
         	Map<String, String> jsonArgs = new HashMap<String, String>();
         	jsonArgs.put("target", "cloud");
         	jsonArgs.put("application", "meme");
@@ -194,8 +228,6 @@ public class MemeServerCaller {
 
     public static String compareMotifsWithTomtomJobFromWs(String wsId, String queryId, String targetId, TomtomRunParameters params, AuthToken authPart) throws Exception {
         String returnVal = null;
-        //BEGIN compare_motifs_with_tomtom_job_from_ws
-        
         //Ask for job id
         returnVal = jobClient(authPart).createJob();
 
@@ -203,7 +235,7 @@ public class MemeServerCaller {
         	String result = MemeServerImpl.compareMotifsWithTomtomJobFromWs(wsId, queryId, targetId, params, returnVal, authPart.toString());
         	System.out.println(result);
         } else {
-        	//Call tug
+        	//Call invoker
         	Map<String, String> jsonArgs = new HashMap<String, String>();
         	jsonArgs.put("target", "cloud");
         	jsonArgs.put("application", "meme");
@@ -222,8 +254,6 @@ public class MemeServerCaller {
         	String result = jsonCall(jsonArgs, authPart);
         	System.out.println(result);
 		}
-		
-        //END compare_motifs_with_tomtom_job_from_ws
         return returnVal;
     }
 
@@ -241,7 +271,6 @@ public class MemeServerCaller {
 
     public static String compareMotifsWithTomtomJobByCollectionFromWs(String wsId, String queryId, String targetId, String pspmId, TomtomRunParameters params, AuthToken authPart) throws Exception {
         String returnVal = null;
-
         //Ask for job id
         returnVal = jobClient(authPart).createJob();
 
@@ -249,8 +278,7 @@ public class MemeServerCaller {
         	String result = MemeServerImpl.compareMotifsWithTomtomJobByCollectionFromWs(wsId, queryId, targetId, pspmId, params, returnVal, authPart.toString());
             System.out.println(result);
         } else {
-
-        	//Call tug
+        	//Call invoker
         	Map<String, String> jsonArgs = new HashMap<String, String>();
         	jsonArgs.put("target", "cloud");
         	jsonArgs.put("application", "meme");
@@ -287,7 +315,6 @@ public class MemeServerCaller {
 
     public static String findSitesWithMastJobFromWs(String wsId, String queryId, String targetId, Double mt, AuthToken authPart) throws Exception {
         String returnVal = null;
-        //BEGIN find_sites_with_mast_job_from_ws
         //Ask for job id
         returnVal = jobClient(authPart).createJob();
         
@@ -295,6 +322,7 @@ public class MemeServerCaller {
         	String result = MemeServerImpl.findSitesWithMastJobFromWs(wsId, queryId, targetId, mt, returnVal, authPart.toString());
         	System.out.println(result);
         } else {
+        	//Call invoker
         	Map<String, String> jsonArgs = new HashMap<String, String>();
         	jsonArgs.put("target", "cloud");
         	jsonArgs.put("application", "meme");
@@ -309,8 +337,6 @@ public class MemeServerCaller {
         	String result = jsonCall(jsonArgs, authPart);
         	System.out.println(result);
         }
-
-        //END find_sites_with_mast_job_from_ws
         return returnVal;
     }
 
@@ -328,15 +354,13 @@ public class MemeServerCaller {
 
     public static String findSitesWithMastJobByCollectionFromWs(String wsId, String queryId, String targetId, String pspmId, Double mt, AuthToken authPart) throws Exception {
         String returnVal = null;
-        //BEGIN find_sites_with_mast_job_by_collection_from_ws
-
         returnVal = jobClient(authPart).createJob();
 
         if (deployCluster == false) { 
         	String result = MemeServerImpl.findSitesWithMastJobByCollectionFromWs(wsId, queryId, targetId, pspmId, mt, returnVal, authPart.toString());
         	System.out.println(result);
         } else {
-
+        	//Call invoker
         	Map<String, String> jsonArgs = new HashMap<String, String>();
         	jsonArgs.put("target", "cloud");
         	jsonArgs.put("application", "meme");
@@ -352,8 +376,6 @@ public class MemeServerCaller {
         	String result = jsonCall(jsonArgs, authPart);
         	System.out.println(result);
         }
-        
-        //END find_sites_with_mast_job_by_collection_from_ws
         return returnVal;
     }
 
@@ -371,18 +393,17 @@ public class MemeServerCaller {
 
     public static String getPspmCollectionFromMemeResultJobFromWs(String wsId, String memeRunResultId, AuthToken authPart) throws Exception {
         String returnVal = null;
-        //BEGIN get_pspm_collection_from_meme_result_job_from_ws
         returnVal = jobClient(authPart).createJob();
 
         if (deployCluster == false) { 
         	String result = MemeServerImpl.getPspmCollectionFromMemeJobResultFromWs(wsId, memeRunResultId, returnVal, authPart.toString());
         	System.out.println(result);
         } else {
-
+        	//Call invoker
         	Map<String, String> jsonArgs = new HashMap<String, String>();
         	jsonArgs.put("target", "cloud");
         	jsonArgs.put("application", "meme");
-        	jsonArgs.put("method", "get_pspm_collection_from_meme_result_from_ws");
+        	jsonArgs.put("method", "get_pspm_collection_from_meme_result_job_from_ws");
         	jsonArgs.put("job_id", returnVal);
         	jsonArgs.put("workspace", wsId);
         	jsonArgs.put("queryId", memeRunResultId);
@@ -391,8 +412,6 @@ public class MemeServerCaller {
         	String result = jsonCall(jsonArgs, authPart);
         	System.out.println(result);
         }
-        
-        //END get_pspm_collection_from_meme_result_job_from_ws
         return returnVal;
     }    
 

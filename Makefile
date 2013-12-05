@@ -14,7 +14,7 @@ SERVICE_SPEC = ./kbase_meme.spec
 SERVICE_PORT = $(TARGET_PORT)
 SERVICE_DIR = $(TARGET_DIR)
 SERVLET_CLASS = us.kbase.meme.MEMEServer
-MAIN_CLASS = us.kbase.meme.MemeServerTug
+MAIN_CLASS = us.kbase.meme.MemeServerInvoker
 SERVICE_PSGI = $(SERVICE_NAME).psgi
 TPAGE_ARGS = --define kb_top=$(TARGET) --define kb_runtime=$(DEPLOY_RUNTIME) --define kb_service_name=$(SERVICE_NAME) --define kb_service_dir=$(SERVICE_DIR) --define kb_service_port=$(SERVICE_PORT) --define kb_psgi=$(SERVICE_PSGI)
 SCRIPTS_TESTS = $(wildcard script-tests/*.t)

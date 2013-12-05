@@ -1067,7 +1067,7 @@ public class MemeServerImpl {
 	public static String findSitesWithMastJobFromWs(String wsId, String queryId, String targetId, Double mt, String jobId, String token) throws MalformedURLException, Exception{
 
 		//Start job
-		String desc = "MEME service job. Method: findSitesWithMastJobByCollectionFromWs. Input: " + queryId + ", " + targetId + ". Workspace: " + wsId + ".";
+		String desc = "MEME service job. Method: findSitesWithMastJobFromWs. Input: " + queryId + ", " + targetId + ". Workspace: " + wsId + ".";
 		if (jobId != null) startJob (jobId, desc, 2L, token);
 
 		GetObjectParams queryParams = new GetObjectParams().withType("MemePSPM").withId(queryId).withWorkspace(wsId).withAuth(token);   
