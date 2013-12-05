@@ -282,7 +282,7 @@ public class MemeServerCaller {
         	Map<String, String> jsonArgs = new HashMap<String, String>();
         	jsonArgs.put("target", "cloud");
         	jsonArgs.put("application", "meme");
-        	jsonArgs.put("method", "compare_motifs_with_tomtom_job_from_ws");
+        	jsonArgs.put("method", "compare_motifs_with_tomtom_job_by_collection_from_ws");
         	jsonArgs.put("job_id", returnVal);
         	jsonArgs.put("workspace", wsId);
         	jsonArgs.put("queryId", queryId);
@@ -364,7 +364,7 @@ public class MemeServerCaller {
         	Map<String, String> jsonArgs = new HashMap<String, String>();
         	jsonArgs.put("target", "cloud");
         	jsonArgs.put("application", "meme");
-        	jsonArgs.put("method", "find_sites_with_mast_job_from_ws");
+        	jsonArgs.put("method", "find_sites_with_mast_job_by_collection_from_ws");
         	jsonArgs.put("job_id", returnVal);
         	jsonArgs.put("workspace", wsId);
         	jsonArgs.put("queryId", queryId);
