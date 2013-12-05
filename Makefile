@@ -31,8 +31,7 @@ compile-cluster: src lib
 	./make_jar.sh $(MAIN_CLASS)
 
 deploy-cluster-logic:
-	rm -r $(WORK_DIR)
-	mkdir -p $(WORK_DIR)
+	test -d $(WORK_DIR) || mkdir -p $(WORK_DIR)
 	rm -r $(DEPLOY_CLUSTER)
 	mkdir $(DEPLOY_CLUSTER)
 	mkdir $(DEPLOY_CLUSTER)/lib

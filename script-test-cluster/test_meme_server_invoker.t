@@ -57,13 +57,13 @@ system ($test_command);
 
 #4 compare_motifs_with_tomtom_by_collection_from_ws
 $job = $job_client->create_job();
-$test_command = $command_line." --method compare_motifs_with_tomtom_job_by_collection_from_ws --job $job --ws $ws --query $meme_pspm_collection_id --target $meme_pspm_collection_id --thresh 0.000001 --evalue 1 --dist pearson --min_overlap 12 --token \"$auth_token\"";
+$test_command = $command_line." --method compare_motifs_with_tomtom_job_by_collection_from_ws --job $job --ws $ws --query $meme_pspm_collection_id --target $meme_pspm_collection_id --thresh 0.000001 --evalue 1 --dist pearson --min_overlap 12 --internal 1 --token \"$auth_token\"";
 print $test_command."\n\n";
 system ($test_command);
 
 #5 compare_motifs_with_tomtom_from_ws
 $job = $job_client->create_job();
-$test_command = $command_line." --method compare_motifs_with_tomtom_job_from_ws --job $job --ws $ws --query $meme_pspm_id --target $meme_pspm_collection_id --thresh 0.000001 --evalue 1 --dist pearson --min_overlap 12 --token \"$auth_token\"";
+$test_command = $command_line." --method compare_motifs_with_tomtom_job_from_ws --job $job --ws $ws --query $meme_pspm_id --target $meme_pspm_collection_id --thresh 0.000001 --evalue 1 --dist pearson --min_overlap 12 --internal 1 --token \"$auth_token\"";
 print $test_command."\n\n";
 system ($test_command);
 

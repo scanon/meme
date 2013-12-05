@@ -16,7 +16,6 @@ import us.kbase.common.service.UObject;
 import us.kbase.common.service.UnauthorizedException;
 import us.kbase.userandjobstate.Results;
 import us.kbase.userandjobstate.UserAndJobStateClient;
-import us.kbase.util.WSUtil;
 import us.kbase.workspaceservice.GetObjectOutput;
 import us.kbase.workspaceservice.GetObjectParams;
 
@@ -25,7 +24,7 @@ public class MemeServerCallerTest {
 	private static final String USER_NAME = "aktest";
 	private static final String PASSWORD = "1475rokegi";
 	private static final String JOB_SERVICE = "http://140.221.84.180:7083";
-	private String sequenceSetId = "KBase.SequenceSet.12345";
+	private String sequenceSetId = "testSequenceSet";
 	private String workspace = "AKtest";
 
 	@Test
@@ -119,8 +118,8 @@ public class MemeServerCallerTest {
 		resultId = resultIdParts[1];
 //Read result from WS
 		
-		GetObjectParams objectParams = new GetObjectParams().withType("MemeRunResult").withId(resultId).withWorkspace(WSUtil.workspaceName).withAuth(WSUtil.authToken().toString());   
-		GetObjectOutput output = WSUtil.wsClient().getObject(objectParams);
+		GetObjectParams objectParams = new GetObjectParams().withType("MemeRunResult").withId(resultId).withWorkspace(workspace).withAuth(token.toString());   
+		GetObjectOutput output = MemeServerImpl.wsClient(token.toString()).getObject(objectParams);
 		MemeRunResult result = UObject.transformObjectToObject(output.getData(), MemeRunResult.class);
 
 		assertEquals(Long.valueOf("0"),result.getSeed());

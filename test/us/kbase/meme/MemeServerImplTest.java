@@ -52,11 +52,15 @@ import java.net.URL;
 public class MemeServerImplTest {
 	
 	private SequenceSet testSequenceSet = new SequenceSet();
+	private String testSequenceSetId = "TestSequenceSet";
+	private String testCollectionId = "TestMemePSPMCollection";	
+	private String testMemeRunResultId = "TestMemeRunResult";
 	private String fakeJobId = "12345.fasta";
 	private String inputSequenceSet = new String();
 	private MemeRunResult memeRunResult = new MemeRunResult();
 	private final String USER_NAME = "aktest";
 	private final String PASSWORD = "1475rokegi";
+	private final String WORKSPACE = "AKtest";
 	private final String JOB_SERVICE = "http://140.221.84.180:7083";
 	//private final String JOB_ACCOUNT = "memejobs";
 	//private final String JOB_PASSWORD = "1475_rokegi";
@@ -90,7 +94,7 @@ public class MemeServerImplTest {
     	sequences.add(seq5);
     	sequences.add(seq6);
     	testSequenceSet.setSequences(sequences);
-    	testSequenceSet.setSequenceSetId("KBase.SequenceSet.12345");
+    	testSequenceSet.setSequenceSetId(testSequenceSetId);
     	for(Sequence sequence:testSequenceSet.getSequences()){
     		inputSequenceSet += ">"+sequence.getSequenceId()+"\n";
     		inputSequenceSet += MemeServerImpl.formatSequence(sequence.getSequence())+"\n";
@@ -427,12 +431,10 @@ public class MemeServerImplTest {
 		params.setMaxsites(0L);
 		params.setPal(1L);
 		params.setRevcomp(0L);
+	
+		String resultId = MemeServerImpl.findMotifsWithMemeJobFromWs (WORKSPACE, testSequenceSetId, params, jobId, token.toString());
 		
-		String wsId = "AKtest";
-		
-		String resultId = MemeServerImpl.findMotifsWithMemeJobFromWs (wsId, testSequenceSet.getSequenceSetId(), params, jobId, token.toString());
-		
-		GetObjectParams objectParams = new GetObjectParams().withType("SequenceSet").withId(resultId).withWorkspace(wsId).withAuth(token.toString());
+		GetObjectParams objectParams = new GetObjectParams().withType("SequenceSet").withId(resultId).withWorkspace(WORKSPACE).withAuth(token.toString());
 		GetObjectOutput output = MemeServerImpl.wsClient(token.toString()).getObject(objectParams);
 		MemeRunResult result = UObject.transformObjectToObject(output.getData(), MemeRunResult.class);
 
@@ -581,9 +583,9 @@ public class MemeServerImplTest {
 		System.out.println(jobId);
 		assertNotNull(jobId);
 		
-		String resultId = MemeServerImpl.compareMotifsWithTomtomJobByCollectionFromWs("AKtest", "kb|memepspmcollection.2", "kb|memepspmcollection.2", "", paramsTomtom, jobId, token.toString());
+		String resultId = MemeServerImpl.compareMotifsWithTomtomJobByCollectionFromWs(WORKSPACE, testCollectionId, testCollectionId, "", paramsTomtom, jobId, token.toString());
 
-		GetObjectParams params = new GetObjectParams().withType("TomtomRunResult").withId(resultId).withWorkspace("AKtest").withAuth(token.toString());   
+		GetObjectParams params = new GetObjectParams().withType("TomtomRunResult").withId(resultId).withWorkspace(WORKSPACE).withAuth(token.toString());   
 		GetObjectOutput output = WSUtil.wsClient().getObject(params);
 		TomtomRunResult result = UObject.transformObjectToObject(output.getData(), TomtomRunResult.class);
 		
@@ -694,9 +696,9 @@ public class MemeServerImplTest {
 		AuthToken token = AuthService.login(USER_NAME, new String(PASSWORD)).getToken();
 		String jobId = MemeServerImpl.jobClient(token.toString()).createJob();
 		
-		String resultId = MemeServerImpl.findSitesWithMastJobByCollectionFromWs("AKtest", "kb|memepspmcollection.2", testSequenceSet.getSequenceSetId(), "1", 0.0005, jobId, token.toString());
+		String resultId = MemeServerImpl.findSitesWithMastJobByCollectionFromWs(WORKSPACE, testCollectionId, testSequenceSetId, "1", 0.0005, jobId, token.toString());
 		
-		GetObjectParams params = new GetObjectParams().withType("MastRunResult").withId(resultId).withWorkspace("AKtest").withAsJSON(1L).withAuth(token.toString());
+		GetObjectParams params = new GetObjectParams().withType("MastRunResult").withId(resultId).withWorkspace(WORKSPACE).withAsJSON(1L).withAuth(token.toString());
 		GetObjectOutput output = MemeServerImpl.wsClient(token.toString()).getObject(params);
 		MastRunResult result = UObject.transformObjectToObject(output.getData(), MastRunResult.class);
 		
@@ -717,10 +719,9 @@ public class MemeServerImplTest {
 
 		AuthToken token = AuthService.login(USER_NAME, new String(PASSWORD)).getToken();
 		String jobId = MemeServerImpl.jobClient(token.toString()).createJob();
-		String inputId = "kb|memerunresult.202";
-		String resultId = MemeServerImpl.getPspmCollectionFromMemeJobResultFromWs("AKtest", inputId, jobId, token.toString());
+		String resultId = MemeServerImpl.getPspmCollectionFromMemeJobResultFromWs(WORKSPACE, testMemeRunResultId, jobId, token.toString());
 				
-		GetObjectParams objectParams = new GetObjectParams().withType("MemePSPMCollection").withId(resultId).withWorkspace("AKtest").withAuth(token.toString());   
+		GetObjectParams objectParams = new GetObjectParams().withType("MemePSPMCollection").withId(resultId).withWorkspace(WORKSPACE).withAuth(token.toString());   
 		GetObjectOutput output = WSUtil.wsClient().getObject(objectParams);
 		MemePSPMCollection result = UObject.transformObjectToObject(output.getData(), MemePSPMCollection.class);
 
@@ -743,24 +744,24 @@ public class MemeServerImplTest {
 		SequenceSet result = UObject.transformObjectToObject(output.get(0).getData(), SequenceSet.class);
 */
 		
-		GetObjectParams params = new GetObjectParams().withType("SequenceSet").withId("KBase.SequenceSet.12345").withWorkspace("AKtest").withAsJSON(1L).withAuth(token.toString());
+		GetObjectParams params = new GetObjectParams().withType("SequenceSet").withId(testSequenceSetId).withWorkspace(WORKSPACE).withAsJSON(1L).withAuth(token.toString());
 		GetObjectOutput output = MemeServerImpl.wsClient(token.toString()).getObject(params);
 		SequenceSet result = UObject.transformObjectToObject(output.getData(), SequenceSet.class);
 		assertEquals("GCCGGGCACGGGCCACCTCATCATCCGAGACTGCGACGTCTTTCATGGGGTCTCCGGTTGCTCAAGTATGAGGGTACGATGCCTCCACTCCTGCCCCAAGTCCAGCCGTGCGTGAATGCGGTCACGTTCGTCACCATGAGGGTGACCGGGTTGCCGGGTGCGATACGCAGGGCTAACGCTGCCATAATCGGGAGAGGAGTATCCACGCTTCCGGTCATGCATCATCCACCCGCATCCGCAAGGAGGCCCC",result.getSequences().get(0).getSequence());
 		assertEquals(testSequenceSet.getSequenceSetId(),result.getSequenceSetId());
 	}
 
-	@Test
+/*	@Test
 	public void testWsWrite() throws Exception {
 		
-		String id = "kb|sequenceset.3";
+		String id = "";
 		AuthToken token = JsonClientCaller.requestTokenFromKBase(USER_NAME, PASSWORD.toCharArray());
-		MemeServerImpl.saveObjectToWorkspace (UObject.transformObjectToObject(testSequenceSet, UObject.class), "SequenceSet", "AKtest", id, token.toString());		
+		MemeServerImpl.saveObjectToWorkspace (UObject.transformObjectToObject(testSequenceSet, UObject.class), "SequenceSet", WORKSPACE, id, token.toString());		
 		fail("Not yet implemented"); // TODO
 		
 	}
 
-/*	@Test
+	@Test
 	public void testRegisterModule() throws Exception {
 		//Now requestModuleOwnership
 		
@@ -1184,13 +1185,10 @@ public class MemeServerImplTest {
 			String status = "Finished";
 			String error = null;
 			
-			String wsId = "AKtest";
-			String resultId = "KBase.SequenceSet.12345";
-			
 			Results res = new Results();
 			List<String> workspaceIds = new ArrayList<String>();
-			workspaceIds.add(wsId);
-			workspaceIds.add(resultId);
+			workspaceIds.add(WORKSPACE);
+			workspaceIds.add(testSequenceSetId);
 			res.setWorkspaceids(workspaceIds);
 			client.completeJob(jobId, token.toString(), status, error, res); 
 			assertNotNull(jobId);
@@ -1236,8 +1234,8 @@ public class MemeServerImplTest {
 			System.out.println(resultId);
 			
 			assertNotNull(res.getAdditionalProperties().keySet());
-			assertEquals(workspaceId,"AKtest");
-			assertEquals(resultId,"KBase.SequenceSet.12345");
+			assertEquals(workspaceId,WORKSPACE);
+			assertEquals(resultId,testSequenceSetId);
 			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -1250,7 +1248,7 @@ public class MemeServerImplTest {
 
 	@Test
 	public void testDeleteJob() throws AuthException, IOException, UnauthorizedException, JsonClientException {
-		String jobId = "529ff386e4b0565cd80fb6f2";
+		String jobId = "529fffede4b0565cd80fb70f";
 
 //		AuthToken token = AuthService.login(JOB_ACCOUNT, new String(JOB_PASSWORD)).getToken();
 		AuthToken token = AuthService.login(USER_NAME, new String(PASSWORD)).getToken();
@@ -1268,7 +1266,7 @@ public class MemeServerImplTest {
         jsonArgs.put("method", "find_motifs_with_meme_job_from_ws");
         jsonArgs.put("job_id", "12345");
         jsonArgs.put("workspace", "AKtest");
-        jsonArgs.put("seq_id", "KBase.SequenceSet.12345");
+        jsonArgs.put("seq_id", testSequenceSetId);
         jsonArgs.put("mod", "oops");
         jsonArgs.put("nmotifs", "2");
         jsonArgs.put("minw", "14");

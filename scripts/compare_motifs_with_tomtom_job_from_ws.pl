@@ -4,11 +4,11 @@ use Carp;
 
 =head1 NAME
 
-compare_motifs_with_tomtom_from_ws - find motifs that are similar to a given DNA motif by searching against a database of known motifs.
+compare_motifs_with_tomtom_job_from_ws - find motifs that are similar to a given DNA motif by searching against a database of known motifs.
 
 =head1 SYNOPSIS
 
-compare_motifs_with_tomtom_from_ws [--url=http://140.221.84.195:7049/ --ws=<workspace ID> --query=<MemePSPM ID> --target=<MemePSPMCollection ID> --thresh=<threshold> --evalue --dist=<allr|ed|kullback|pearson|sandelin> --internal --min_overlap=<value> --user=<username> --pw=<password>] 
+compare_motifs_with_tomtom_job_from_ws [--url=http://140.221.84.195:7049/ --ws=<workspace ID> --query=<MemePSPM ID> --target=<MemePSPMCollection ID> --thresh=<threshold> --evalue --dist=<allr|ed|kullback|pearson|sandelin> --internal --min_overlap=<value> --user=<username> --pw=<password>] 
 
 =head1 DESCRIPTION
 
@@ -16,7 +16,7 @@ Find motifs that are similar to a given DNA motif by searching a database of kno
 
 =head2 Documentation for underlying call
 
-Returns KBase ID of TOMTOM run result.
+Returns Job object ID that keeps ID of TOMTOM run result.
 
 =head1 OPTIONS
 
@@ -62,9 +62,9 @@ Only report motif matches that overlap by min overlap positions or more.
 
 =head1 EXAMPLE
 
- compare_motifs_with_tomtom_from_ws --url=http://140.221.84.195:7049/ --ws=AKtest --query="kb|memepspm.1" --target="kb|memepspmcollection.2" --thresh=0.0000001 --evalue --dist=pearson --internal --min_overlap=12
- compare_motifs_with_tomtom_from_ws --help
- compare_motifs_with_tomtom_from_ws --version
+ compare_motifs_with_tomtom_job_from_ws --url=http://140.221.84.195:7049/ --ws=AKtest --query="kb|memepspm.1" --target="kb|memepspmcollection.2" --thresh=0.0000001 --evalue --dist=pearson --internal --min_overlap=12
+ compare_motifs_with_tomtom_job_from_ws --help
+ compare_motifs_with_tomtom_job_from_ws --version
 
 =head1 VERSION
 
@@ -77,7 +77,7 @@ use Bio::KBase::meme::Client;
 use Bio::KBase::AuthToken;
 use Bio::KBase::AuthUser;
 
-my $usage = "Usage: compare_motifs_with_tomtom_from_ws [--url=http://140.221.84.195:7049/ --ws=<workspace ID> --query=<MemePSPM ID> --target=<MemePSPMCollection ID> --thresh=<threshold> --evalue --dist=<allr|ed|kullback|pearson|sandelin> --internal --min_overlap=<value> --user=<username> --pw=<password>]\n";
+my $usage = "Usage: compare_motifs_with_tomtom_job_from_ws [--url=http://140.221.84.195:7049/ --ws=<workspace ID> --query=<MemePSPM ID> --target=<MemePSPMCollection ID> --thresh=<threshold> --evalue --dist=<allr|ed|kullback|pearson|sandelin> --internal --min_overlap=<value> --user=<username> --pw=<password>]\n";
 
 my $url        = "http://140.221.84.195:7049/";
 my $ws		   = "";
@@ -110,19 +110,19 @@ GetOptions("help"           => \$help,
            
 if($help){
 print "NAME\n";
-print "compare_motifs_with_tomtom_from_ws - search a sequence database for occurences of known motifs by MAST.\n";
+print "compare_motifs_with_tomtom_job_from_ws - search a sequence database for occurences of known motifs by MAST.\n";
 print "\n";
 print "\n";
 print "VERSION\n";
 print "1.0\n";
 print "\n";
 print "SYNOPSIS\n";
-print "compare_motifs_with_tomtom_from_ws [--url=http://140.221.84.195:7049/ --ws=<workspace ID> --query=<MemePSPM ID> --target=<MemePSPMCollection ID> --thresh=<threshold> --evalue --dist=<allr|ed|kullback|pearson|sandelin> --internal --min_overlap=<value> --user=<username> --pw=<password>] \n";
+print "compare_motifs_with_tomtom_job_from_ws [--url=http://140.221.84.195:7049/ --ws=<workspace ID> --query=<MemePSPM ID> --target=<MemePSPMCollection ID> --thresh=<threshold> --evalue --dist=<allr|ed|kullback|pearson|sandelin> --internal --min_overlap=<value> --user=<username> --pw=<password>] \n";
 print "\n";
 print "DESCRIPTION\n";
 print "INPUT:            This command requires the URL of the service, IDs of two PSPM collections and parameters.\n";
 print "\n";
-print "OUTPUT:           The output of this command is an ID of TomtomRunResult.\n";
+print "OUTPUT:           The output of this command is a Job object ID.\n";
 print "\n";
 print "PARAMETERS:\n";
 print "--url             The URL of the service, --url=http://140.221.84.195:7049/, required.\n";
@@ -153,9 +153,9 @@ print "--version         Print version information. \n";
 print "\n";
 print " \n";
 print "EXAMPLES \n";
-print "compare_motifs_with_tomtom_from_ws --url=http://140.221.84.195:7049/ --ws=AKtest --query=\"kb|memepspm.1\" --target=\"kb|memepspmcollection.2\" --thresh=0.0000001 --evalue --dist=pearson --internal --min_overlap=12\n";
+print "compare_motifs_with_tomtom_job_from_ws --url=http://140.221.84.195:7049/ --ws=AKtest --query=\"kb|memepspm.1\" --target=\"kb|memepspmcollection.2\" --thresh=0.0000001 --evalue --dist=pearson --internal --min_overlap=12\n";
 print "\n";
-print "This command for each query motif will return an ID of list of TOMTOM hits.\n";
+print "This command will return a Job object ID.\n";
 print "\n";
 print " \n";
 print "Report bugs to aekazakov\@lbl.gov\n";
@@ -164,7 +164,7 @@ exit(0);
 
 if($version)
 {
-    print "compare_motifs_with_tomtom_from_ws\n";
+    print "compare_motifs_with_tomtom_job_from_ws\n";
     print "Copyright (C) 2013 DOE Systems Biology Knowledgebase\n";
     print "License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>.\n";
     print "This is free software: you are free to change and redistribute it.\n";
@@ -197,7 +197,7 @@ my $tomtom_run_parameters = {
 };
 
 my $obj = {
-	method => "MEME.compare_motifs_with_tomtom_from_ws",
+	method => "MEME.compare_motifs_with_tomtom_job_from_ws",
 	params => [$ws, $query, $target, $tomtom_run_parameters],
 };
 

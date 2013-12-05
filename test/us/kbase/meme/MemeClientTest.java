@@ -27,21 +27,26 @@ import us.kbase.generaltypes.Sequence;
 import us.kbase.generaltypes.SequenceSet;
 import us.kbase.userandjobstate.Results;
 import us.kbase.userandjobstate.UserAndJobStateClient;
-import us.kbase.util.WSUtil;
+//import us.kbase.util.WSUtil;
 
 public class MemeClientTest {
 	
 	private SequenceSet testSequenceSet = new SequenceSet();
 	private MemeRunResult memeRunResult = new MemeRunResult();
-//	private String serverUrl = "http://140.221.84.195:7049";
+	private String serverUrl = "http://140.221.84.195:7049";
 //	private String serverUrl = "http://140.221.84.197:8100";
 //	private String serverUrl = "http://140.221.84.191/services/meme/";
 //	private String serverUrl = "http://kbase.us/services/meme/";
-	private String serverUrl = "http://127.0.0.1:7108";
+//	private String serverUrl = "http://127.0.0.1:7108";
 	private static final String USER_NAME = "aktest";
 	private static final String PASSWORD = "1475rokegi";
+	private final String WORKSPACE = "AKtest";
 	private final String JOB_SERVICE = "http://140.221.84.180:7083";
-	
+	private String testSequenceSetId = "TestSequenceSet";
+	private String testCollectionId = "TestMemePSPMCollection";	
+	private String testMemeRunResultId = "TestMemeRunResult";
+	private String testPspmId = "TestMemePSPM";
+		
 	@Before
 	public void setUp() throws Exception {
     	Sequence seq1 = new Sequence();
@@ -70,7 +75,7 @@ public class MemeClientTest {
     	sequences.add(seq5);
     	sequences.add(seq6);
     	testSequenceSet.setSequences(sequences);
-    	testSequenceSet.setSequenceSetId("KBase.SequenceSet.12345");
+    	testSequenceSet.setSequenceSetId(testSequenceSetId);
 
 	}
 
@@ -155,7 +160,6 @@ public class MemeClientTest {
 		//AuthToken token = JsonClientCaller.requestTokenFromKBase(USER_NAME, PASSWORD.toCharArray());
 		AuthToken token = AuthService.login(USER_NAME, new String(PASSWORD)).getToken();
 //		System.out.println(token.toString());
-		String id = "KBase.SequenceSet.12345";
 		URL serviceUrl = new URL(serverUrl);
 //		MEMEClient client = new MEMEClient(serviceUrl, USER_NAME, PASSWORD);
 		MEMEClient client = new MEMEClient(serviceUrl, token);
@@ -178,7 +182,7 @@ public class MemeClientTest {
 		params.setRevcomp(0L);
 
 		
-		String resultId = client.findMotifsWithMemeFromWs("AKtest", id, params);
+		String resultId = client.findMotifsWithMemeFromWs(WORKSPACE, testSequenceSetId, params);
 //Read result from WS
 		
 //		List<ObjectIdentity> objectIds = new ArrayList<ObjectIdentity>();
@@ -190,8 +194,8 @@ public class MemeClientTest {
 
 		
 		
-		GetObjectParams objectParams = new GetObjectParams().withType("MemeRunResult").withId(resultId).withWorkspace(WSUtil.workspaceName).withAuth(WSUtil.authToken().toString());   
-		GetObjectOutput output = WSUtil.wsClient().getObject(objectParams);
+		GetObjectParams objectParams = new GetObjectParams().withType("MemeRunResult").withId(resultId).withWorkspace(WORKSPACE).withAuth(token.toString());   
+		GetObjectOutput output = MemeServerImpl.wsClient(token.toString()).getObject(objectParams);
 		MemeRunResult result = UObject.transformObjectToObject(output.getData(), MemeRunResult.class);
 
 		assertEquals(Long.valueOf("0"),result.getSeed());
@@ -239,22 +243,11 @@ public class MemeClientTest {
 		
 		String resultId = null;
 		
-		//AuthToken token = JsonClientCaller.requestTokenFromKBase(USER_NAME, PASSWORD.toCharArray());
 		AuthToken token = AuthService.login(USER_NAME, new String(PASSWORD)).getToken();
-//		System.out.println(token.toString());
-		String id = "KBase.SequenceSet.12345";
 		URL serviceUrl = new URL(serverUrl);
-//		MEMEClient client = new MEMEClient(serviceUrl, USER_NAME, PASSWORD);
 		MEMEClient memeClient = new MEMEClient(serviceUrl, token);
 		memeClient.setAuthAllowedForHttp(true);
 
-//TODO: complete this test		
-		
-		
-/*		System.out.println(input.getSequenceSetId());
-		System.out.println(input.getSequences().get(0).getSequenceId());
-		System.out.println(input.getSequences().get(0).getSequence());
-*/		
 		//set params
 		MemeRunParameters params = new MemeRunParameters();
 		params.setMod("oops");
@@ -268,7 +261,7 @@ public class MemeClientTest {
 		params.setRevcomp(0L);
 
 		
-		String jobId = memeClient.findMotifsWithMemeJobFromWs("AKtest", id, params);
+		String jobId = memeClient.findMotifsWithMemeJobFromWs(WORKSPACE, testSequenceSetId, params);
 		System.out.println("Job ID = " + jobId);
 		assertNotNull(jobId);
 		
@@ -339,8 +332,8 @@ public class MemeClientTest {
 		resultId = resultIdParts[1];
 //Read result from WS
 		
-		GetObjectParams objectParams = new GetObjectParams().withType("MemeRunResult").withId(resultId).withWorkspace(WSUtil.workspaceName).withAuth(WSUtil.authToken().toString());   
-		GetObjectOutput output = WSUtil.wsClient().getObject(objectParams);
+		GetObjectParams objectParams = new GetObjectParams().withType("MemeRunResult").withId(resultId).withWorkspace(WORKSPACE).withAuth(token.toString());   
+		GetObjectOutput output = MemeServerImpl.wsClient(token.toString()).getObject(objectParams);
 		MemeRunResult result = UObject.transformObjectToObject(output.getData(), MemeRunResult.class);
 
 		assertEquals(Long.valueOf("0"),result.getSeed());
@@ -446,7 +439,7 @@ public class MemeClientTest {
 		paramsTomtom.setMinOverlap(0L);
 				
 //		String resultId = client.compareMotifsWithTomtomByCollectionFromWs("AKtest", "kb|memepspmcollection.2", "RegPreciseMotifs_20131006", "", paramsTomtom);
-		String resultId = client.compareMotifsWithTomtomByCollectionFromWs("AKtest", "kb|memepspmcollection.141", "kb|memepspmcollection.141", "", paramsTomtom);
+		String resultId = client.compareMotifsWithTomtomByCollectionFromWs(WORKSPACE, testCollectionId, testCollectionId, "", paramsTomtom);
 
 /*		
 		List<ObjectIdentity> objectIds = new ArrayList<ObjectIdentity>();
@@ -457,17 +450,16 @@ public class MemeClientTest {
 		TomtomRunResult result = UObject.transformObjectToObject(output.get(0).getData(), TomtomRunResult.class);
 */		
 		
-		GetObjectParams params = new GetObjectParams().withType("TomtomRunResult").withId(resultId).withWorkspace("AKtest").withAuth(token.toString());   
-		GetObjectOutput output = WSUtil.wsClient().getObject(params);
+		GetObjectParams params = new GetObjectParams().withType("TomtomRunResult").withId(resultId).withWorkspace(WORKSPACE).withAuth(token.toString());   
+		GetObjectOutput output = MemeServerImpl.wsClient(token.toString()).getObject(params);
 		TomtomRunResult result = UObject.transformObjectToObject(output.getData(), TomtomRunResult.class);
 
 		
 		assertNotNull(result.getHits().get(0).getTargetPspmId());
 		assertEquals(result.getHits().get(0).getTargetPspmId(),result.getHits().get(0).getQueryPspmId());
 		assertEquals(Long.valueOf("0"),result.getHits().get(0).getOptimalOffset());
-		assertEquals(Double.valueOf("3.89353E-37"),result.getHits().get(0).getPvalue());
+		assertEquals(Double.valueOf("3.89353e-37"),result.getHits().get(0).getPvalue());
 		assertEquals(Double.valueOf("7.78706e-37"),result.getHits().get(0).getEvalue());
-		assertEquals(Double.valueOf("7.78706e-37"),result.getHits().get(0).getQvalue());
 		assertEquals(Long.valueOf("24"),result.getHits().get(0).getOverlap());
 		assertEquals("TCACGCTCGTCATGACGAGCGTGA",result.getHits().get(0).getQueryConsensus());
 		assertEquals("TCACGCTCGTCATGACGAGCGTGA",result.getHits().get(0).getTargetConsensus());
@@ -494,7 +486,7 @@ public class MemeClientTest {
 		paramsTomtom.setMinOverlap(0L);
 				
 //		String resultId = client.compareMotifsWithTomtomByCollectionFromWs("AKtest", "kb|memepspmcollection.2", "RegPreciseMotifs_20131006", "", paramsTomtom);
-		String jobId = clientMeme.compareMotifsWithTomtomJobByCollectionFromWs("AKtest", "kb|memepspmcollection.141", "kb|memepspmcollection.141", "", paramsTomtom);
+		String jobId = clientMeme.compareMotifsWithTomtomJobByCollectionFromWs(WORKSPACE, testCollectionId, testCollectionId, "", paramsTomtom);
 
 		System.out.println("Job ID = " + jobId);
 		assertNotNull(jobId);
@@ -568,17 +560,15 @@ public class MemeClientTest {
 		
 
 		
-		GetObjectParams params = new GetObjectParams().withType("TomtomRunResult").withId(resultId).withWorkspace("AKtest").withAuth(token.toString());   
-		GetObjectOutput output = WSUtil.wsClient().getObject(params);
+		GetObjectParams params = new GetObjectParams().withType("TomtomRunResult").withId(resultId).withWorkspace(WORKSPACE).withAuth(token.toString());   
+		GetObjectOutput output = MemeServerImpl.wsClient(token.toString()).getObject(params);
 		TomtomRunResult result = UObject.transformObjectToObject(output.getData(), TomtomRunResult.class);
 
-		
 		assertNotNull(result.getHits().get(0).getTargetPspmId());
 		assertEquals(result.getHits().get(0).getTargetPspmId(),result.getHits().get(0).getQueryPspmId());
 		assertEquals(Long.valueOf("0"),result.getHits().get(0).getOptimalOffset());
-		assertEquals(Double.valueOf("3.89353E-37"),result.getHits().get(0).getPvalue());
+		assertEquals(Double.valueOf("3.89353e-37"),result.getHits().get(0).getPvalue());
 		assertEquals(Double.valueOf("7.78706e-37"),result.getHits().get(0).getEvalue());
-		assertEquals(Double.valueOf("7.78706e-37"),result.getHits().get(0).getQvalue());
 		assertEquals(Long.valueOf("24"),result.getHits().get(0).getOverlap());
 		assertEquals("TCACGCTCGTCATGACGAGCGTGA",result.getHits().get(0).getQueryConsensus());
 		assertEquals("TCACGCTCGTCATGACGAGCGTGA",result.getHits().get(0).getTargetConsensus());
@@ -619,13 +609,11 @@ public class MemeClientTest {
 
 	@Test
 	public final void testFindSitesWithMastByMotifCollectionFromWs() throws Exception {
-		String seqId = "KBase.SequenceSet.12345";
-		String pspmCollectionId = "KBase.MemePSPMCollection.1380921747486";
 		URL serviceUrl = new URL(serverUrl);
 		MEMEClient client = new MEMEClient(serviceUrl, USER_NAME, PASSWORD);
 		client.setAuthAllowedForHttp(true);
 		
-		String resultId = client.findSitesWithMastByCollectionFromWs("AKtest", pspmCollectionId, seqId, "", 0.0005);
+		String resultId = client.findSitesWithMastByCollectionFromWs(WORKSPACE, testCollectionId, testSequenceSetId, "", 0.0005);
 
 		AuthToken token = AuthService.login(USER_NAME, new String(PASSWORD)).getToken();
 		
@@ -636,8 +624,8 @@ public class MemeClientTest {
 		
 		MastRunResult result = UObject.transformObjectToObject(output.get(0).getData(), MastRunResult.class);
 */		
-		GetObjectParams objectParams = new GetObjectParams().withType("MastRunResult").withId(resultId).withWorkspace("AKtest").withAuth(token.toString());   
-		GetObjectOutput output = WSUtil.wsClient().getObject(objectParams);
+		GetObjectParams objectParams = new GetObjectParams().withType("MastRunResult").withId(resultId).withWorkspace(WORKSPACE).withAuth(token.toString());   
+		GetObjectOutput output = MemeServerImpl.wsClient(token.toString()).getObject(objectParams);
 		MastRunResult result = UObject.transformObjectToObject(output.getData(), MastRunResult.class);
 		
 		
@@ -656,13 +644,11 @@ public class MemeClientTest {
 	public final void testFindSitesWithMastJobByMotifCollectionFromWs() throws Exception {
 		String resultId = null;
 		AuthToken token = AuthService.login(USER_NAME, new String(PASSWORD)).getToken();
-		String seqId = "KBase.SequenceSet.12345";
-		String pspmCollectionId = "KBase.MemePSPMCollection.1380921747486";
 		URL serviceUrl = new URL(serverUrl);
 		MEMEClient clientMeme = new MEMEClient(serviceUrl, token);
 		clientMeme.setAuthAllowedForHttp(true);
 		
-		String jobId = clientMeme.findSitesWithMastJobByCollectionFromWs("AKtest", pspmCollectionId, seqId, "", 0.0005);
+		String jobId = clientMeme.findSitesWithMastJobByCollectionFromWs(WORKSPACE, testCollectionId, testSequenceSetId, "", 0.0005);
 	
 		System.out.println("Job ID = " + jobId);
 		assertNotNull(jobId);
@@ -734,8 +720,8 @@ public class MemeClientTest {
 		resultId = resultIdParts[1];
 //Read result from WS
 
-		GetObjectParams objectParams = new GetObjectParams().withType("MastRunResult").withId(resultId).withWorkspace("AKtest").withAuth(token.toString());   
-		GetObjectOutput output = WSUtil.wsClient().getObject(objectParams);
+		GetObjectParams objectParams = new GetObjectParams().withType("MastRunResult").withId(resultId).withWorkspace(WORKSPACE).withAuth(token.toString());   
+		GetObjectOutput output = MemeServerImpl.wsClient(token.toString()).getObject(objectParams);
 		MastRunResult result = UObject.transformObjectToObject(output.getData(), MastRunResult.class);
 		
 		
@@ -752,7 +738,6 @@ public class MemeClientTest {
 
 	@Test
 	public final void testFindSitesWithMast() throws Exception {
-		String memePspmId = "kb|memepspm.14"; 
 		URL serviceUrl = new URL(serverUrl);
 		MEMEClient client = new MEMEClient(serviceUrl, USER_NAME, PASSWORD);
 		client.setAuthAllowedForHttp(true);
@@ -767,8 +752,8 @@ public class MemeClientTest {
 		MemePSPM pspm = UObject.transformObjectToObject(output.get(0).getData(), MemePSPM.class);
 */		
 		
-		GetObjectParams objectParams = new GetObjectParams().withType("MemePSPM").withId(memePspmId).withWorkspace("AKtest").withAuth(token.toString());   
-		GetObjectOutput output = WSUtil.wsClient().getObject(objectParams);
+		GetObjectParams objectParams = new GetObjectParams().withType("MemePSPM").withId(testPspmId).withWorkspace(WORKSPACE).withAuth(token.toString());   
+		GetObjectOutput output = MemeServerImpl.wsClient(token.toString()).getObject(objectParams);
 		MemePSPM pspm = UObject.transformObjectToObject(output.getData(), MemePSPM.class);
 
 		MastRunResult result = client.findSitesWithMast(pspm, testSequenceSet, 0.0005);
@@ -789,7 +774,7 @@ public class MemeClientTest {
 		MEMEClient client = new MEMEClient(serviceUrl, USER_NAME, PASSWORD);
 		client.setAuthAllowedForHttp(true);
 
-		String resultId = client.findSitesWithMastFromWs("AKtest", "kb|memepspm.14", "KBase.SequenceSet.12345", 0.0005);
+		String resultId = client.findSitesWithMastFromWs(WORKSPACE, testPspmId, testSequenceSetId, 0.0005);
 		
 		AuthToken token = AuthService.login(USER_NAME, new String(PASSWORD)).getToken();
 		
@@ -801,8 +786,8 @@ public class MemeClientTest {
 		MastRunResult result = UObject.transformObjectToObject(output.get(0).getData(), MastRunResult.class);
 */
 		
-		GetObjectParams objectParams = new GetObjectParams().withType("MastRunResult").withId(resultId).withWorkspace("AKtest").withAuth(token.toString());   
-		GetObjectOutput output = WSUtil.wsClient().getObject(objectParams);
+		GetObjectParams objectParams = new GetObjectParams().withType("MastRunResult").withId(resultId).withWorkspace(WORKSPACE).withAuth(token.toString());   
+		GetObjectOutput output = MemeServerImpl.wsClient(token.toString()).getObject(objectParams);
 		MastRunResult result = UObject.transformObjectToObject(output.getData(), MastRunResult.class);
 
 		
@@ -825,7 +810,7 @@ public class MemeClientTest {
 		MEMEClient clientMeme = new MEMEClient(serviceUrl, token);
 		clientMeme.setAuthAllowedForHttp(true);
 		
-		String jobId = clientMeme.findSitesWithMastJobFromWs("AKtest", "kb|memepspm.14", "KBase.SequenceSet.12345", 0.0005);
+		String jobId = clientMeme.findSitesWithMastJobFromWs(WORKSPACE, testPspmId, testSequenceSetId, 0.0005);
 	
 		System.out.println("Job ID = " + jobId);
 		assertNotNull(jobId);
@@ -897,8 +882,8 @@ public class MemeClientTest {
 		resultId = resultIdParts[1];
 //Read result from WS
 
-		GetObjectParams objectParams = new GetObjectParams().withType("MastRunResult").withId(resultId).withWorkspace("AKtest").withAuth(token.toString());   
-		GetObjectOutput output = WSUtil.wsClient().getObject(objectParams);
+		GetObjectParams objectParams = new GetObjectParams().withType("MastRunResult").withId(resultId).withWorkspace(WORKSPACE).withAuth(token.toString());   
+		GetObjectOutput output = MemeServerImpl.wsClient(token.toString()).getObject(objectParams);
 		MastRunResult result = UObject.transformObjectToObject(output.getData(), MastRunResult.class);
 
 		
@@ -915,7 +900,6 @@ public class MemeClientTest {
 
 	@Test
 	public final void testGetPspmCollectionFromMemeResult() throws Exception {
-		String id = "KBase.MemeRunResult.1380917552760";
 		URL serviceUrl = new URL(serverUrl);
 		MEMEClient client = new MEMEClient(serviceUrl, USER_NAME, PASSWORD);
 		client.setAuthAllowedForHttp(true);
@@ -929,8 +913,8 @@ public class MemeClientTest {
 		
 		MemeRunResult input = UObject.transformObjectToObject(output.get(0).getData(), MemeRunResult.class);
 */
-		GetObjectParams memeParams = new GetObjectParams().withType("MemeRunResult").withId(id).withWorkspace("AKtest").withAuth(token.toString());   
-		GetObjectOutput output = WSUtil.wsClient().getObject(memeParams);
+		GetObjectParams memeParams = new GetObjectParams().withType("MemeRunResult").withId(testMemeRunResultId).withWorkspace(WORKSPACE).withAuth(token.toString());   
+		GetObjectOutput output = MemeServerImpl.wsClient(token.toString()).getObject(memeParams);
 		MemeRunResult input = UObject.transformObjectToObject(output.getData(), MemeRunResult.class);
 
 		
@@ -940,7 +924,7 @@ public class MemeClientTest {
 		assertFalse(result.getPspms().size() == 0);
 		assertEquals("ACGT", result.getAlphabet());
 		//Write result to WS
-		MemeServerImpl.saveObjectToWorkspace(UObject.transformObjectToObject(result, UObject.class), result.getClass().getSimpleName(), "AKtest", result.getId(), token.toString());
+		MemeServerImpl.saveObjectToWorkspace(UObject.transformObjectToObject(result, UObject.class), result.getClass().getSimpleName(), WORKSPACE, result.getId(), token.toString());
 
 		
 //		WSUtil.saveObject(result.getId(), result, false);
@@ -952,12 +936,11 @@ public class MemeClientTest {
 
 	@Test
 	public final void testGetPspmCollectionFromMemeResultFromWs() throws Exception {
-		String id = "kb|memerunresult.430";
 		URL serviceUrl = new URL(serverUrl);
 		MEMEClient client = new MEMEClient(serviceUrl, USER_NAME, PASSWORD);
 		client.setAuthAllowedForHttp(true);
 		
-		String resultId = client.getPspmCollectionFromMemeResultFromWs("AKtest", id);
+		String resultId = client.getPspmCollectionFromMemeResultFromWs(WORKSPACE, testMemeRunResultId);
 
 		AuthToken token = AuthService.login(USER_NAME, new String(PASSWORD)).getToken();
 		
@@ -969,8 +952,8 @@ public class MemeClientTest {
 		MemePSPMCollection result = UObject.transformObjectToObject(output.get(0).getData(), MemePSPMCollection.class);
 */
 		//set params
-		GetObjectParams objectParams = new GetObjectParams().withType("MemePSPMCollection").withId(resultId).withWorkspace("AKtest").withAuth(token.toString());   
-		GetObjectOutput output = WSUtil.wsClient().getObject(objectParams);
+		GetObjectParams objectParams = new GetObjectParams().withType("MemePSPMCollection").withId(resultId).withWorkspace(WORKSPACE).withAuth(token.toString());   
+		GetObjectOutput output = MemeServerImpl.wsClient(token.toString()).getObject(objectParams);
 		MemePSPMCollection result = UObject.transformObjectToObject(output.getData(), MemePSPMCollection.class);
 
 		assertNotNull(result);
@@ -982,12 +965,11 @@ public class MemeClientTest {
 	public final void testGetPspmCollectionFromMemeResultJobFromWs() throws Exception {
 		String resultId = null;
 		AuthToken token = AuthService.login(USER_NAME, new String(PASSWORD)).getToken();
-		String id = "kb|memerunresult.430";
 		URL serviceUrl = new URL(serverUrl);
 		MEMEClient clientMeme = new MEMEClient(serviceUrl, USER_NAME, PASSWORD);
 		clientMeme.setAuthAllowedForHttp(true);
 		
-		String jobId = clientMeme.getPspmCollectionFromMemeResultJobFromWs("AKtest", id);
+		String jobId = clientMeme.getPspmCollectionFromMemeResultJobFromWs(WORKSPACE, testMemeRunResultId);
 
 		
 		System.out.println("Job ID = " + jobId);
@@ -1060,8 +1042,8 @@ public class MemeClientTest {
 		resultId = resultIdParts[1];
 
 		//Read result from WS
-		GetObjectParams objectParams = new GetObjectParams().withType("MemePSPMCollection").withId(resultId).withWorkspace("AKtest").withAuth(token.toString());   
-		GetObjectOutput output = WSUtil.wsClient().getObject(objectParams);
+		GetObjectParams objectParams = new GetObjectParams().withType("MemePSPMCollection").withId(resultId).withWorkspace(WORKSPACE).withAuth(token.toString());   
+		GetObjectOutput output = MemeServerImpl.wsClient(token.toString()).getObject(objectParams);
 		MemePSPMCollection result = UObject.transformObjectToObject(output.getData(), MemePSPMCollection.class);
 
 		assertNotNull(result);
