@@ -106,8 +106,7 @@ compile: src lib
 
 distrib:
 	@echo "Target folder: $(TARGET_DIR)"
-	rm -r $(WORK_DIR)
-	mkdir -p $(WORK_DIR)
+	test -d $(WORK_DIR) || mkdir -p $(WORK_DIR)
 	mkdir -p $(TARGET_DIR)
 	cp -f ./dist/service.war $(TARGET_DIR)
 	cp -f ./glassfish_start_service.sh $(TARGET_DIR)
