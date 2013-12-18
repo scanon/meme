@@ -41,10 +41,49 @@
 	
 */
 
-#include <general_types.types>
+#include <Sequences.types>
 
 module MEME
 {
+	/* Represents WS Sequences.Sequence identifier
+		@id ws Sequences.Sequence
+	*/
+	typedef string sequence_id;
+
+	/* Represents WS Sequences.SequenceSet identifier
+		@id ws Sequences.SequenceSet
+	*/
+	typedef string sequence_set_id;
+
+	/* Represents WS MemeMotif identifier
+		@id ws MEME.MemeMotif
+	*/
+	typedef string meme_motif_id;
+
+	/* Represents WS MemeRunResult identifier
+		@id ws MEME.MemeRunResult
+	*/
+	typedef string meme_run_result_id;
+
+	/* Represents WS TomtomRunResult identifier
+		@id ws MEME.TomtomRunResult
+	*/
+	typedef string tomtom_run_result_id;
+
+	/* Represents WS MastRunResult identifier
+		@id ws MEME.MastRunResult
+	*/
+	typedef string mast_run_result_id;
+
+	/* Represents WS MemePSPM identifier
+		@id ws MEME.MemePSPM
+	*/
+	typedef string meme_pspm_id;
+
+	/* Represents WS MemePSPMCollection identifier
+		@id ws MEME.MemePSPMCollection
+	*/
+	typedef string meme_pspm_collection_id;
 
 	/* Represents a particular site from MEME motif description 
 		string source_sequence_id - ID of sequence where the site was found
@@ -55,7 +94,7 @@ module MEME
 		string right_flank - sequence of right flank
 	*/
 	typedef structure {
-		string source_sequence_id;
+		sequence_id source_sequence_id;
 		int start;
 		float pvalue;
 		string left_flank;
@@ -74,7 +113,7 @@ module MEME
 		list<MemeSite> sites - list of sites
 	*/
 	typedef structure {
-		string id;
+		meme_motif_id id;
 		string description;
 		int width;
 		float llr;
@@ -148,7 +187,7 @@ module MEME
 		string raw_output - section of MEME output text file (all before motif data)
 	*/
 	typedef structure{
-		string id;
+		meme_run_result_id id;
 		string timestamp;
 		string meme_version;
 		string input_file_name;
@@ -201,8 +240,8 @@ module MEME
 		list<list<float>> matrix - The letter probability matrix is a table of probabilities where the rows are positions in the motif and the columns are letters in the alphabet. The columns are ordered alphabetically so for DNA the first column is A, the second is C, the third is G and the last is T.
 	*/
 	typedef structure {
-		string id;
-		string source_id;
+		meme_pspm_id id;
+		meme_motif_id source_id;
 		string source_type;
 		string description;
 		string alphabet;
@@ -220,7 +259,7 @@ module MEME
 		list<MemeMotif> pspms - A list of all MemePSPMs in a collection
 	*/
 	typedef structure{
-		string id;
+		meme_pspm_collection_id id;
 		string timestamp;
 		string description;
 		string alphabet;
@@ -255,8 +294,8 @@ module MEME
 		string strand - Orientation: Orientation of target motif with respect to query motif.
 	*/
 	typedef structure{
-		string query_pspm_id;
-		string target_pspm_id;
+		meme_pspm_id query_pspm_id;
+		meme_pspm_id target_pspm_id;
 		int optimal_offset;
 		float pvalue;
 		float evalue;
@@ -278,7 +317,7 @@ module MEME
 		list<TomtomHit> hits - A list of all hits found by TOMTOM
 	*/
 	typedef structure{
-		string id;
+		tomtom_run_result_id id;
 		string timestamp;
 		float thresh;
 		int evalue;
@@ -298,9 +337,9 @@ module MEME
 		float hitPvalue - hit p-value
 	*/
 	typedef structure{
-		string sequence_id;
+		sequence_id seq_id;
 		string strand;
-		string pspm_id;
+		meme_pspm_id pspm_id;
 		int hit_start;
 		int hit_end;
 		float score;
@@ -314,7 +353,7 @@ module MEME
 		list<MastHit> hits - A list of all hits found by MAST
 	*/
 	typedef structure{
-		string id;
+		mast_run_result_id id;
 		string timestamp;
 		float mt;
 		list<MastHit> hits;
@@ -326,7 +365,7 @@ module MEME
 		SequenceSet sequenceSet - input set of sequences
 		MemeRunParameters params - parameters of MEME run
 	*/
-	funcdef find_motifs_with_meme(GeneralTypes.SequenceSet sequenceSet, MemeRunParameters params) returns(MemeRunResult meme_run_result);
+	funcdef find_motifs_with_meme(Sequences.SequenceSet sequenceSet, MemeRunParameters params) returns(MemeRunResult meme_run_result);
 
 	/*
 		Returns kbase id of MemeRunResult object that contains results of a single MEME run
@@ -335,7 +374,7 @@ module MEME
 		string sequence_set_id - kbase id of the input set of sequences
 		MemeRunParameters params - parameters of MEME run
 	*/
-	funcdef find_motifs_with_meme_from_ws(string ws_id, string sequence_set_id, MemeRunParameters params) returns(string meme_run_result_id) authentication required;
+	funcdef find_motifs_with_meme_from_ws(string ws_id, sequence_set_id sequence_set_id, MemeRunParameters params) returns(meme_run_result_id output_id) authentication required;
 
 	/*
 		Returns id of job object that contains id of a single MEME run result
@@ -344,7 +383,7 @@ module MEME
 		string sequence_set_id - kbase id of the input set of sequences
 		MemeRunParameters params - parameters of MEME run
 	*/
-	funcdef find_motifs_with_meme_job_from_ws(string ws_id, string sequence_set_id, MemeRunParameters params) returns(string job_id) authentication required;
+	funcdef find_motifs_with_meme_job_from_ws(string ws_id, sequence_set_id sequence_set_id, MemeRunParameters params) returns(string job_id) authentication required;
 
 	/*
 		Returns TomtomRunResult with results of a single TOMTOM run
@@ -363,7 +402,7 @@ module MEME
 		string target_id - kbase id of MemePSPMCollection with target motifs for TOMTOM run
 		TomtomRunParameters params - parameters of TOMTOM run
 	*/
-	funcdef compare_motifs_with_tomtom_from_ws(string ws_id, string query_id, string target_id, TomtomRunParameters params) returns(string tomtom_run_result_id) authentication required;
+	funcdef compare_motifs_with_tomtom_from_ws(string ws_id, meme_pspm_id query_id, meme_pspm_collection_id target_id, TomtomRunParameters params) returns(tomtom_run_result_id output_id) authentication required;
 
 	/*
 		Returns ID of job object that contains id of a single TOMTOM run result
@@ -373,7 +412,7 @@ module MEME
 		string target_id - kbase id of MemePSPMCollection with target motifs for TOMTOM run
 		TomtomRunParameters params - parameters of TOMTOM run
 	*/
-	funcdef compare_motifs_with_tomtom_job_from_ws(string ws_id, string query_id, string target_id, TomtomRunParameters params) returns(string job_id) authentication required;
+	funcdef compare_motifs_with_tomtom_job_from_ws(string ws_id, meme_pspm_id query_id, meme_pspm_collection_id target_id, TomtomRunParameters params) returns(string job_id) authentication required;
 
 	/*
 		Returns TomtomRunResult with results of a single TOMTOM run
@@ -383,7 +422,7 @@ module MEME
 		string pspm_id - KBase ID of a MemePSPM from the query collection that will be used. When empty string provided, all motifs in the query collection will be used
 		TomtomRunParameters params - parameters of TOMTOM run
 	*/
-	funcdef compare_motifs_with_tomtom_by_collection (MemePSPMCollection query, MemePSPMCollection target, string pspm_id, TomtomRunParameters params) returns(TomtomRunResult tomtom_run_result);
+	funcdef compare_motifs_with_tomtom_by_collection (MemePSPMCollection query, MemePSPMCollection target, meme_pspm_id pspm_id, TomtomRunParameters params) returns(TomtomRunResult tomtom_run_result);
 	
 	/*
 		Returns kbase ID of TomtomRunResult with results of a single TOMTOM run
@@ -394,7 +433,7 @@ module MEME
 		string pspm_id - KBase ID of a MemePSPM from the query collection that will be used. When empty string provided, all motifs in the query collection will be used
 		TomtomRunParameters params - parameters of TOMTOM run
 	*/
-	funcdef compare_motifs_with_tomtom_by_collection_from_ws(string ws_id, string query_id, string target_id, string pspm_id, TomtomRunParameters params) returns(string tomtom_run_result_id) authentication required;
+	funcdef compare_motifs_with_tomtom_by_collection_from_ws(string ws_id, meme_pspm_collection_id query_id, meme_pspm_collection_id target_id, meme_pspm_id pspm_id, TomtomRunParameters params) returns(tomtom_run_result_id output_id) authentication required;
 
 	/*
 		Returns ID of job object that contains ID of results of a single TOMTOM run
@@ -405,7 +444,7 @@ module MEME
 		string pspm_id - KBase ID of a MemePSPM from the query collection that will be used. When empty string provided, all motifs in the query collection will be used
 		TomtomRunParameters params - parameters of TOMTOM run
 	*/
-	funcdef compare_motifs_with_tomtom_job_by_collection_from_ws(string ws_id, string query_id, string target_id, string pspm_id, TomtomRunParameters params) returns(string job_id) authentication required;
+	funcdef compare_motifs_with_tomtom_job_by_collection_from_ws(string ws_id, meme_pspm_collection_id query_id, meme_pspm_collection_id target_id, meme_pspm_id pspm_id, TomtomRunParameters params) returns(string job_id) authentication required;
 
 	/*
 		Returns MastRunResult containing list of MAST hits
@@ -414,7 +453,7 @@ module MEME
 		SequenceSet target - target sequences for MAST run
 		float mt - value of mt parameter for MAST run
 	*/
-	funcdef find_sites_with_mast(MemePSPM query, GeneralTypes.SequenceSet target, float mt) returns(MastRunResult mast_run_result);
+	funcdef find_sites_with_mast(MemePSPM query, Sequences.SequenceSet target, float mt) returns(MastRunResult mast_run_result);
 
 	/*
 		Returns kbase ID of MastRunResult containing list of MAST hits
@@ -424,7 +463,7 @@ module MEME
 		string target_id - kbase ID of SequenceSet containing target sequences for MAST run
 		float mt - value of mt parameter for MAST run
 	*/
-	funcdef find_sites_with_mast_from_ws(string ws_id, string query_id, string target_id, float mt) returns(string mast_run_result_id) authentication required;
+	funcdef find_sites_with_mast_from_ws(string ws_id, meme_pspm_id query_id, sequence_set_id target_id, float mt) returns(mast_run_result_id output_id) authentication required;
 
 	/*
 		Returns ID of job object that contains ID of MastRunResult
@@ -434,7 +473,7 @@ module MEME
 		string target_id - kbase ID of SequenceSet containing target sequences for MAST run
 		float mt - value of mt parameter for MAST run
 	*/
-	funcdef find_sites_with_mast_job_from_ws(string ws_id, string query_id, string target_id, float mt) returns(string job_id) authentication required;
+	funcdef find_sites_with_mast_job_from_ws(string ws_id, meme_pspm_id query_id, sequence_set_id target_id, float mt) returns(string job_id) authentication required;
 
 	/*
 		Returns MastRunResult containing list of MAST hits
@@ -444,7 +483,7 @@ module MEME
 		string pspm_id - KBase ID of a MemePSPM from the query collection that will be used. When empty string provided, all motifs in the query collection will be used
 		float mt - value of mt parameter for MAST run
 	*/
-	funcdef find_sites_with_mast_by_collection (MemePSPMCollection query, GeneralTypes.SequenceSet target, string pspm_id, float mt) returns(MastRunResult mast_run_result);
+	funcdef find_sites_with_mast_by_collection (MemePSPMCollection query, Sequences.SequenceSet target, string pspm_id, float mt) returns(MastRunResult mast_run_result);
 
 	/*
 		Returns kbase ID of MastRunResult containing list of MAST hits
@@ -455,7 +494,7 @@ module MEME
 		string pspm_id - KBase ID of a MemePSPM from the query collection that will be used. When empty string provided, all motifs in the query collection will be used
 		float mt - value of mt parameter for MAST run
 	*/
-	funcdef find_sites_with_mast_by_collection_from_ws(string ws_id, string query_id, string target_id, string pspm_id, float mt) returns(string mast_run_result_id) authentication required;
+	funcdef find_sites_with_mast_by_collection_from_ws(string ws_id, meme_pspm_collection_id query_id, sequence_set_id target_id, string pspm_id, float mt) returns(mast_run_result_id output_id) authentication required;
 
 	/*
 		Returns ID of job object that contains ID of MastRunResult
@@ -466,7 +505,7 @@ module MEME
 		string pspm_id - KBase ID of a MemePSPM from the query collection that will be used. When empty string provided, all motifs in the query collection will be used
 		float mt - value of mt parameter for MAST run
 	*/
-	funcdef find_sites_with_mast_job_by_collection_from_ws(string ws_id, string query_id, string target_id, string pspm_id, float mt) returns(string job_id) authentication required;
+	funcdef find_sites_with_mast_job_by_collection_from_ws(string ws_id, meme_pspm_collection_id query_id, sequence_set_id target_id, string pspm_id, float mt) returns(string job_id) authentication required;
 
 	/*
 		Converts MemeRunResult into MemePSPMCollection 
@@ -479,13 +518,13 @@ module MEME
 		string ws_id - workspace id
 		string meme_run_result_id - KBase ID of source MemeRunResult
 	*/
-	funcdef get_pspm_collection_from_meme_result_from_ws (string ws_id, string meme_run_result_id) returns(string meme_pspm_collection_id) authentication required;
+	funcdef get_pspm_collection_from_meme_result_from_ws (string ws_id, meme_run_result_id input_id) returns(meme_pspm_collection_id output_id) authentication required;
 
 	/*
 		Returns ID of job object that contains ID of MemePSPMCollection converted from MemeRunResult
 		string ws_id - workspace id
 		string meme_run_result_id - KBase ID of source MemeRunResult
 	*/
-	funcdef get_pspm_collection_from_meme_result_job_from_ws (string ws_id, string meme_run_result_id) returns(string job_id) authentication required;
+	funcdef get_pspm_collection_from_meme_result_job_from_ws (string ws_id, meme_run_result_id input_id) returns(string job_id) authentication required;
 
 };
