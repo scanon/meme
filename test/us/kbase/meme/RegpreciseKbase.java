@@ -10,6 +10,7 @@ import java.util.List;
 import us.kbase.auth.AuthToken;
 import us.kbase.common.service.JsonClientCaller;
 import us.kbase.common.service.UObject;
+import us.kbase.util.WsDeluxeUtil;
 
 
 public class RegpreciseKbase {
@@ -69,7 +70,6 @@ public class RegpreciseKbase {
 		MemePSPM result = new MemePSPM();
 		result.setAlphabet("ACGT");
 		result.setDescription("Exported from RegPrecise");
-		result.setSourceType("RegPrecise motif");
 		List<List<Double>> matrix = new ArrayList<List<Double>>();
 		for (String line: lines) {
 			if (line.equals("")){
@@ -122,7 +122,7 @@ public class RegpreciseKbase {
 		String userName = "aktest";
 		String password = "1475rokegi";
 		AuthToken token = JsonClientCaller.requestTokenFromKBase(userName, password.toCharArray());
-		MemeServerImpl.saveObjectToWorkspace(UObject.transformObjectToObject(collection, UObject.class), collection.getClass().getSimpleName(), "AKtest", "kb_pspmcollection_regprecise", token.getTokenData());
+		WsDeluxeUtil.saveObjectToWorkspace(UObject.transformObjectToObject(collection, UObject.class), "MEME.MemePSPMCollection", "AKtest", "kb_pspmcollection_regprecise", token.getTokenData());
 
 
 	}

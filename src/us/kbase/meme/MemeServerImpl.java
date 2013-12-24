@@ -2,8 +2,10 @@ package us.kbase.meme;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
@@ -13,82 +15,40 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Pattern;
 
 import us.kbase.auth.AuthException;
-//import us.kbase.auth.AuthService;
 import us.kbase.auth.AuthToken;
-//import us.kbase.auth.TokenException;
-import us.kbase.auth.TokenFormatException;
-//import us.kbase.common.service.JsonClientCaller;
-//import us.kbase.common.service.JsonClientException;
-import us.kbase.common.service.Tuple11;
-//import us.kbase.common.service.Tuple9;
 import us.kbase.common.service.JsonClientException;
 import us.kbase.common.service.UObject;
 import us.kbase.common.service.UnauthorizedException;
-//import us.kbase.auth.AuthUser;
-import us.kbase.generaltypes.Sequence;
-import us.kbase.generaltypes.SequenceSet;
+import us.kbase.sequences.Sequence;
+import us.kbase.sequences.SequenceSet;
 import us.kbase.idserverapi.IDServerAPIClient;
-//	import us.kbase.workspace.ObjectData;
-//	import us.kbase.workspace.ObjectIdentity;
-//	import us.kbase.workspace.ObjectSaveData;
-//	import us.kbase.workspace.SaveObjectsParams;
-//	import us.kbase.workspace.WorkspaceClient;
-//  import us.kbase.util.WSUtil;
 import us.kbase.userandjobstate.InitProgress;
 import us.kbase.userandjobstate.Results;
 import us.kbase.userandjobstate.UserAndJobStateClient;
-import us.kbase.workspaceservice.GetObjectOutput;
-import us.kbase.workspaceservice.GetObjectParams;
-import us.kbase.workspaceservice.ObjectData;
-import us.kbase.workspaceservice.SaveObjectParams;
-import us.kbase.workspaceservice.WorkspaceServiceClient;
+import us.kbase.util.WsDeluxeUtil;
 
 public class MemeServerImpl {
 	private static Integer temporaryFileId = 0;
-	private static final String WORK_DIRECTORY = "/var/tmp/meme"; 
-	private static final String ID_SERVICE_URL = "http://kbase.us/services/idserver";
-	private static final String WS_SERVICE_URL = "http://kbase.us/services/workspace";
-	private static final String JOB_SERVICE_URL = "http://140.221.84.180:7083";
-//	private static final String JOB_ACCOUNT = "memejobs";
-//	private static final String JOB_PASSWORD = "1475_rokegi";
+	private static final String WORK_DIRECTORY = MemeServerConfig.WORK_DIRECTORY; 
+	private static final String ID_SERVICE_URL = MemeServerConfig.ID_SERVICE_URL;
+	private static final String JOB_SERVICE_URL = MemeServerConfig.JOB_SERVICE;
 
 	private static Pattern spacePattern = Pattern.compile("[\\n\\t ]");
 	private static Date date = new Date();
 	private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
-	private static WorkspaceServiceClient _wsClient = null;
 	private static UserAndJobStateClient _jobClient = null;
-//	private static AuthToken jobToken = null;
 	
-	protected static void cleanUpOnStart () {
-		try {
-			Runtime.getRuntime().exec("rm "+WORK_DIRECTORY+"/*.fasta");
-			Runtime.getRuntime().exec("rm "+WORK_DIRECTORY+"/*.meme");
-			Runtime.getRuntime().exec("rm "+WORK_DIRECTORY+"/*.out");
-			Runtime.getRuntime().exec("rm "+WORK_DIRECTORY+"/*_tomtom.txt");
-			Runtime.getRuntime().exec("rm "+WORK_DIRECTORY+"/*_mast.txt");
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
+	protected static void cleanUpOnStart () throws IOException {
+		deleteFile(WORK_DIRECTORY, ".*.fasta");
+		deleteFile(WORK_DIRECTORY, ".*.meme");
+		deleteFile(WORK_DIRECTORY, ".*.out");
+		deleteFile(WORK_DIRECTORY, ".*._tomtom.txt");
+		deleteFile(WORK_DIRECTORY, ".*._mast.txt");
 	}
-	
-	protected static WorkspaceServiceClient wsClient(String token) throws TokenFormatException, UnauthorizedException, IOException{
-		if(_wsClient == null)
-		{
-			URL workspaceClientUrl = new URL (WS_SERVICE_URL);
-			AuthToken authToken = new AuthToken(token);
-			_wsClient = new WorkspaceServiceClient(workspaceClientUrl, authToken);
-			_wsClient.setAuthAllowedForHttp(true);
-		}
-		return _wsClient;
-	} 
 	
 	protected static UserAndJobStateClient jobClient(String token) throws UnauthorizedException, IOException, AuthException {
 		if(_jobClient == null)
@@ -98,12 +58,6 @@ public class MemeServerImpl {
 			_jobClient = new UserAndJobStateClient (jobServiceUrl, authToken);
 			_jobClient.setAuthAllowedForHttp(true);
 		}
-/*		
-		if(jobToken == null)
-		{
-			jobToken = AuthService.login(JOB_ACCOUNT, new String(JOB_PASSWORD)).getToken();
-		}
-*/		
 		return _jobClient;
 	}
 	
@@ -119,13 +73,13 @@ public class MemeServerImpl {
 			//System.out.println(dateFormat.format(date));
 			jobClient(token).startJob(jobId, token, status, desc, initProgress, dateFormat.format(date));
 		} catch (JsonClientException e) {
-			// TODO Auto-generated catch block
+			System.err.println("Unable to start job "+ jobId + " (" + desc + "): JSON Client Exception");
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			System.err.println("Unable to start job "+ jobId + " (" + desc + "): IO Exception");
 			e.printStackTrace();
 		} catch (AuthException e) {
-			// TODO Auto-generated catch block
+			System.err.println("Unable to start job "+ jobId + " (" + desc + "): Authentication Exception");
 			e.printStackTrace();
 		}
 	}
@@ -135,13 +89,13 @@ public class MemeServerImpl {
 			date.setTime(date.getTime()+10000L);
 			jobClient(token).updateJobProgress(jobId, token, status, tasks, dateFormat.format(date));
 		} catch (JsonClientException e) {
-			// TODO Auto-generated catch block
+			System.err.println("Unable to update job "+ jobId + " (" + status + "): JSON Client Exception");
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			System.err.println("Unable to update job "+ jobId + " (" + status + "): IO Exception");
 			e.printStackTrace();
 		} catch (AuthException e) {
-			// TODO Auto-generated catch block
+			System.err.println("Unable to update job "+ jobId + " (" + status + "): Authentication Exception");
 			e.printStackTrace();
 		}
 
@@ -158,13 +112,13 @@ public class MemeServerImpl {
 			res.setWorkspaceids(workspaceIds);
 			jobClient(token).completeJob(jobId, token, status, error, res); 
 		} catch (JsonClientException e) {
-			// TODO Auto-generated catch block
+			System.err.println("Unable to finish job "+ jobId + " (result object: " + objectId + " in workspace " + wsId + "): JSON Client Exception");
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
+			System.err.println("Unable to finish job "+ jobId + " (result object: " + objectId + " in workspace " + wsId + "): IO Exception");
 			e.printStackTrace();
 		} catch (AuthException e) {
-			// TODO Auto-generated catch block
+			System.err.println("Unable to finish job "+ jobId + " (result object: " + objectId + " in workspace " + wsId + "): Authentication Exception");
 			e.printStackTrace();
 		}
 
@@ -178,15 +132,13 @@ public class MemeServerImpl {
 		
 	protected static void generateFastaFile(String jobId,
 			SequenceSet sequenceSet) {
-		String memeInput = new String();
-		for (Sequence sequence : sequenceSet.getSequences()) {
-			memeInput += ">" + sequence.getSequenceId() + "\n"
-					+ formatSequence(sequence.getSequence()) + "\n";
-		}
 		BufferedWriter writer = null;
 		try {
 			writer = new BufferedWriter(new FileWriter(jobId));
-			writer.write(memeInput);
+			for (Sequence sequence : sequenceSet.getSequences()) {
+				writer.write(">" + sequence.getSequenceId() + "\n"
+						+ formatSequence(sequence.getSequence()) + "\n");
+			}
 		} catch (IOException e) {
 			System.out.println(e.getLocalizedMessage());
 		} finally {
@@ -213,7 +165,7 @@ public class MemeServerImpl {
 		return result;
 	}
 
-	protected static String generateMemeCommandLine(String jobId,
+	protected static String generateMemeCommandLine(String inputFileName,
 			String mod, Long nmotifs, Long minw,
 			Long maxw, Long nsites, Long minsites,
 			Long maxsites, Long pal, Long revcomp) throws UnsupportedEncodingException {
@@ -222,7 +174,7 @@ public class MemeServerImpl {
 					+ ". oops will be used instead.");
 			mod = "oops";
 		}
-		String memeCommand = "meme " + jobId + " -mod " + mod;
+		String memeCommand = "meme " + inputFileName + " -mod " + mod;
 		if (nmotifs > 0)
 			memeCommand += " -nmotifs " + nmotifs;
 		if (minw > 0)
@@ -568,9 +520,8 @@ public class MemeServerImpl {
 
 		MemeRunResult returnVal = null;
 		// Generate unique jobId for the MEME run
-		String currentJobId = getTemporaryFileId();
-		String inputFileName = WORK_DIRECTORY+"/"+currentJobId	+ ".fasta";
-		String outputFileName = WORK_DIRECTORY+"/"+currentJobId	+ ".out";
+		String inputFileName = WORK_DIRECTORY + "/" + jobId	+ ".fasta";
+		String outputFileName = WORK_DIRECTORY + "/" + jobId + ".out";
 		// Generate MEME command line
 		String memeCommand = generateMemeCommandLine(inputFileName, params.getMod(),
 				params.getNmotifs(), params.getMinw(), params.getMaxw(), params.getNsites(), params.getMinsites(),
@@ -590,54 +541,56 @@ public class MemeServerImpl {
 		}
 		finally {
 			// Clean up
-			Runtime.getRuntime().exec("rm " + inputFileName);
-			Runtime.getRuntime().exec("rm " + outputFileName);
+			File fileDelete = new File(inputFileName);
+			fileDelete.delete();
+			fileDelete = new File(outputFileName);
+			fileDelete.delete();
+			//Runtime.getRuntime().exec("rm " + inputFileName);
+			//Runtime.getRuntime().exec("rm " + outputFileName);
 		}
-
+		returnVal.setParams(params);
 		return returnVal;
 	}
 	
 	public static String findMotifsWithMemeFromWs(
-			String wsId, String sequenceSetId, MemeRunParameters params, String token) throws Exception {
-
-		String returnVal = findMotifsWithMemeJobFromWs(wsId, sequenceSetId, params, null, token);		
+			String wsName, MemeRunParameters params, String token) throws Exception {
+		String returnVal = findMotifsWithMemeJobFromWs(wsName, params, null, token);		
 		return returnVal;		
 	}
 
-	public static String findMotifsWithMemeJobFromWs(String wsId, String sequenceSetId, MemeRunParameters params, String jobId, String token) throws Exception{
+	public static String findMotifsWithMemeJobFromWs(String wsName, MemeRunParameters params, String jobId, String token) throws Exception{
 
 		//Start job
-		String desc = "MEME service job. Method: findMotifsWithMemeJobFromWs. Input: " + sequenceSetId + ". Workspace: " + wsId + ".";
+		String desc = "MEME service job. Method: findMotifsWithMemeJobFromWs. Input: " + params.getSourceRef() + ". Workspace: " + wsName + ".";
 		if (jobId != null) startJob (jobId, desc, 3L, token);
 
-		GetObjectParams objectParams = new GetObjectParams().withType("SequenceSet").withId(sequenceSetId).withWorkspace(wsId).withAuth(token);
-		GetObjectOutput output = wsClient(token).getObject(objectParams);
-		SequenceSet input = UObject.transformObjectToObject(output.getData(), SequenceSet.class);
+		SequenceSet input = WsDeluxeUtil.getObjectFromWsByRef(params.getSourceRef(), token).getData().asClassInstance(SequenceSet.class);
 		
 		MemeRunResult memeRunResult = findMotifsWithMeme (input, params, jobId, token);
 		String returnVal = memeRunResult.getId();
 
 		//Save to workspace	
-		saveObjectToWorkspace (UObject.transformObjectToObject(memeRunResult, UObject.class), memeRunResult.getClass().getSimpleName(), wsId, returnVal, token);
+		WsDeluxeUtil.saveObjectToWorkspace (UObject.transformObjectToObject(memeRunResult, UObject.class), "MEME.MemeRunResult", wsName, returnVal, token);
 				
 		//Finalize job
-		if (jobId != null) finishJob (jobId, wsId, returnVal, token);
+		if (jobId != null) finishJob (jobId, wsName, returnVal, token);
 		return returnVal;		
 	}
 
 	public static TomtomRunResult compareMotifsWithTomtom(MemePSPM query, MemePSPMCollection target, TomtomRunParameters params) throws Exception {
 				
 		MemePSPMCollection queryCol = makePSPMCollection(query);
-		TomtomRunResult result = compareMotifsWithTomtomByCollection(queryCol, target, "", params, null, null);
+		TomtomRunResult result = compareMotifsWithTomtomByCollection(queryCol, target, params, null, null);
 		return result;
 	}
 
-	public static String compareMotifsWithTomtomFromWs(String wsId, String queryId, String targetId, TomtomRunParameters params, String token) throws MalformedURLException, Exception{
+/*	public static String compareMotifsWithTomtomFromWs(String wsId, String queryId, String targetId, TomtomRunParameters params, String token) throws MalformedURLException, Exception{
 		String returnVal = compareMotifsWithTomtomJobFromWs(wsId, queryId, targetId, params, null, token);
 		return returnVal;
 	}
+*/
 
-	public static String compareMotifsWithTomtomJobFromWs(String wsId, String queryId, String targetId, TomtomRunParameters params, String jobId, String token) throws MalformedURLException, Exception{
+/*	public static String compareMotifsWithTomtomJobFromWs(String wsId, String queryId, String targetId, TomtomRunParameters params, String jobId, String token) throws MalformedURLException, Exception{
 
 	//Start job
 		String desc = "MEME service job. Method: compareMotifsWithTomtomJobFromWs. Input: " + queryId + ", " + targetId + ". Workspace: " + wsId + ".";
@@ -662,17 +615,21 @@ public class MemeServerImpl {
 		if (jobId != null) finishJob (jobId, wsId, returnVal, token);
 		return returnVal;		
 	}
+*/
 	
-	public static TomtomRunResult compareMotifsWithTomtomByCollection(MemePSPMCollection query, MemePSPMCollection target, String pspmId, TomtomRunParameters params, String jobId, String token) throws Exception {
+	public static TomtomRunResult compareMotifsWithTomtomByCollection(MemePSPMCollection query, MemePSPMCollection target, TomtomRunParameters params, String jobId, String token) throws Exception {
 		TomtomRunResult result = new TomtomRunResult();
-		String distTomtom = new String(params.getDist().getBytes("ISO-8859-1"), "UTF-8");// MAGIC!
-		String tempFileId = getTemporaryFileId();
+		String tempFileId = null;
+		if (jobId == null) {
+			tempFileId = getTemporaryFileId();
+		} else {
+			tempFileId = jobId;
+		}
 		String firstInputFile = WORK_DIRECTORY+"/"+tempFileId+"_query.meme";
 		String secondInputFile = WORK_DIRECTORY+"/"+tempFileId+"_target.meme";
 		String outputFileName = WORK_DIRECTORY+"/"+tempFileId+"_tomtom.txt";
 		//Generate command line
-		String commandLineTomtom = generateTomtomCommandLine (firstInputFile, secondInputFile, params.getThresh(),
-				params.getEvalue(), distTomtom, params.getInternal(), params.getMinOverlap(), pspmId);
+		String commandLineTomtom = generateTomtomCommandLine (firstInputFile, secondInputFile, params);
 		try {
 			//Generate first input file
 			generateSimpleMemeFile(query, firstInputFile);
@@ -688,45 +645,39 @@ public class MemeServerImpl {
 			result = parseTomtomOutput(outputFileName, params);
 		}
 		finally {
-			//Clean up
-			try {
-				Runtime.getRuntime().exec("rm " + firstInputFile);
-				Runtime.getRuntime().exec("rm " + secondInputFile);
-				Runtime.getRuntime().exec("rm " + outputFileName);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			File fileDelete = new File(firstInputFile);
+			fileDelete.delete();
+			fileDelete = new File(secondInputFile);
+			fileDelete.delete();
+			fileDelete = new File(outputFileName);
+			fileDelete.delete();
 		}
 		return result;		
 	}
 	
-	public static String compareMotifsWithTomtomByCollectionFromWs(String wsId, String queryId, String targetId, String pspmId, TomtomRunParameters params, String token) throws MalformedURLException, Exception{
+	public static String compareMotifsWithTomtomByCollectionFromWs(String wsName, TomtomRunParameters params, String token) throws MalformedURLException, Exception{
 
-		String returnVal = compareMotifsWithTomtomJobByCollectionFromWs(wsId, queryId, targetId, pspmId, params, null, token);		
+		String returnVal = compareMotifsWithTomtomJobByCollectionFromWs(wsName, params, null, token);		
 		return returnVal;
 	}
 	
-	public static String compareMotifsWithTomtomJobByCollectionFromWs(String wsId, String queryId, String targetId, String pspmId, TomtomRunParameters params, String jobId, String token) throws MalformedURLException, Exception{
+	public static String compareMotifsWithTomtomJobByCollectionFromWs(String wsName, TomtomRunParameters params, String jobId, String token) throws MalformedURLException, Exception{
 
-		String desc = "MEME service job. Method: compareMotifsWithTomtomJobByCollectionFromWs. Input: " + queryId + ", " + targetId + ". Workspace: " + wsId + ".";
+		String desc = "MEME service job. Method: compareMotifsWithTomtomJobByCollectionFromWs. Input: " + params.getQueryRef() + ", " + params.getTargetRef() + ". Workspace: " + wsName + ".";
 		if (jobId != null) startJob (jobId, desc, 3L, token);
 
-		GetObjectParams queryParams = new GetObjectParams().withType("MemePSPMCollection").withId(queryId).withWorkspace(wsId).withAuth(token);   
-		GetObjectOutput queryOutput = wsClient(token).getObject(queryParams);
-		MemePSPMCollection query = UObject.transformObjectToObject(queryOutput.getData(), MemePSPMCollection.class);
-		GetObjectParams targetParams = new GetObjectParams().withType("MemePSPMCollection").withId(targetId).withWorkspace(wsId).withAuth(token);
-		GetObjectOutput targetOutput = wsClient(token).getObject(targetParams);
-		MemePSPMCollection target = UObject.transformObjectToObject(targetOutput.getData(), MemePSPMCollection.class);
+		MemePSPMCollection query = WsDeluxeUtil.getObjectFromWsByRef(params.getQueryRef(), token).getData().asClassInstance(MemePSPMCollection.class);
+		
+		MemePSPMCollection target = WsDeluxeUtil.getObjectFromWsByRef(params.getTargetRef(), token).getData().asClassInstance(MemePSPMCollection.class);
 				
-		TomtomRunResult result = compareMotifsWithTomtomByCollection(query, target, pspmId, params, jobId, token);
+		TomtomRunResult result = compareMotifsWithTomtomByCollection(query, target, params, jobId, token);
 		
 		//Write result to WS
 		String returnVal = result.getId();
-		saveObjectToWorkspace (UObject.transformObjectToObject(result, UObject.class), result.getClass().getSimpleName(), wsId, returnVal, token);
+		WsDeluxeUtil.saveObjectToWorkspace (UObject.transformObjectToObject(result, UObject.class), "MEME.TomtomRunResult", wsName, returnVal, token);
 		
 		//Finish job
-		if (jobId != null) finishJob (jobId, wsId, returnVal, token);
+		if (jobId != null) finishJob (jobId, wsName, returnVal, token);
 		return returnVal;
 	}
 
@@ -734,6 +685,7 @@ public class MemeServerImpl {
 		MemePSPMCollection returnVal = new MemePSPMCollection();
 		returnVal.setId(getKbaseId("MemePSPMCollection"));
 		returnVal.setTimestamp(String.valueOf(date.getTime()));
+		returnVal.setSourceRef(memeRunResult.getId());
 		returnVal.setDescription("Based on "+ memeRunResult.getId() +" MEME run");
 		returnVal.setAlphabet(memeRunResult.getAlphabet());
 		List<MemePSPM> pspms = new ArrayList<MemePSPM>();
@@ -745,36 +697,36 @@ public class MemeServerImpl {
 		return returnVal;
 	}
 	
-	public static String getPspmCollectionFromMemeResultFromWs(String wsId, String memeRunResultId, String token) throws Exception {
+	public static String getPspmCollectionFromMemeResultFromWs(String wsName, String memeRunResultRef, String token) throws Exception {
 
-		String returnVal = getPspmCollectionFromMemeJobResultFromWs(wsId, memeRunResultId, null, token);
+		String returnVal = getPspmCollectionFromMemeJobResultFromWs(wsName, memeRunResultRef, null, token);
 		return returnVal;		
 	}
 
-	public static String getPspmCollectionFromMemeJobResultFromWs(String wsId, String memeRunResultId, String jobId, String token) throws Exception {
+	public static String getPspmCollectionFromMemeJobResultFromWs(String wsName, String memeRunResultRef, String jobId, String token) throws Exception {
 
 		//Start job
-		String desc = "MEME service job. Method: getPspmCollectionFromMemeJobResultFromWs. Input: " + memeRunResultId + ". Workspace: " + wsId + ".";
+		String desc = "MEME service job. Method: getPspmCollectionFromMemeJobResultFromWs. Input: " + memeRunResultRef + ". Workspace: " + wsName + ".";
 		if (jobId != null) startJob (jobId, desc, 2L, token);
 		
-		GetObjectParams objectParams = new GetObjectParams().withType("MemeRunResult").withId(memeRunResultId).withWorkspace(wsId).withAuth(token);   
-		GetObjectOutput output = wsClient(token).getObject(objectParams);
-		MemeRunResult memeRunResult = UObject.transformObjectToObject(output.getData(), MemeRunResult.class);
+		MemeRunResult memeRunResult = WsDeluxeUtil.getObjectFromWsByRef(memeRunResultRef, token).getData().asClassInstance(MemeRunResult.class);
 
 		MemePSPMCollection collection = getPspmCollectionFromMemeResult(memeRunResult);
+		collection.setSourceRef(memeRunResultRef);
 		String returnVal = collection.getId();
 		String status = "Conversion completed. Saving output...";
 		if (jobId != null) updateJobProgress (jobId, status, 1L, token);
 
-		saveObjectToWorkspace (UObject.transformObjectToObject(collection, UObject.class), collection.getClass().getSimpleName(), wsId, returnVal, token);
+		WsDeluxeUtil.saveObjectToWorkspace (UObject.transformObjectToObject(collection, UObject.class), "MEME.MemePSPMCollection", wsName, returnVal, token);
 		//Finish job
-		if (jobId != null) finishJob (jobId, wsId, returnVal,  token);
+		if (jobId != null) finishJob (jobId, wsName, returnVal,  token);
 		return returnVal;				
 	}
 
 	protected static MemePSPMCollection makePSPMCollection (MemePSPM pspm){
 		MemePSPMCollection returnVal = new MemePSPMCollection();
 		returnVal.setId("undefined");
+		returnVal.setSourceRef(pspm.getId());
 		returnVal.setTimestamp("undefined");
 		returnVal.setDescription("temporary collection for TOMTOM run");
 		returnVal.setAlphabet(pspm.getAlphabet());
@@ -789,7 +741,6 @@ public class MemeServerImpl {
 		MemePSPM returnVal = new MemePSPM();
 		returnVal.setId(getKbaseId("MemePSPM"));
 		returnVal.setSourceId(motif.getId());
-		returnVal.setSourceType(MemeMotif.class.getSimpleName());
 		returnVal.setDescription(motif.getDescription());
 		returnVal.setAlphabet(alphabet);
 		returnVal.setWidth((long) motif.getSites().get(0).getSequence().length());
@@ -826,25 +777,24 @@ public class MemeServerImpl {
 	}
 	
 	protected static void generateSimpleMemeFile (MemePSPM pspm, String fileName){
-		String tomtomInput = "MEME version 4\n\n"; 				//Version
-		tomtomInput += "ALPHABET= "+pspm.getAlphabet()+"\n\n"; 	//Alphabet
-		tomtomInput += "strands + -\n\n";						//Strands
-		tomtomInput += "Background letter frequencies\nA 0.25 C 0.25 G 0.25 T 0.25\n\n"; //Background frequencies are uniform
-		tomtomInput += "MOTIF " +pspm.getId()+ "\n";			//Motif ID
-		tomtomInput += "letter-probability matrix: alength= " +pspm.getAlphabet().length()+ " w= " +pspm.getWidth()+ " nsites= " +pspm.getNsites()+ " E= " +pspm.getEvalue()+ "\n";
-		//Print matrix
-		DecimalFormat df = new DecimalFormat("0.000000");
-		for (List<Double> row : pspm.getMatrix()){
-			for (Double value : row){
-				tomtomInput+= " "+ df.format(value);
-			}
-			tomtomInput += "\n";
-		}
-		tomtomInput += "\n";
 		BufferedWriter writer = null;
 		try {
 			writer = new BufferedWriter(new FileWriter(fileName));
-			writer.write(tomtomInput);
+			writer.write("MEME version 4\n\n"); 				//Version
+			writer.write("ALPHABET= "+pspm.getAlphabet()+"\n\n"); 	//Alphabet
+			writer.write("strands + -\n\n");						//Strands
+			writer.write("Background letter frequencies\nA 0.25 C 0.25 G 0.25 T 0.25\n\n"); //Background frequencies are uniform
+			writer.write("MOTIF " +pspm.getId()+ "\n");			//Motif ID
+			writer.write("letter-probability matrix: alength= " +pspm.getAlphabet().length()+ " w= " +pspm.getWidth()+ " nsites= " +pspm.getNsites()+ " E= " +pspm.getEvalue()+ "\n");
+			//Print matrix
+			DecimalFormat df = new DecimalFormat("0.000000");
+			for (List<Double> row : pspm.getMatrix()){
+				for (Double value : row){
+					writer.write(" "+ df.format(value));
+				}
+				writer.write("\n");
+			}
+			writer.write("\n");
 		} catch (IOException e) {
 			System.out.println(e.getLocalizedMessage());
 		} finally {
@@ -858,27 +808,26 @@ public class MemeServerImpl {
 	}
 
 	protected static void generateSimpleMemeFile (MemePSPMCollection collection, String fileName){
-		String tomtomInput = "MEME version 4\n\n"; 				//Version
-		tomtomInput += "ALPHABET= "+collection.getAlphabet()+"\n\n"; 	//Alphabet
-		tomtomInput += "strands + -\n\n";						//Strands
-		tomtomInput += "Background letter frequencies\nA 0.25 C 0.25 G 0.25 T 0.25\n\n"; //Background frequencies are uniform
-		for (MemePSPM pspm : collection.getPspms()){
-			tomtomInput += "MOTIF " +pspm.getId()+ "\n";			//Motif ID
-			tomtomInput += "letter-probability matrix: alength= " +pspm.getAlphabet().length()+ " w= " +pspm.getWidth()+ " nsites= " +pspm.getNsites()+ " E= " +pspm.getEvalue()+ "\n";
-			//Print matrix
-			DecimalFormat df = new DecimalFormat("0.000000");
-			for (List<Double> row : pspm.getMatrix()){
-				for (Double value : row){
-					tomtomInput+= " "+ df.format(value);
-				}
-				tomtomInput += "\n";
-			}
-			tomtomInput += "\n";
-		}
 		BufferedWriter writer = null;
 		try {
 			writer = new BufferedWriter(new FileWriter(fileName));
-			writer.write(tomtomInput);
+			writer.write("MEME version 4\n\n"); 				//Version
+			writer.write("ALPHABET= "+collection.getAlphabet()+"\n\n"); 	//Alphabet
+			writer.write("strands + -\n\n");						//Strands
+			writer.write("Background letter frequencies\nA 0.25 C 0.25 G 0.25 T 0.25\n\n"); //Background frequencies are uniform
+			for (MemePSPM pspm : collection.getPspms()){
+				writer.write("MOTIF " +pspm.getId()+ "\n");			//Motif ID
+				writer.write("letter-probability matrix: alength= " +pspm.getAlphabet().length()+ " w= " +pspm.getWidth()+ " nsites= " +pspm.getNsites()+ " E= " +pspm.getEvalue()+ "\n");
+				//Print matrix
+				DecimalFormat df = new DecimalFormat("0.000000");
+				for (List<Double> row : pspm.getMatrix()){
+					for (Double value : row){
+						writer.write(" "+ df.format(value));
+					}
+					writer.write("\n");
+				}
+				writer.write("\n");
+			}
 		} catch (IOException e) {
 			System.out.println(e.getLocalizedMessage());
 		} finally {
@@ -892,34 +841,33 @@ public class MemeServerImpl {
 	}
 	
 	
-	protected static String generateTomtomCommandLine (String firstInputFile, String secondInputFile, Double threshTomtom,
-			Long evalueTomtom, String distTomtom, Long internalTomtom, Long minOverlapTomtom, String pspmId){
+	protected static String generateTomtomCommandLine (String firstInputFile, String secondInputFile, TomtomRunParameters params){
 		String commandLine = "tomtom";
-		if (!pspmId.equals("")){
-			commandLine += " -m " + pspmId;
+		if (params.getPspmId() != null){
+			commandLine += " -m " + params.getPspmId();
 		}
-		if (threshTomtom > 0){
-			commandLine += " -thresh " + threshTomtom.toString();
+		if (params.getThresh() > 0){
+			commandLine += " -thresh " + params.getThresh().toString();
 		}
-		if (evalueTomtom == 1){
+		if (params.getEvalue() == 1){
 			commandLine += " -evalue";
-		} else if (evalueTomtom != 0) {
-			System.out.println("Cannot parse value of e-value parameter: " + evalueTomtom.toString());
+		} else if (params.getEvalue() != 0) {
+			System.out.println("Cannot parse value of e-value parameter: " + params.getEvalue().toString());
 		}
-		if (distTomtom.equals("allr")||distTomtom.equals("ed")||distTomtom.equals("kullback")||distTomtom.equals("pearson")||distTomtom.equals("sandelin")){
-			commandLine += " -dist " + distTomtom;
+		if (params.getDist().equals("allr")||params.getDist().equals("ed")||params.getDist().equals("kullback")||params.getDist().equals("pearson")||params.getDist().equals("sandelin")){
+			commandLine += " -dist " + params.getDist();
 		} else {
-			System.out.println("Cannot parse value of dist parameter: " + distTomtom);
+			System.out.println("Cannot parse value of dist parameter: " + params.getDist());
 		}
-		if (internalTomtom == 1){
+		if (params.getInternal() == 1){
 			commandLine += " -internal";
-		} else if (internalTomtom != 0) {
-			System.out.println("Cannot parse value of internalTomtom parameter: " + internalTomtom.toString());
+		} else if (params.getInternal() != 0) {
+			System.out.println("Cannot parse value of internalTomtom parameter: " + params.getInternal().toString());
 		}
-		if (minOverlapTomtom >= 1){
-			commandLine += " -min-overlap " + minOverlapTomtom.toString();
-		} else if (minOverlapTomtom != 0) {
-			System.out.println("Cannot parse value of minOverlapTomtom parameter: " + internalTomtom.toString());
+		if (params.getMinOverlap() >= 1){
+			commandLine += " -min-overlap " + params.getMinOverlap().toString();
+		} else if (params.getMinOverlap() != 0) {
+			System.out.println("Cannot parse value of minOverlapTomtom parameter: " + params.getMinOverlap().toString());
 		}
 		
 		commandLine += " -text";
@@ -931,12 +879,7 @@ public class MemeServerImpl {
 		TomtomRunResult returnVal = new TomtomRunResult();
 		returnVal.setId(getKbaseId(TomtomRunResult.class.getSimpleName()));
 		returnVal.setTimestamp(String.valueOf(date.getTime()));
-		returnVal.setThresh(params.getThresh());
-		returnVal.setEvalue(params.getEvalue());
-		returnVal.setDist(params.getDist());
-		returnVal.setInternal(params.getInternal());
-		returnVal.setMinOverlap(params.getMinOverlap());
-		
+		returnVal.setParams(params);
 		
 		List<TomtomHit> hits = new ArrayList<TomtomHit>();
 		try {
@@ -973,23 +916,29 @@ public class MemeServerImpl {
 		return result;
 	}
 	
-	public static MastRunResult findSitesWithMastByCollection(MemePSPMCollection query, SequenceSet target, String pspmId, Double mt, String jobId, String token) throws Exception{
+	public static MastRunResult findSitesWithMastByCollection(MemePSPMCollection query, SequenceSet target, MastRunParameters params, String jobId, String token) throws Exception{
 		MastRunResult returnVal = new MastRunResult();
 		returnVal.setId(getKbaseId(MastRunResult.class.getSimpleName()));
 		returnVal.setTimestamp(String.valueOf(date.getTime()));
-		returnVal.setMt(mt);
-
+		returnVal.setParams(params);
+		String tempFileId = null;
 		List<MastHit> hitList = new ArrayList<MastHit>();
-		String tempFileId = getTemporaryFileId();
+		if (jobId == null) {
+			tempFileId = getTemporaryFileId();
+		} else {
+			tempFileId = jobId;
+		}
+		
 		String motifFileName = WORK_DIRECTORY+"/"+tempFileId+"_query.meme";
 		String sequenceFileName = WORK_DIRECTORY+"/"+tempFileId+"_target.fasta";
 		String outputFileName = WORK_DIRECTORY+"/"+tempFileId+"_mast.txt";
 		Integer pspmNumber = -1;
-		if (!pspmId.equals("")) {
-			pspmNumber = getPSPMnumber(query, pspmId);
+		if (params.getPspmId() != null) {
+			pspmNumber = getPSPMnumber(query, params.getPspmId());
+			if (pspmNumber == -1) throw new Exception ("PSPM " + params.getPspmId() + " not found in the collection " + query.getId());
 		}
 		//Generate command line
-		String commandLine = generateMastCommandLine (motifFileName, sequenceFileName, mt, pspmNumber);
+		String commandLine = generateMastCommandLine (motifFileName, sequenceFileName, params.getMt(), pspmNumber);
 		try {
 			//Generate motif input file
 			generateSimpleMemeFile(query, motifFileName);
@@ -1005,92 +954,90 @@ public class MemeServerImpl {
 			hitList = parseMastOutput(outputFileName);
 		}
 		finally {
-			//Clean up
-			try {
-				Runtime.getRuntime().exec("rm " + motifFileName);
-				Runtime.getRuntime().exec("rm " + sequenceFileName);
-				Runtime.getRuntime().exec("rm " + outputFileName);
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			File fileDelete = new File(motifFileName);
+			fileDelete.delete();
+			fileDelete = new File(sequenceFileName);
+			fileDelete.delete();
+			fileDelete = new File(outputFileName);
+			fileDelete.delete();
 		}
 		returnVal.setHits(hitList);
 				
 		return returnVal;
 	}
 	
-	public static String findSitesWithMastByCollectionFromWs(String wsId, String queryId, String targetId, String pspmId, Double mt, String token) throws MalformedURLException, Exception{
+	public static String findSitesWithMastByCollectionFromWs(String wsName, MastRunParameters params, String token) throws MalformedURLException, Exception{
 
-		String returnVal = findSitesWithMastJobByCollectionFromWs(wsId, queryId, targetId, pspmId, mt, null, token);
+		String returnVal = findSitesWithMastJobByCollectionFromWs(wsName, params, null, token);
 		return returnVal;
 		
 	}
 
-	public static String findSitesWithMastJobByCollectionFromWs(String wsId, String queryId, String targetId, String pspmId, Double mt, String jobId, String token) throws MalformedURLException, Exception{
+	public static String findSitesWithMastJobByCollectionFromWs(String wsName, MastRunParameters params, String jobId, String token) throws MalformedURLException, Exception{
 
 		//Start job
-		String desc = "MEME service job. Method: findSitesWithMastJobByCollectionFromWs. Input: " + queryId + ", " + targetId + ". Workspace: " + wsId + ".";
+		String desc = "MEME service job. Method: findSitesWithMastJobByCollectionFromWs. Input: " + params.getQueryRef() + ", " + params.getTargetRef() + ". Workspace: " + wsName + ".";
 		if (jobId != null) startJob (jobId, desc, 2L, token);
 
-		GetObjectParams queryParams = new GetObjectParams().withType("MemePSPMCollection").withId(queryId).withWorkspace(wsId).withAuth(token);   
-		GetObjectOutput queryOutput = wsClient(token).getObject(queryParams);
-		MemePSPMCollection query = UObject.transformObjectToObject(queryOutput.getData(), MemePSPMCollection.class);
-		GetObjectParams targetParams = new GetObjectParams().withType("SequenceSet").withId(targetId).withWorkspace(wsId).withAuth(token);
-		GetObjectOutput targetOutput = wsClient(token).getObject(targetParams);
-		SequenceSet target = UObject.transformObjectToObject(targetOutput.getData(), SequenceSet.class);
+		MemePSPMCollection query = WsDeluxeUtil.getObjectFromWsByRef(params.getQueryRef(), token).getData().asClassInstance(MemePSPMCollection.class);
+		SequenceSet target = WsDeluxeUtil.getObjectFromWsByRef(params.getTargetRef(), token).getData().asClassInstance(SequenceSet.class);
 		
-		MastRunResult result = findSitesWithMastByCollection(query, target, pspmId, mt, jobId, token);
-
+		MastRunResult result = findSitesWithMastByCollection(query, target, params, jobId, token);
 		String returnVal = result.getId();
-		saveObjectToWorkspace (UObject.transformObjectToObject(result, UObject.class), result.getClass().getSimpleName(), wsId, returnVal, token);
+		WsDeluxeUtil.saveObjectToWorkspace (UObject.transformObjectToObject(result, UObject.class), "MEME.MastRunResult", wsName, returnVal, token);
 
 		//Finish job
-		if (jobId != null) finishJob (jobId, wsId, returnVal, token);
+		if (jobId != null) finishJob (jobId, wsName, returnVal, token);
 		return returnVal;		
 	}
 
 	
-	public static MastRunResult findSitesWithMast (MemePSPM query, SequenceSet target, Double mt) throws Exception{
-
+	public static MastRunResult findSitesWithMast (MemePSPM query, SequenceSet target, MastRunParameters params) throws Exception{
 		MemePSPMCollection queryCol = makePSPMCollection(query);
-		MastRunResult returnVal = findSitesWithMastByCollection(queryCol, target, "", mt, null, null);
+		MastRunResult returnVal = findSitesWithMastByCollection(queryCol, target, params, null, null);
 		return returnVal;
 	}
 	
-	public static String findSitesWithMastFromWs(String wsId, String queryId, String targetId, Double mt, String token) throws MalformedURLException, Exception{
+/*	public static String findSitesWithMastFromWs(String wsName, MastRunParameters params, String token) throws MalformedURLException, Exception{
 
-		String returnVal = findSitesWithMastJobFromWs(wsId, queryId, targetId, mt, null, token);
+		String returnVal = findSitesWithMastJobFromWs(wsName, params, null, token);
 		return returnVal;
 	}
+*/
 	
-	public static String findSitesWithMastJobFromWs(String wsId, String queryId, String targetId, Double mt, String jobId, String token) throws MalformedURLException, Exception{
+/*	public static String findSitesWithMastJobFromWs(String wsName, MastRunParameters params, String jobId, String token) throws MalformedURLException, Exception{
 
 		//Start job
-		String desc = "MEME service job. Method: findSitesWithMastJobFromWs. Input: " + queryId + ", " + targetId + ". Workspace: " + wsId + ".";
+		String desc = "MEME service job. Method: findSitesWithMastJobFromWs. Input: " + queryId + ", " + targetId + ". Workspace: " + wsName + ".";
 		if (jobId != null) startJob (jobId, desc, 2L, token);
 
-		GetObjectParams queryParams = new GetObjectParams().withType("MemePSPM").withId(queryId).withWorkspace(wsId).withAuth(token);   
+		GetObjectParams queryParams = new GetObjectParams().withType("MemePSPM").withId(queryId).withWorkspace(wsName).withAuth(token);   
 		GetObjectOutput queryOutput = wsClient(token).getObject(queryParams);
 		MemePSPM query = UObject.transformObjectToObject(queryOutput.getData(), MemePSPM.class);
+		
 		MemePSPMCollection queryCol = makePSPMCollection(query);
-		GetObjectParams targetParams = new GetObjectParams().withType("SequenceSet").withId(targetId).withWorkspace(wsId).withAuth(token);
+		GetObjectParams targetParams = new GetObjectParams().withType("SequenceSet").withId(targetId).withWorkspace(wsName).withAuth(token);
 		GetObjectOutput targetOutput = wsClient(token).getObject(targetParams);
 		SequenceSet target = UObject.transformObjectToObject(targetOutput.getData(), SequenceSet.class);
 		
 		MastRunResult result = findSitesWithMastByCollection(queryCol, target, "", mt, jobId, token);
 
 		String returnVal = result.getId();
-		saveObjectToWorkspace (UObject.transformObjectToObject(result, UObject.class), result.getClass().getSimpleName(), wsId, returnVal, token);
+		WsDeluxeUtil.saveObjectToWorkspace (UObject.transformObjectToObject(result, UObject.class), result.getClass().getSimpleName(), wsName, returnVal, token);
 
 		//Finish job
-		if (jobId != null) finishJob (jobId, wsId, returnVal, token);
+		if (jobId != null) finishJob (jobId, wsName, returnVal, token);
 		return returnVal;
 	}
+*/
 
 	protected static Integer getPSPMnumber(MemePSPMCollection query, String pspmId){
+		Integer returnVal = 0;
 		for (MemePSPM pspm : query.getPspms()){
-			if (pspm.getId().equals(pspmId)) return query.getPspms().indexOf(pspm);
+			if (pspm.getId().equals(pspmId)) {
+				returnVal = query.getPspms().indexOf(pspm) + 1;
+				return returnVal;
+			}
 		}
 		return -1;
 	}
@@ -1132,7 +1079,7 @@ public class MemeServerImpl {
 		MastHit result = new MastHit();
 		line = line.replaceAll("\\s+", " ");
 		String[] hitData = line.split(" ");
-		result.setSequenceId(hitData[0]);
+		result.setSeqId(hitData[0]);
 		result.setStrand(hitData[1].substring(0, 1));
 		result.setPspmId(hitData[1].substring(1));
 		result.setHitStart(Long.parseLong(hitData[2]));
@@ -1142,82 +1089,59 @@ public class MemeServerImpl {
 		return result;
 	}
 	
-	protected static String getKbaseId(String entityType) throws Exception {
+	public static String getKbaseId(String entityType){
 		String returnVal = null;
-		URL idServerUrl = new URL(ID_SERVICE_URL);
+		URL idServerUrl = null;
+		try {
+			idServerUrl = new URL(ID_SERVICE_URL);
+		} catch (MalformedURLException e) {
+			System.err.println("Unable to connect to ID service at " + ID_SERVICE_URL);
+			e.printStackTrace();
+		}
 		IDServerAPIClient idClient = new IDServerAPIClient(idServerUrl);
 		
-		if (entityType.equals("MemeRunResult")) {
-			returnVal = "kb|memerunresult." + idClient.allocateIdRange("memerunresult", 1L).toString();
-		} else if (entityType.equals("MemeMotif")) {
-			returnVal = "kb|mememotif." + idClient.allocateIdRange("mememotif", 1L).toString();
-		} else if (entityType.equals("MemeSite")) {
-			returnVal = "kb|memesite." + idClient.allocateIdRange("memesite", 1L).toString();
-		} else if (entityType.equals("MemePSPMCollection")) {
-			returnVal = "kb|memepspmcollection." + idClient.allocateIdRange("memepspmcollection", 1L).toString();
-		} else if (entityType.equals("MemePSPM")) {
-			returnVal = "kb|memepspm." + idClient.allocateIdRange("memepspm", 1L).toString();
-		} else if (entityType.equals("TomtomRunResult")) {
-			returnVal = "kb|tomtomrunresult." + idClient.allocateIdRange("tomtomrunresult", 1L).toString();
-		} else if (entityType.equals("MastRunResult")) {
-			returnVal = "kb|mastrunresult." + idClient.allocateIdRange("mastrunresult", 1L).toString();
-		} else {
+		try {
+				if (entityType.equals("MemeRunResult")) {
+				returnVal = "kb|memerunresult." + idClient.allocateIdRange("kb|memerunresult", 1L).toString();
+				} else if (entityType.equals("MemeMotif")) {
+					returnVal = "kb|mememotif." + idClient.allocateIdRange("kb|mememotif", 1L).toString();
+				} else if (entityType.equals("MemeSite")) {
+					returnVal = "kb|memesite." + idClient.allocateIdRange("kb|memesite", 1L).toString();
+				} else if (entityType.equals("MemePSPMCollection")) {
+					returnVal = "kb|memepspmcollection." + idClient.allocateIdRange("kb|memepspmcollection", 1L).toString();
+				} else if (entityType.equals("MemePSPM")) {
+					returnVal = "kb|memepspm." + idClient.allocateIdRange("kb|memepspm", 1L).toString();
+				} else if (entityType.equals("TomtomRunResult")) {
+					returnVal = "kb|tomtomrunresult." + idClient.allocateIdRange("kb|tomtomrunresult", 1L).toString();
+				} else if (entityType.equals("MastRunResult")) {
+					returnVal = "kb|mastrunresult." + idClient.allocateIdRange("kb|mastrunresult", 1L).toString();
+				} else if (entityType.equals("Sequence")) {
+					returnVal = "kb|sequence." + idClient.allocateIdRange("kb|sequence", 1L).toString();
+				} else if (entityType.equals("SequenceSet")) {
+					returnVal = "kb|sequenceset." + idClient.allocateIdRange("kb|sequenceset", 1L).toString();
+				} else {
+					System.err.println("Unknown data type " + entityType);
+				}
+		} catch (IOException e) {
+			System.err.println("Unable to get ID for " + entityType + " at " + ID_SERVICE_URL + " : IO Exception");
+			e.printStackTrace();
+		} catch (JsonClientException e) {
+			System.err.println("Unable to get ID for " + entityType + " at " + ID_SERVICE_URL + " : JSON Client Exception");
+			e.printStackTrace();
 		}
 		return returnVal;
 	}
 	
-/*	protected static void saveObjectToWorkspace (UObject object, String type, String workspace, String name, String token) throws Exception{
+	protected static void deleteFile(String folder, final String pattern){
+		File dir = new File(folder);
+		File fileDelete;
 
-		ObjectSaveData saveData = new ObjectSaveData().withData(object).withType(type).withName(name);
-		List<ObjectSaveData> saveObjects = new ArrayList<ObjectSaveData>();
-		saveObjects.add(saveData);
-		SaveObjectsParams saveParams = new SaveObjectsParams();
-		saveParams.setObjects(saveObjects);
-		saveParams.setWorkspace(workspace);
-		List<Tuple9<Long, String, String, String, Long, String, Long, String, Long>> ret = wsClient(token).saveObjects(saveParams);
-		System.out.println("Saving object:");
-		System.out.println(ret.get(0).getE1());
-		System.out.println(ret.get(0).getE2());
-		System.out.println(ret.get(0).getE3());
-		System.out.println(ret.get(0).getE4());
-		System.out.println(ret.get(0).getE5());
-		System.out.println(ret.get(0).getE6());
-		System.out.println(ret.get(0).getE7());
-		System.out.println(ret.get(0).getE8());
-		System.out.println(ret.get(0).getE9());
-
-	}*/
-
-	protected static void saveObjectToWorkspace (UObject object, String type, String workspaceName, String id, String token) throws Exception {
-
-		ObjectData objectData = UObject.transformObjectToObject(object, ObjectData.class);
-		SaveObjectParams params = new SaveObjectParams();
-		params.setAuth(token);
-		params.setCompressed(0L);
-		params.setData(objectData);
-		params.setId(id); 
-		params.setJson(0L); 
-		params.setType(type);
-		
-		Map<String, String> metadata = new HashMap<String, String>();
-		params.setMetadata(metadata);
-		
-		params.setWorkspace(workspaceName);
-		Tuple11<String, String, String, Long, String, String, String, String, String, String, Map<String,String>> ret = wsClient(token).saveObject(params);
-		
-		System.out.println("Saving object:");
-		System.out.println(ret.getE1());
-/*		System.out.println(ret.getE2());
-		System.out.println(ret.getE3());
-		System.out.println(ret.getE4());
-		System.out.println(ret.getE5());
-		System.out.println(ret.getE6());
-		System.out.println(ret.getE7());
-		System.out.println(ret.getE8());
-		System.out.println(ret.getE9());
-		System.out.println(ret.getE10());
-		System.out.println(ret.getE11());
-*/
+		for (String file : dir.list(new FilenameFilter(){public boolean accept( File dir, String name ) {return name.matches(pattern);}})){
+			String temp = new StringBuffer(folder).append(File.separator).append(file).toString();
+			fileDelete = new File(temp);
+			boolean isdeleted = fileDelete.delete();
+			System.out.println("file : " + temp + " is deleted : " + isdeleted);
+		}
 	}
-
+		 
 }

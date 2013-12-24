@@ -1,5 +1,5 @@
 
-package us.kbase.generaltypes;
+package us.kbase.sequences;
 
 import java.util.HashMap;
 import java.util.List;
@@ -17,7 +17,8 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
  * <pre>
  * Represents set of sequences
  * string sequence_set_id - identifier of sequence set
- * list<Sequence> sequences - sequences
+ * string description - description of a sequence set
+ * list<Sequence> sequences - list of sequences
  * </pre>
  * 
  */
@@ -25,12 +26,15 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @Generated("com.googlecode.jsonschema2pojo")
 @JsonPropertyOrder({
     "sequence_set_id",
+    "description",
     "sequences"
 })
 public class SequenceSet {
 
     @JsonProperty("sequence_set_id")
     private String sequenceSetId;
+    @JsonProperty("description")
+    private String description;
     @JsonProperty("sequences")
     private List<Sequence> sequences;
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
@@ -47,6 +51,21 @@ public class SequenceSet {
 
     public SequenceSet withSequenceSetId(String sequenceSetId) {
         this.sequenceSetId = sequenceSetId;
+        return this;
+    }
+
+    @JsonProperty("description")
+    public String getDescription() {
+        return description;
+    }
+
+    @JsonProperty("description")
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public SequenceSet withDescription(String description) {
+        this.description = description;
         return this;
     }
 
@@ -77,7 +96,7 @@ public class SequenceSet {
 
     @Override
     public String toString() {
-        return ((((((("SequenceSet"+" [sequenceSetId=")+ sequenceSetId)+", sequences=")+ sequences)+", additionalProperties=")+ additionalProperties)+"]");
+        return ((((((((("SequenceSet"+" [sequenceSetId=")+ sequenceSetId)+", description=")+ description)+", sequences=")+ sequences)+", additionalProperties=")+ additionalProperties)+"]");
     }
 
 }

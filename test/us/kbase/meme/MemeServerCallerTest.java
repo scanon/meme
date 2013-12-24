@@ -12,20 +12,18 @@ import us.kbase.auth.AuthService;
 import us.kbase.auth.AuthToken;
 import us.kbase.common.service.JsonClientException;
 import us.kbase.common.service.Tuple7;
-import us.kbase.common.service.UObject;
 import us.kbase.common.service.UnauthorizedException;
 import us.kbase.userandjobstate.Results;
 import us.kbase.userandjobstate.UserAndJobStateClient;
-import us.kbase.workspaceservice.GetObjectOutput;
-import us.kbase.workspaceservice.GetObjectParams;
+import us.kbase.util.WsDeluxeUtil;
 
 public class MemeServerCallerTest {
 
 	private static final String USER_NAME = "aktest";
 	private static final String PASSWORD = "1475rokegi";
+	private static final String TEST_WORKSPACE = "AKtest";
 	private static final String JOB_SERVICE = "http://140.221.84.180:7083";
-	private String sequenceSetId = "testSequenceSet";
-	private String workspace = "AKtest";
+	private String sequenceSetId = "kb|sequenceset.8";
 
 	@Test
 	public void testFindMotifsWithMemeJobFromWs() throws Exception {
@@ -41,10 +39,11 @@ public class MemeServerCallerTest {
 		params.setMaxsites(0L);
 		params.setPal(1L);
 		params.setRevcomp(0L);
+		params.setSourceRef(TEST_WORKSPACE + "/" + sequenceSetId);
 		
 		//MemeServerCaller.setAuthAllowedForHttp(true);
 
-		String jobId = MemeServerCaller.findMotifsWithMemeJobFromWs(workspace, sequenceSetId, params, token);
+		String jobId = MemeServerCaller.findMotifsWithMemeJobFromWs(TEST_WORKSPACE, params, token);
 
 		System.out.println("Job ID = " + jobId);
 		assertNotNull(jobId);
@@ -117,10 +116,7 @@ public class MemeServerCallerTest {
 		String[] resultIdParts = resultId.split("/");
 		resultId = resultIdParts[1];
 //Read result from WS
-		
-		GetObjectParams objectParams = new GetObjectParams().withType("MemeRunResult").withId(resultId).withWorkspace(workspace).withAuth(token.toString());   
-		GetObjectOutput output = MemeServerImpl.wsClient(token.toString()).getObject(objectParams);
-		MemeRunResult result = UObject.transformObjectToObject(output.getData(), MemeRunResult.class);
+		MemeRunResult result = WsDeluxeUtil.getObjectFromWsByRef(TEST_WORKSPACE + "/" +resultId, token.toString()).getData().asClassInstance(MemeRunResult.class);
 
 		assertEquals(Long.valueOf("0"),result.getSeed());
 		assertEquals(Long.valueOf("1"),result.getSeqfrac());
@@ -154,7 +150,7 @@ public class MemeServerCallerTest {
 		assertEquals(6,result.getMotifs().get(0).getSites().size());
 		assertEquals(Double.valueOf("90"),result.getMotifs().get(0).getLlr());
 		assertEquals(Double.valueOf("2300"),result.getMotifs().get(0).getEvalue());
-		assertEquals("393587",result.getMotifs().get(0).getSites().get(0).getSourceSequenceId());
+		assertEquals("kb|sequence.43",result.getMotifs().get(0).getSites().get(0).getSourceSequenceId());
 		assertEquals(Long.valueOf("134"),result.getMotifs().get(0).getSites().get(0).getStart());
 		assertEquals(Double.valueOf("0.000000000152"),result.getMotifs().get(0).getSites().get(0).getPvalue());
 		assertEquals("ACTGGTTTTG",result.getMotifs().get(0).getSites().get(0).getLeftFlank());

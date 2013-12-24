@@ -17,6 +17,8 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
  * <pre>
  * Represents results of a single MEME run
  * string id - KBase ID of MemeRunResult
+ * string source_ref - WS reference to source SequenceSet object
+ * string source_id - id of source SequenceSet object
  * string timestamp - timestamp for creation time of collection
  * string version - version of MEME like "MEME version 4.9.0 (Release date: Wed Oct  3 11:07:26 EST 2012)"
  * string input_file_name - name of input file, DATAFILE field of MEME output
@@ -55,6 +57,8 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
  * string bg_freq - background letter frequencies
  * list<MemeMotif> motifs - A list of all motifs in a collection
  * string raw_output - section of MEME output text file (all before motif data)
+ * MemeRunParameters params
+ * @optional source_ref source_id timestamp meme_version input_file_name alphabet training_set command_line mod nmotifs evt object_function minw maxw minic wg ws endgaps minsites maxsites wnsites prob spmap spfuzz substring branching wbranch prior b maxiter distance n n_cap strands seed seqfrac letter_freq bg_freq motifs raw_output
  * </pre>
  * 
  */
@@ -62,6 +66,8 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @Generated("com.googlecode.jsonschema2pojo")
 @JsonPropertyOrder({
     "id",
+    "source_ref",
+    "source_id",
     "timestamp",
     "meme_version",
     "input_file_name",
@@ -99,12 +105,17 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
     "letter_freq",
     "bg_freq",
     "motifs",
-    "raw_output"
+    "raw_output",
+    "params"
 })
 public class MemeRunResult {
 
     @JsonProperty("id")
     private java.lang.String id;
+    @JsonProperty("source_ref")
+    private java.lang.String sourceRef;
+    @JsonProperty("source_id")
+    private java.lang.String sourceId;
     @JsonProperty("timestamp")
     private java.lang.String timestamp;
     @JsonProperty("meme_version")
@@ -181,6 +192,27 @@ public class MemeRunResult {
     private List<MemeMotif> motifs;
     @JsonProperty("raw_output")
     private java.lang.String rawOutput;
+    /**
+     * <p>Original spec-file type: MemeRunParameters</p>
+     * <pre>
+     * Contains parameters of a MEME run
+     * string mod - distribution of motifs, acceptable values are "oops", "zoops", "anr"
+     * int nmotifs - maximum number of motifs to find
+     * int minw - minumum motif width
+     * int maxw - maximum motif width
+     * int nsites - number of sites for each motif
+     * int minsites - minimum number of sites for each motif
+     * int maxsites - maximum number of sites for each motif
+     * int pal - force palindromes, acceptable values are 0 and 1
+     * int revcomp - allow sites on + or - DNA strands, acceptable values are 0 and 1
+     * sequence_set_ref source_ref - WS reference to source SequenceSet object
+     * string source_id - id of source SequenceSet object
+     * @optional nmotifs minw maxw nsites minsites maxsites pal revcomp source_ref source_id
+     * </pre>
+     * 
+     */
+    @JsonProperty("params")
+    private MemeRunParameters params;
     private Map<java.lang.String, Object> additionalProperties = new HashMap<java.lang.String, Object>();
 
     @JsonProperty("id")
@@ -195,6 +227,36 @@ public class MemeRunResult {
 
     public MemeRunResult withId(java.lang.String id) {
         this.id = id;
+        return this;
+    }
+
+    @JsonProperty("source_ref")
+    public java.lang.String getSourceRef() {
+        return sourceRef;
+    }
+
+    @JsonProperty("source_ref")
+    public void setSourceRef(java.lang.String sourceRef) {
+        this.sourceRef = sourceRef;
+    }
+
+    public MemeRunResult withSourceRef(java.lang.String sourceRef) {
+        this.sourceRef = sourceRef;
+        return this;
+    }
+
+    @JsonProperty("source_id")
+    public java.lang.String getSourceId() {
+        return sourceId;
+    }
+
+    @JsonProperty("source_id")
+    public void setSourceId(java.lang.String sourceId) {
+        this.sourceId = sourceId;
+    }
+
+    public MemeRunResult withSourceId(java.lang.String sourceId) {
+        this.sourceId = sourceId;
         return this;
     }
 
@@ -768,6 +830,59 @@ public class MemeRunResult {
         return this;
     }
 
+    /**
+     * <p>Original spec-file type: MemeRunParameters</p>
+     * <pre>
+     * Contains parameters of a MEME run
+     * string mod - distribution of motifs, acceptable values are "oops", "zoops", "anr"
+     * int nmotifs - maximum number of motifs to find
+     * int minw - minumum motif width
+     * int maxw - maximum motif width
+     * int nsites - number of sites for each motif
+     * int minsites - minimum number of sites for each motif
+     * int maxsites - maximum number of sites for each motif
+     * int pal - force palindromes, acceptable values are 0 and 1
+     * int revcomp - allow sites on + or - DNA strands, acceptable values are 0 and 1
+     * sequence_set_ref source_ref - WS reference to source SequenceSet object
+     * string source_id - id of source SequenceSet object
+     * @optional nmotifs minw maxw nsites minsites maxsites pal revcomp source_ref source_id
+     * </pre>
+     * 
+     */
+    @JsonProperty("params")
+    public MemeRunParameters getParams() {
+        return params;
+    }
+
+    /**
+     * <p>Original spec-file type: MemeRunParameters</p>
+     * <pre>
+     * Contains parameters of a MEME run
+     * string mod - distribution of motifs, acceptable values are "oops", "zoops", "anr"
+     * int nmotifs - maximum number of motifs to find
+     * int minw - minumum motif width
+     * int maxw - maximum motif width
+     * int nsites - number of sites for each motif
+     * int minsites - minimum number of sites for each motif
+     * int maxsites - maximum number of sites for each motif
+     * int pal - force palindromes, acceptable values are 0 and 1
+     * int revcomp - allow sites on + or - DNA strands, acceptable values are 0 and 1
+     * sequence_set_ref source_ref - WS reference to source SequenceSet object
+     * string source_id - id of source SequenceSet object
+     * @optional nmotifs minw maxw nsites minsites maxsites pal revcomp source_ref source_id
+     * </pre>
+     * 
+     */
+    @JsonProperty("params")
+    public void setParams(MemeRunParameters params) {
+        this.params = params;
+    }
+
+    public MemeRunResult withParams(MemeRunParameters params) {
+        this.params = params;
+        return this;
+    }
+
     @JsonAnyGetter
     public Map<java.lang.String, Object> getAdditionalProperties() {
         return this.additionalProperties;
@@ -780,7 +895,7 @@ public class MemeRunResult {
 
     @Override
     public java.lang.String toString() {
-        return ((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((("MemeRunResult"+" [id=")+ id)+", timestamp=")+ timestamp)+", memeVersion=")+ memeVersion)+", inputFileName=")+ inputFileName)+", alphabet=")+ alphabet)+", trainingSet=")+ trainingSet)+", commandLine=")+ commandLine)+", mod=")+ mod)+", nmotifs=")+ nmotifs)+", evt=")+ evt)+", objectFunction=")+ objectFunction)+", minw=")+ minw)+", maxw=")+ maxw)+", minic=")+ minic)+", wg=")+ wg)+", ws=")+ ws)+", endgaps=")+ endgaps)+", minsites=")+ minsites)+", maxsites=")+ maxsites)+", wnsites=")+ wnsites)+", prob=")+ prob)+", spmap=")+ spmap)+", spfuzz=")+ spfuzz)+", substring=")+ substring)+", branching=")+ branching)+", wbranch=")+ wbranch)+", prior=")+ prior)+", b=")+ b)+", maxiter=")+ maxiter)+", distance=")+ distance)+", n=")+ n)+", nCap=")+ nCap)+", strands=")+ strands)+", seed=")+ seed)+", seqfrac=")+ seqfrac)+", letterFreq=")+ letterFreq)+", bgFreq=")+ bgFreq)+", motifs=")+ motifs)+", rawOutput=")+ rawOutput)+", additionalProperties=")+ additionalProperties)+"]");
+        return ((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((((("MemeRunResult"+" [id=")+ id)+", sourceRef=")+ sourceRef)+", sourceId=")+ sourceId)+", timestamp=")+ timestamp)+", memeVersion=")+ memeVersion)+", inputFileName=")+ inputFileName)+", alphabet=")+ alphabet)+", trainingSet=")+ trainingSet)+", commandLine=")+ commandLine)+", mod=")+ mod)+", nmotifs=")+ nmotifs)+", evt=")+ evt)+", objectFunction=")+ objectFunction)+", minw=")+ minw)+", maxw=")+ maxw)+", minic=")+ minic)+", wg=")+ wg)+", ws=")+ ws)+", endgaps=")+ endgaps)+", minsites=")+ minsites)+", maxsites=")+ maxsites)+", wnsites=")+ wnsites)+", prob=")+ prob)+", spmap=")+ spmap)+", spfuzz=")+ spfuzz)+", substring=")+ substring)+", branching=")+ branching)+", wbranch=")+ wbranch)+", prior=")+ prior)+", b=")+ b)+", maxiter=")+ maxiter)+", distance=")+ distance)+", n=")+ n)+", nCap=")+ nCap)+", strands=")+ strands)+", seed=")+ seed)+", seqfrac=")+ seqfrac)+", letterFreq=")+ letterFreq)+", bgFreq=")+ bgFreq)+", motifs=")+ motifs)+", rawOutput=")+ rawOutput)+", params=")+ params)+", additionalProperties=")+ additionalProperties)+"]");
     }
 
 }

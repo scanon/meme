@@ -17,14 +17,14 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
  * <pre>
  * Represents a position-specific probability matrix fot MEME motif
  * string id - KBase ID of the matrix object
- * string source_id - KBase ID of parent object
- * string source_type - KBase type of parent object
+ * string source_id - KBase ID of source object
  * string description - description of motif
  * string alphabet - ALPHABET field of MEME output ("ACGT" for nucleotide motifs)
  * int width - width of motif
  * int nsites - number of sites
  * float evalue - E-value of motif
  * list<list<float>> matrix - The letter probability matrix is a table of probabilities where the rows are positions in the motif and the columns are letters in the alphabet. The columns are ordered alphabetically so for DNA the first column is A, the second is C, the third is G and the last is T.
+ * @optional source_id description width nsites evalue
  * </pre>
  * 
  */
@@ -33,7 +33,6 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @JsonPropertyOrder({
     "id",
     "source_id",
-    "source_type",
     "description",
     "alphabet",
     "width",
@@ -47,8 +46,6 @@ public class MemePSPM {
     private String id;
     @JsonProperty("source_id")
     private String sourceId;
-    @JsonProperty("source_type")
-    private String sourceType;
     @JsonProperty("description")
     private String description;
     @JsonProperty("alphabet")
@@ -90,21 +87,6 @@ public class MemePSPM {
 
     public MemePSPM withSourceId(String sourceId) {
         this.sourceId = sourceId;
-        return this;
-    }
-
-    @JsonProperty("source_type")
-    public String getSourceType() {
-        return sourceType;
-    }
-
-    @JsonProperty("source_type")
-    public void setSourceType(String sourceType) {
-        this.sourceType = sourceType;
-    }
-
-    public MemePSPM withSourceType(String sourceType) {
-        this.sourceType = sourceType;
         return this;
     }
 
@@ -210,7 +192,7 @@ public class MemePSPM {
 
     @Override
     public String toString() {
-        return ((((((((((((((((((((("MemePSPM"+" [id=")+ id)+", sourceId=")+ sourceId)+", sourceType=")+ sourceType)+", description=")+ description)+", alphabet=")+ alphabet)+", width=")+ width)+", nsites=")+ nsites)+", evalue=")+ evalue)+", matrix=")+ matrix)+", additionalProperties=")+ additionalProperties)+"]");
+        return ((((((((((((((((((("MemePSPM"+" [id=")+ id)+", sourceId=")+ sourceId)+", description=")+ description)+", alphabet=")+ alphabet)+", width=")+ width)+", nsites=")+ nsites)+", evalue=")+ evalue)+", matrix=")+ matrix)+", additionalProperties=")+ additionalProperties)+"]");
     }
 
 }

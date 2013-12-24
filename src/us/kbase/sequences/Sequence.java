@@ -1,5 +1,5 @@
 
-package us.kbase.generaltypes;
+package us.kbase.sequences;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -15,7 +15,8 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
  * <p>Original spec-file type: Sequence</p>
  * <pre>
  * Represents a particular sequence from sequence set
- * string sequence_id - sequence identifier,  must be unique in SequenceSet
+ * string sequence_id - identifier of a sequence
+ * string description - description of a sequence
  * string sequence - nucleotide sequence
  * </pre>
  * 
@@ -24,12 +25,15 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @Generated("com.googlecode.jsonschema2pojo")
 @JsonPropertyOrder({
     "sequence_id",
+    "description",
     "sequence"
 })
 public class Sequence {
 
     @JsonProperty("sequence_id")
     private String sequenceId;
+    @JsonProperty("description")
+    private String description;
     @JsonProperty("sequence")
     private String sequence;
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
@@ -46,6 +50,21 @@ public class Sequence {
 
     public Sequence withSequenceId(String sequenceId) {
         this.sequenceId = sequenceId;
+        return this;
+    }
+
+    @JsonProperty("description")
+    public String getDescription() {
+        return description;
+    }
+
+    @JsonProperty("description")
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Sequence withDescription(String description) {
+        this.description = description;
         return this;
     }
 
@@ -76,7 +95,7 @@ public class Sequence {
 
     @Override
     public String toString() {
-        return ((((((("Sequence"+" [sequenceId=")+ sequenceId)+", sequence=")+ sequence)+", additionalProperties=")+ additionalProperties)+"]");
+        return ((((((((("Sequence"+" [sequenceId=")+ sequenceId)+", description=")+ description)+", sequence=")+ sequence)+", additionalProperties=")+ additionalProperties)+"]");
     }
 
 }

@@ -25,6 +25,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
  * string query_consensus - Query consensus sequence.
  * string target_consensus - Target consensus sequence.
  * string strand - Orientation: Orientation of target motif with respect to query motif.
+ * @optional optimal_offset pvalue evalue qvalue overlap query_consensus target_consensus strand
  * </pre>
  * 
  */

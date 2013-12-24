@@ -18,12 +18,9 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
  * Represents result of a single TOMTOM run
  * string id - KBase ID of TomtomRunResult
  * string timestamp - timestamp for creation time of TomtomRunResult
- * float thresh - thresh parameter of TOMTOM run
- * int evalue - evalue parameter of TOMTOM run
- * string dist - dist parameter of TOMTOM run (accepable values are "allr", "ed", "kullback", "pearson", "sandelin")
- * int internal - internal parameter of TOMTOM run ("0" or "1")
- * int min_overlap - min-overlap parameter of TOMTOM run
+ * TomtomRunParameters params - run parameters
  * list<TomtomHit> hits - A list of all hits found by TOMTOM
+ * @optional timestamp hits
  * </pre>
  * 
  */
@@ -32,11 +29,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @JsonPropertyOrder({
     "id",
     "timestamp",
-    "thresh",
-    "evalue",
-    "dist",
-    "internal",
-    "min_overlap",
+    "params",
     "hits"
 })
 public class TomtomRunResult {
@@ -45,16 +38,24 @@ public class TomtomRunResult {
     private String id;
     @JsonProperty("timestamp")
     private String timestamp;
-    @JsonProperty("thresh")
-    private Double thresh;
-    @JsonProperty("evalue")
-    private Long evalue;
-    @JsonProperty("dist")
-    private String dist;
-    @JsonProperty("internal")
-    private Long internal;
-    @JsonProperty("min_overlap")
-    private Long minOverlap;
+    /**
+     * <p>Original spec-file type: TomtomRunParameters</p>
+     * <pre>
+     * Contains parameters of a TOMTOM run
+     * meme_pspm_collection_ref query_ref - query motifs for TOMTOM run
+     * meme_pspm_collection_ref target_ref - target motifs for TOMTOM run
+     * string pspm_id - KBase ID of a MemePSPM from the query collection that will be used. When empty string provided, all motifs in the query collection will be used
+     * float thresh - thresh parameter of TOMTOM run, must be smaller than or equal to 1.0 unless evalueTomtom == 1
+     * int evalue - evalue parameter of TOMTOM run (accepable values are "0" and "1")
+     * string dist - value of dist parameter of TOMTOM run (accepable values are "allr", "ed", "kullback", "pearson", "sandelin")
+     * int internal - internal parameter of TOMTOM run (accepable values are "0" and "1")
+     * int min_overlap - value of min-overlap parameter of TOMTOM run. In case a query motif is smaller than minOverlapTomtom specified, then the motif's width is used as the minimum overlap for that query.
+     * @optional query_ref target_ref pspm_id thresh evalue dist internal min_overlap
+     * </pre>
+     * 
+     */
+    @JsonProperty("params")
+    private TomtomRunParameters params;
     @JsonProperty("hits")
     private List<TomtomHit> hits;
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
@@ -89,78 +90,50 @@ public class TomtomRunResult {
         return this;
     }
 
-    @JsonProperty("thresh")
-    public Double getThresh() {
-        return thresh;
+    /**
+     * <p>Original spec-file type: TomtomRunParameters</p>
+     * <pre>
+     * Contains parameters of a TOMTOM run
+     * meme_pspm_collection_ref query_ref - query motifs for TOMTOM run
+     * meme_pspm_collection_ref target_ref - target motifs for TOMTOM run
+     * string pspm_id - KBase ID of a MemePSPM from the query collection that will be used. When empty string provided, all motifs in the query collection will be used
+     * float thresh - thresh parameter of TOMTOM run, must be smaller than or equal to 1.0 unless evalueTomtom == 1
+     * int evalue - evalue parameter of TOMTOM run (accepable values are "0" and "1")
+     * string dist - value of dist parameter of TOMTOM run (accepable values are "allr", "ed", "kullback", "pearson", "sandelin")
+     * int internal - internal parameter of TOMTOM run (accepable values are "0" and "1")
+     * int min_overlap - value of min-overlap parameter of TOMTOM run. In case a query motif is smaller than minOverlapTomtom specified, then the motif's width is used as the minimum overlap for that query.
+     * @optional query_ref target_ref pspm_id thresh evalue dist internal min_overlap
+     * </pre>
+     * 
+     */
+    @JsonProperty("params")
+    public TomtomRunParameters getParams() {
+        return params;
     }
 
-    @JsonProperty("thresh")
-    public void setThresh(Double thresh) {
-        this.thresh = thresh;
+    /**
+     * <p>Original spec-file type: TomtomRunParameters</p>
+     * <pre>
+     * Contains parameters of a TOMTOM run
+     * meme_pspm_collection_ref query_ref - query motifs for TOMTOM run
+     * meme_pspm_collection_ref target_ref - target motifs for TOMTOM run
+     * string pspm_id - KBase ID of a MemePSPM from the query collection that will be used. When empty string provided, all motifs in the query collection will be used
+     * float thresh - thresh parameter of TOMTOM run, must be smaller than or equal to 1.0 unless evalueTomtom == 1
+     * int evalue - evalue parameter of TOMTOM run (accepable values are "0" and "1")
+     * string dist - value of dist parameter of TOMTOM run (accepable values are "allr", "ed", "kullback", "pearson", "sandelin")
+     * int internal - internal parameter of TOMTOM run (accepable values are "0" and "1")
+     * int min_overlap - value of min-overlap parameter of TOMTOM run. In case a query motif is smaller than minOverlapTomtom specified, then the motif's width is used as the minimum overlap for that query.
+     * @optional query_ref target_ref pspm_id thresh evalue dist internal min_overlap
+     * </pre>
+     * 
+     */
+    @JsonProperty("params")
+    public void setParams(TomtomRunParameters params) {
+        this.params = params;
     }
 
-    public TomtomRunResult withThresh(Double thresh) {
-        this.thresh = thresh;
-        return this;
-    }
-
-    @JsonProperty("evalue")
-    public Long getEvalue() {
-        return evalue;
-    }
-
-    @JsonProperty("evalue")
-    public void setEvalue(Long evalue) {
-        this.evalue = evalue;
-    }
-
-    public TomtomRunResult withEvalue(Long evalue) {
-        this.evalue = evalue;
-        return this;
-    }
-
-    @JsonProperty("dist")
-    public String getDist() {
-        return dist;
-    }
-
-    @JsonProperty("dist")
-    public void setDist(String dist) {
-        this.dist = dist;
-    }
-
-    public TomtomRunResult withDist(String dist) {
-        this.dist = dist;
-        return this;
-    }
-
-    @JsonProperty("internal")
-    public Long getInternal() {
-        return internal;
-    }
-
-    @JsonProperty("internal")
-    public void setInternal(Long internal) {
-        this.internal = internal;
-    }
-
-    public TomtomRunResult withInternal(Long internal) {
-        this.internal = internal;
-        return this;
-    }
-
-    @JsonProperty("min_overlap")
-    public Long getMinOverlap() {
-        return minOverlap;
-    }
-
-    @JsonProperty("min_overlap")
-    public void setMinOverlap(Long minOverlap) {
-        this.minOverlap = minOverlap;
-    }
-
-    public TomtomRunResult withMinOverlap(Long minOverlap) {
-        this.minOverlap = minOverlap;
+    public TomtomRunResult withParams(TomtomRunParameters params) {
+        this.params = params;
         return this;
     }
 
@@ -191,7 +164,7 @@ public class TomtomRunResult {
 
     @Override
     public String toString() {
-        return ((((((((((((((((((("TomtomRunResult"+" [id=")+ id)+", timestamp=")+ timestamp)+", thresh=")+ thresh)+", evalue=")+ evalue)+", dist=")+ dist)+", internal=")+ internal)+", minOverlap=")+ minOverlap)+", hits=")+ hits)+", additionalProperties=")+ additionalProperties)+"]");
+        return ((((((((((("TomtomRunResult"+" [id=")+ id)+", timestamp=")+ timestamp)+", params=")+ params)+", hits=")+ hits)+", additionalProperties=")+ additionalProperties)+"]");
     }
 
 }

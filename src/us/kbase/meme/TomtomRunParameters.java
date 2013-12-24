@@ -15,17 +15,24 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
  * <p>Original spec-file type: TomtomRunParameters</p>
  * <pre>
  * Contains parameters of a TOMTOM run
+ * meme_pspm_collection_ref query_ref - query motifs for TOMTOM run
+ * meme_pspm_collection_ref target_ref - target motifs for TOMTOM run
+ * string pspm_id - KBase ID of a MemePSPM from the query collection that will be used. When empty string provided, all motifs in the query collection will be used
  * float thresh - thresh parameter of TOMTOM run, must be smaller than or equal to 1.0 unless evalueTomtom == 1
  * int evalue - evalue parameter of TOMTOM run (accepable values are "0" and "1")
  * string dist - value of dist parameter of TOMTOM run (accepable values are "allr", "ed", "kullback", "pearson", "sandelin")
  * int internal - internal parameter of TOMTOM run (accepable values are "0" and "1")
  * int min_overlap - value of min-overlap parameter of TOMTOM run. In case a query motif is smaller than minOverlapTomtom specified, then the motif's width is used as the minimum overlap for that query.
+ * @optional query_ref target_ref pspm_id thresh evalue dist internal min_overlap
  * </pre>
  * 
  */
 @JsonInclude(JsonInclude.Include.NON_NULL)
 @Generated("com.googlecode.jsonschema2pojo")
 @JsonPropertyOrder({
+    "query_ref",
+    "target_ref",
+    "pspm_id",
     "thresh",
     "evalue",
     "dist",
@@ -34,6 +41,12 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 })
 public class TomtomRunParameters {
 
+    @JsonProperty("query_ref")
+    private String queryRef;
+    @JsonProperty("target_ref")
+    private String targetRef;
+    @JsonProperty("pspm_id")
+    private String pspmId;
     @JsonProperty("thresh")
     private Double thresh;
     @JsonProperty("evalue")
@@ -45,6 +58,51 @@ public class TomtomRunParameters {
     @JsonProperty("min_overlap")
     private Long minOverlap;
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
+
+    @JsonProperty("query_ref")
+    public String getQueryRef() {
+        return queryRef;
+    }
+
+    @JsonProperty("query_ref")
+    public void setQueryRef(String queryRef) {
+        this.queryRef = queryRef;
+    }
+
+    public TomtomRunParameters withQueryRef(String queryRef) {
+        this.queryRef = queryRef;
+        return this;
+    }
+
+    @JsonProperty("target_ref")
+    public String getTargetRef() {
+        return targetRef;
+    }
+
+    @JsonProperty("target_ref")
+    public void setTargetRef(String targetRef) {
+        this.targetRef = targetRef;
+    }
+
+    public TomtomRunParameters withTargetRef(String targetRef) {
+        this.targetRef = targetRef;
+        return this;
+    }
+
+    @JsonProperty("pspm_id")
+    public String getPspmId() {
+        return pspmId;
+    }
+
+    @JsonProperty("pspm_id")
+    public void setPspmId(String pspmId) {
+        this.pspmId = pspmId;
+    }
+
+    public TomtomRunParameters withPspmId(String pspmId) {
+        this.pspmId = pspmId;
+        return this;
+    }
 
     @JsonProperty("thresh")
     public Double getThresh() {
@@ -133,7 +191,7 @@ public class TomtomRunParameters {
 
     @Override
     public String toString() {
-        return ((((((((((((("TomtomRunParameters"+" [thresh=")+ thresh)+", evalue=")+ evalue)+", dist=")+ dist)+", internal=")+ internal)+", minOverlap=")+ minOverlap)+", additionalProperties=")+ additionalProperties)+"]");
+        return ((((((((((((((((((("TomtomRunParameters"+" [queryRef=")+ queryRef)+", targetRef=")+ targetRef)+", pspmId=")+ pspmId)+", thresh=")+ thresh)+", evalue=")+ evalue)+", dist=")+ dist)+", internal=")+ internal)+", minOverlap=")+ minOverlap)+", additionalProperties=")+ additionalProperties)+"]");
     }
 
 }

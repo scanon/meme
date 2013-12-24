@@ -18,8 +18,9 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
  * Represents result of a single MAST run
  * string id - KBase ID of MastRunResult
  * string timestamp - timestamp for creation time of MastRunResult
- * float mt - mt parameter of MAST run (p-value threshold)
+ * MastRunParameters params - run parameters
  * list<MastHit> hits - A list of all hits found by MAST
+ * @optional timestamp hits
  * </pre>
  * 
  */
@@ -28,7 +29,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @JsonPropertyOrder({
     "id",
     "timestamp",
-    "mt",
+    "params",
     "hits"
 })
 public class MastRunResult {
@@ -37,8 +38,20 @@ public class MastRunResult {
     private String id;
     @JsonProperty("timestamp")
     private String timestamp;
-    @JsonProperty("mt")
-    private Double mt;
+    /**
+     * <p>Original spec-file type: MastRunParameters</p>
+     * <pre>
+     * Contains parameters of a MAST run
+     * meme_pspm_collection_ref query_ref - query motifs for MAST run
+     * sequence_set_ref target_ref - target sequences for MAST run
+     * string pspm_id - KBase ID of a MemePSPM from the query collection that will be used. When empty string provided, all motifs in the query collection will be used
+     * float mt - value of mt parameter for MAST run
+     * @optional query_ref target_ref pspm_id mt
+     * </pre>
+     * 
+     */
+    @JsonProperty("params")
+    private MastRunParameters params;
     @JsonProperty("hits")
     private List<MastHit> hits;
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
@@ -73,18 +86,42 @@ public class MastRunResult {
         return this;
     }
 
-    @JsonProperty("mt")
-    public Double getMt() {
-        return mt;
+    /**
+     * <p>Original spec-file type: MastRunParameters</p>
+     * <pre>
+     * Contains parameters of a MAST run
+     * meme_pspm_collection_ref query_ref - query motifs for MAST run
+     * sequence_set_ref target_ref - target sequences for MAST run
+     * string pspm_id - KBase ID of a MemePSPM from the query collection that will be used. When empty string provided, all motifs in the query collection will be used
+     * float mt - value of mt parameter for MAST run
+     * @optional query_ref target_ref pspm_id mt
+     * </pre>
+     * 
+     */
+    @JsonProperty("params")
+    public MastRunParameters getParams() {
+        return params;
     }
 
-    @JsonProperty("mt")
-    public void setMt(Double mt) {
-        this.mt = mt;
+    /**
+     * <p>Original spec-file type: MastRunParameters</p>
+     * <pre>
+     * Contains parameters of a MAST run
+     * meme_pspm_collection_ref query_ref - query motifs for MAST run
+     * sequence_set_ref target_ref - target sequences for MAST run
+     * string pspm_id - KBase ID of a MemePSPM from the query collection that will be used. When empty string provided, all motifs in the query collection will be used
+     * float mt - value of mt parameter for MAST run
+     * @optional query_ref target_ref pspm_id mt
+     * </pre>
+     * 
+     */
+    @JsonProperty("params")
+    public void setParams(MastRunParameters params) {
+        this.params = params;
     }
 
-    public MastRunResult withMt(Double mt) {
-        this.mt = mt;
+    public MastRunResult withParams(MastRunParameters params) {
+        this.params = params;
         return this;
     }
 
@@ -115,7 +152,7 @@ public class MastRunResult {
 
     @Override
     public String toString() {
-        return ((((((((((("MastRunResult"+" [id=")+ id)+", timestamp=")+ timestamp)+", mt=")+ mt)+", hits=")+ hits)+", additionalProperties=")+ additionalProperties)+"]");
+        return ((((((((((("MastRunResult"+" [id=")+ id)+", timestamp=")+ timestamp)+", params=")+ params)+", hits=")+ hits)+", additionalProperties=")+ additionalProperties)+"]");
     }
 
 }

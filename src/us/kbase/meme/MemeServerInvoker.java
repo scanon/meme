@@ -19,7 +19,7 @@ public class MemeServerInvoker {
                 .create() );
 
 		options.addOption( OptionBuilder.withLongOpt( "method" )
-                .withDescription( "available methods: find_motifs_with_meme_from_ws | compare_motifs_with_tomtom_from_ws | compare_motifs_with_tomtom_by_collection_from_ws | find_sites_with_mast_from_ws | find_sites_with_mast_by_collection_from_ws | get_pspm_collection_from_meme_result_from_ws" )
+                .withDescription( "available methods: find_motifs_with_meme_job_from_ws | compare_motifs_with_tomtom_by_collection_from_ws | compare_motifs_with_tomtom_job_by_collection_from_ws | find_sites_with_mast_by_collection_from_ws | find_sites_with_mast_job_by_collection_from_ws | get_pspm_collection_from_meme_result_job_from_ws" )
                 .hasArg(true)
                 .withArgName("NAME")
                 .create() );
@@ -151,6 +151,8 @@ public class MemeServerInvoker {
 		MemeRunParameters params = new MemeRunParameters();		    			
 		String returnVal = null;
 		
+		params.setSourceId(line.getOptionValue("query"));
+		
 		if ( line.hasOption("mod")){
 			params.setMod(line.getOptionValue("mod"));
 		}
@@ -216,7 +218,6 @@ public class MemeServerInvoker {
 		}
 
 		returnVal = MemeServerImpl.findMotifsWithMemeJobFromWs(line.getOptionValue("ws"), 
-							line.getOptionValue("query"), 
 							params,
 							line.getOptionValue("job"),
 							line.getOptionValue("token"));
@@ -225,7 +226,7 @@ public class MemeServerInvoker {
 		
 	}
 	
-	private String runTomtomWithMatrix (CommandLine line) throws Exception {
+/*	private String runTomtomWithMatrix (CommandLine line) throws Exception {
 
 		TomtomRunParameters params = new TomtomRunParameters();
 		String returnVal = null;
@@ -281,12 +282,13 @@ public class MemeServerInvoker {
 		return returnVal;
 
 	}
+*/
 
 	private String runTomtomWithCollection (CommandLine line) throws Exception {
 
 		TomtomRunParameters params = new TomtomRunParameters();
 		String returnVal = null;
-
+		
 		if ( line.hasOption("thresh")){
 			params.setThresh(Double.parseDouble(line.getOptionValue("thresh")));
 		}
@@ -323,16 +325,14 @@ public class MemeServerInvoker {
 			params.setInternal(0L);
 		}
 
-		String pspm = "";
 		if ( line.hasOption("pspm")){
-			pspm = line.getOptionValue("pspm");
+			params.setPspmId(line.getOptionValue("pspm"));
 		}
 		
 		if (line.hasOption("target")) {
+			params.setQueryRef(line.getOptionValue("query"));
+			params.setTargetRef(line.getOptionValue("target"));
 			returnVal = MemeServerImpl.compareMotifsWithTomtomJobByCollectionFromWs(line.getOptionValue("ws"), 
-								line.getOptionValue("query"), 
-								line.getOptionValue("target"), 
-								pspm, 
 								params, 
 								line.getOptionValue("job"),
 								line.getOptionValue("token"));
@@ -347,16 +347,20 @@ public class MemeServerInvoker {
 	}
 
 
-	private String runMastWithMatrix (CommandLine line) throws Exception {
+/*	private String runMastWithMatrix (CommandLine line) throws Exception {
 		Double mt = 0.0;
 		String returnVal = null;
 
+		MastRunParameters params = new MastRunParameters();
+		
 		if (line.hasOption("thresh")){
-			mt = Double.parseDouble(line.getOptionValue("thresh"));
+			params.setMt(Double.parseDouble(line.getOptionValue("thresh")));
 		}
 		else {
-			mt = 0.0;
+			params.setMt(Double.valueOf("0.0"));
 		}
+		
+		
 
 		if (line.hasOption("target")) {
 			returnVal = MemeServerImpl.findSitesWithMastJobFromWs(line.getOptionValue("ws"), 
@@ -373,29 +377,28 @@ public class MemeServerInvoker {
 		
 		return returnVal;
 	}
+*/
 
 	private String runMastWithCollection (CommandLine line) throws Exception {
 		String returnVal = null;
-		String pspm = "";
+		MastRunParameters params = new MastRunParameters();
 
 		if ( line.hasOption("pspm")){
-			pspm = line.getOptionValue("pspm");
+			params.setPspmId(line.getOptionValue("pspm"));
 		}
 
-		Double mt = 0.0;
 		if (line.hasOption("thresh")){
-			mt = Double.parseDouble(line.getOptionValue("thresh"));
+			params.setMt(Double.parseDouble(line.getOptionValue("thresh")));
 		}
 		else {
-			mt = 0.0;
+			params.setMt(Double.valueOf("0.0"));
 		}
-
+		
 		if (line.hasOption("target")) {
-			returnVal = MemeServerImpl.findSitesWithMastJobByCollectionFromWs(line.getOptionValue("ws"), 
-								line.getOptionValue("query"), 
-								line.getOptionValue("target"), 
-								pspm, 
-								mt, 
+			params.setQueryRef(line.getOptionValue("query"));
+			params.setTargetRef(line.getOptionValue("target"));
+			returnVal = MemeServerImpl.findSitesWithMastJobByCollectionFromWs(line.getOptionValue("ws"),
+								params,
 								line.getOptionValue("job"),
 								line.getOptionValue("token"));
 		}
@@ -437,15 +440,17 @@ public class MemeServerInvoker {
 		    		if (serverMethod.equalsIgnoreCase("find_motifs_with_meme_job_from_ws")){
 		    			returnVal = runMeme(line);
 		    		}
-		    		else if (serverMethod.equalsIgnoreCase("compare_motifs_with_tomtom_job_from_ws")){
+/*		    		else if (serverMethod.equalsIgnoreCase("compare_motifs_with_tomtom_job_from_ws")){
 		    			returnVal = runTomtomWithMatrix(line);
 		    		}
+*/
 		    		else if (serverMethod.equalsIgnoreCase("compare_motifs_with_tomtom_job_by_collection_from_ws")){
 		    			returnVal = runTomtomWithCollection(line);
 		    		}
-		    		else if (serverMethod.equalsIgnoreCase("find_sites_with_mast_job_from_ws")){
+/*		    		else if (serverMethod.equalsIgnoreCase("find_sites_with_mast_job_from_ws")){
 		    			returnVal = runMastWithMatrix(line);
 		    		}
+*/
 		    		else if (serverMethod.equalsIgnoreCase("find_sites_with_mast_job_by_collection_from_ws")){
 		    			returnVal = runMastWithCollection(line);
 		    		}

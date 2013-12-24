@@ -24,6 +24,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
  * float evalue - E-value of motif
  * string raw_output - part of MEME output file with data about this motif
  * list<MemeSite> sites - list of sites
+ * @optional description width llr evalue raw_output
  * </pre>
  * 
  */

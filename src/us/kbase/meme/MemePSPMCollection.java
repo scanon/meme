@@ -17,10 +17,12 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
  * <pre>
  * Represents collection of MemePSPMs
  * string id - KBase ID of MotifPSPMMeme
+ * meme_run_result_ref source_ref - WS reference of source object
  * string timestamp - timestamp for creation time of collection
  * string description - user's description of the collection
  * string alphabet - ALPHABET field of MEME output ("ACGT" for nucleotide motifs)
  * list<MemeMotif> pspms - A list of all MemePSPMs in a collection
+ * @optional source_ref timestamp description
  * </pre>
  * 
  */
@@ -28,6 +30,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 @Generated("com.googlecode.jsonschema2pojo")
 @JsonPropertyOrder({
     "id",
+    "source_ref",
     "timestamp",
     "description",
     "alphabet",
@@ -37,6 +40,8 @@ public class MemePSPMCollection {
 
     @JsonProperty("id")
     private String id;
+    @JsonProperty("source_ref")
+    private String sourceRef;
     @JsonProperty("timestamp")
     private String timestamp;
     @JsonProperty("description")
@@ -59,6 +64,21 @@ public class MemePSPMCollection {
 
     public MemePSPMCollection withId(String id) {
         this.id = id;
+        return this;
+    }
+
+    @JsonProperty("source_ref")
+    public String getSourceRef() {
+        return sourceRef;
+    }
+
+    @JsonProperty("source_ref")
+    public void setSourceRef(String sourceRef) {
+        this.sourceRef = sourceRef;
+    }
+
+    public MemePSPMCollection withSourceRef(String sourceRef) {
+        this.sourceRef = sourceRef;
         return this;
     }
 
@@ -134,7 +154,7 @@ public class MemePSPMCollection {
 
     @Override
     public String toString() {
-        return ((((((((((((("MemePSPMCollection"+" [id=")+ id)+", timestamp=")+ timestamp)+", description=")+ description)+", alphabet=")+ alphabet)+", pspms=")+ pspms)+", additionalProperties=")+ additionalProperties)+"]");
+        return ((((((((((((((("MemePSPMCollection"+" [id=")+ id)+", sourceRef=")+ sourceRef)+", timestamp=")+ timestamp)+", description=")+ description)+", alphabet=")+ alphabet)+", pspms=")+ pspms)+", additionalProperties=")+ additionalProperties)+"]");
     }
 
 }

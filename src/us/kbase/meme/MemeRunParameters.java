@@ -24,6 +24,9 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
  * int maxsites - maximum number of sites for each motif
  * int pal - force palindromes, acceptable values are 0 and 1
  * int revcomp - allow sites on + or - DNA strands, acceptable values are 0 and 1
+ * sequence_set_ref source_ref - WS reference to source SequenceSet object
+ * string source_id - id of source SequenceSet object
+ * @optional nmotifs minw maxw nsites minsites maxsites pal revcomp source_ref source_id
  * </pre>
  * 
  */
@@ -38,7 +41,9 @@ import com.fasterxml.jackson.annotation.JsonPropertyOrder;
     "minsites",
     "maxsites",
     "pal",
-    "revcomp"
+    "revcomp",
+    "source_ref",
+    "source_id"
 })
 public class MemeRunParameters {
 
@@ -60,6 +65,10 @@ public class MemeRunParameters {
     private Long pal;
     @JsonProperty("revcomp")
     private Long revcomp;
+    @JsonProperty("source_ref")
+    private String sourceRef;
+    @JsonProperty("source_id")
+    private String sourceId;
     private Map<String, Object> additionalProperties = new HashMap<String, Object>();
 
     @JsonProperty("mod")
@@ -197,6 +206,36 @@ public class MemeRunParameters {
         return this;
     }
 
+    @JsonProperty("source_ref")
+    public String getSourceRef() {
+        return sourceRef;
+    }
+
+    @JsonProperty("source_ref")
+    public void setSourceRef(String sourceRef) {
+        this.sourceRef = sourceRef;
+    }
+
+    public MemeRunParameters withSourceRef(String sourceRef) {
+        this.sourceRef = sourceRef;
+        return this;
+    }
+
+    @JsonProperty("source_id")
+    public String getSourceId() {
+        return sourceId;
+    }
+
+    @JsonProperty("source_id")
+    public void setSourceId(String sourceId) {
+        this.sourceId = sourceId;
+    }
+
+    public MemeRunParameters withSourceId(String sourceId) {
+        this.sourceId = sourceId;
+        return this;
+    }
+
     @JsonAnyGetter
     public Map<String, Object> getAdditionalProperties() {
         return this.additionalProperties;
@@ -209,7 +248,7 @@ public class MemeRunParameters {
 
     @Override
     public String toString() {
-        return ((((((((((((((((((((("MemeRunParameters"+" [mod=")+ mod)+", nmotifs=")+ nmotifs)+", minw=")+ minw)+", maxw=")+ maxw)+", nsites=")+ nsites)+", minsites=")+ minsites)+", maxsites=")+ maxsites)+", pal=")+ pal)+", revcomp=")+ revcomp)+", additionalProperties=")+ additionalProperties)+"]");
+        return ((((((((((((((((((((((((("MemeRunParameters"+" [mod=")+ mod)+", nmotifs=")+ nmotifs)+", minw=")+ minw)+", maxw=")+ maxw)+", nsites=")+ nsites)+", minsites=")+ minsites)+", maxsites=")+ maxsites)+", pal=")+ pal)+", revcomp=")+ revcomp)+", sourceRef=")+ sourceRef)+", sourceId=")+ sourceId)+", additionalProperties=")+ additionalProperties)+"]");
     }
 
 }
