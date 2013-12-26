@@ -30,10 +30,10 @@ my $deployment_dir = "/kb/deployment/meme/";
 my $command_line = "java -jar ".$deployment_dir."meme_cluster.jar";
 
 my $ws = "AKtest";
-my $sequence_set_id = "KBase.SequenceSet.12345";
-my $meme_run_result_id = "\"kb|memerunresult.11\"";
-my $meme_pspm_collection_id = "\"kb|memepspmcollection.2\"";
-my $meme_pspm_id = "\"kb|memepspm.14\"";
+my $sequence_set_id = "\"AKtest/kb|sequenceset.8\"";
+my $meme_run_result_id = "\"AKtest/kb|memerunresult.15\"";
+my $meme_pspm_collection_id = "\"AKtest/kb|memepspmcollection.1\"";
+#my $meme_pspm_id = "\"kb|memepspm.14\"";
 
 my $test_command = "";
 
@@ -61,17 +61,17 @@ $test_command = $command_line." --method compare_motifs_with_tomtom_job_by_colle
 print $test_command."\n\n";
 system ($test_command);
 
-#5 compare_motifs_with_tomtom_from_ws
-$job = $job_client->create_job();
-$test_command = $command_line." --method compare_motifs_with_tomtom_job_from_ws --job $job --ws $ws --query $meme_pspm_id --target $meme_pspm_collection_id --thresh 0.000001 --evalue 1 --dist pearson --min_overlap 12 --internal 1 --token \"$auth_token\"";
-print $test_command."\n\n";
-system ($test_command);
+#(function removed) 5 compare_motifs_with_tomtom_from_ws
+#$job = $job_client->create_job();
+#$test_command = $command_line." --method compare_motifs_with_tomtom_job_from_ws --job $job --ws $ws --query $meme_pspm_id --target $meme_pspm_collection_id --thresh 0.000001 --evalue 1 --dist pearson --min_overlap 12 --internal 1 --token \"$auth_token\"";
+#print $test_command."\n\n";
+#system ($test_command);
 
-#6 find_sites_with_mast_from_ws
-$job = $job_client->create_job();
-$test_command = $command_line." --method find_sites_with_mast_job_from_ws --job $job --ws $ws --query $meme_pspm_id --target $sequence_set_id --thresh 0.001 --token \"$auth_token\"";
-print $test_command."\n\n";
-system ($test_command);
+#(function removed) 6 find_sites_with_mast_from_ws
+#$job = $job_client->create_job();
+#$test_command = $command_line." --method find_sites_with_mast_job_from_ws --job $job --ws $ws --query $meme_pspm_id --target $sequence_set_id --thresh 0.001 --token \"$auth_token\"";
+#print $test_command."\n\n";
+#system ($test_command);
 
 #7 find_sites_with_mast_by_collection_from_ws
 $job = $job_client->create_job();
