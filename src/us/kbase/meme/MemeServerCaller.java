@@ -1,7 +1,9 @@
 package us.kbase.meme;
 
+import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -113,7 +115,7 @@ public class MemeServerCaller {
 		g.writeEndObject();
 		g.close();
 
-/*	Make a copy of JSON data and display it
+//	Make a copy of JSON data and display it
  		JsonGenerator g2 = mapper.getFactory().createGenerator(System.out, JsonEncoding.UTF8);
 		g2.writeRaw("data=");
 		g2.writeStartObject();
@@ -123,7 +125,7 @@ public class MemeServerCaller {
 		}
 		g2.writeEndObject();
 		g2.close();
-*/
+
 		String res = null;
 		int code = conn.getResponseCode();
 		conn.getResponseMessage();
@@ -135,7 +137,7 @@ public class MemeServerCaller {
 			istream = conn.getInputStream();
 		 }
 		
-/*	Display HTTPS response instead of processing it as JSON  	
+	//Display HTTPS response instead of processing it as JSON  	
  		InputStreamReader is = new InputStreamReader(new UnclosableInputStream(conn.getInputStream()));
 		StringBuilder sb=new StringBuilder();
 		BufferedReader br = new BufferedReader(is);
@@ -146,7 +148,7 @@ public class MemeServerCaller {
 		    read =br.readLine();
 		}
 		System.out.println(sb.toString());
-*/
+
 		
 		JsonNode node = mapper.readTree(new UnclosableInputStream(istream));
 		
@@ -381,18 +383,18 @@ public class MemeServerCaller {
         return returnVal;
     }
 
-    public static String getPspmCollectionFromMemeResultFromWs(String wsId, String memeRunResultId, AuthToken authPart) throws Exception {
+    public static String getPspmCollectionFromMemeResultFromWs(String wsId, String memeRunResultRef, AuthToken authPart) throws Exception {
         String returnVal = null;
-        returnVal = MemeServerImpl.getPspmCollectionFromMemeResultFromWs(wsId, memeRunResultId, authPart.toString());
+        returnVal = MemeServerImpl.getPspmCollectionFromMemeResultFromWs(wsId, memeRunResultRef, authPart.toString());
         return returnVal;
     }
 
-    public static String getPspmCollectionFromMemeResultJobFromWs(String wsId, String memeRunResultId, AuthToken authPart) throws Exception {
+    public static String getPspmCollectionFromMemeResultJobFromWs(String wsId, String memeRunResultRef, AuthToken authPart) throws Exception {
         String returnVal = null;
         returnVal = jobClient(authPart).createJob();
 
         if (deployCluster == false) { 
-        	String result = MemeServerImpl.getPspmCollectionFromMemeJobResultFromWs(wsId, memeRunResultId, returnVal, authPart.toString());
+        	String result = MemeServerImpl.getPspmCollectionFromMemeJobResultFromWs(wsId, memeRunResultRef, returnVal, authPart.toString());
         	System.out.println(result);
         } else {
         	//Call invoker
@@ -402,7 +404,7 @@ public class MemeServerCaller {
         	jsonArgs.put("method", "get_pspm_collection_from_meme_result_job_from_ws");
         	jsonArgs.put("job_id", returnVal);
         	jsonArgs.put("workspace", wsId);
-        	jsonArgs.put("queryId", memeRunResultId);
+        	jsonArgs.put("query_ref", memeRunResultRef);
         	jsonArgs.put("token", authPart.toString());
         
         	String result = jsonCall(jsonArgs, authPart);
