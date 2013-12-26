@@ -151,7 +151,7 @@ public class MemeServerInvoker {
 		MemeRunParameters params = new MemeRunParameters();		    			
 		String returnVal = null;
 		
-		params.setSourceId(line.getOptionValue("query"));
+		params.setSourceRef(line.getOptionValue("query"));
 		
 		if ( line.hasOption("mod")){
 			params.setMod(line.getOptionValue("mod"));
