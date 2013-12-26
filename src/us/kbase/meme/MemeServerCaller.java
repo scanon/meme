@@ -1,9 +1,7 @@
 package us.kbase.meme;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -116,7 +114,7 @@ public class MemeServerCaller {
 		g.close();
 
 //	Make a copy of JSON data and display it
- 		JsonGenerator g2 = mapper.getFactory().createGenerator(System.out, JsonEncoding.UTF8);
+/* 		JsonGenerator g2 = mapper.getFactory().createGenerator(System.out, JsonEncoding.UTF8);
 		g2.writeRaw("data=");
 		g2.writeStartObject();
 		for (Map.Entry<String, String> entry : arg.entrySet())
@@ -125,7 +123,8 @@ public class MemeServerCaller {
 		}
 		g2.writeEndObject();
 		g2.close();
-
+*/
+		
 		String res = null;
 		int code = conn.getResponseCode();
 		conn.getResponseMessage();
@@ -138,7 +137,7 @@ public class MemeServerCaller {
 		 }
 		
 	//Display HTTPS response instead of processing it as JSON  	
- 		InputStreamReader is = new InputStreamReader(new UnclosableInputStream(conn.getInputStream()));
+/* 		InputStreamReader is = new InputStreamReader(new UnclosableInputStream(conn.getInputStream()));
 		StringBuilder sb=new StringBuilder();
 		BufferedReader br = new BufferedReader(is);
 		String read = br.readLine();
@@ -148,7 +147,7 @@ public class MemeServerCaller {
 		    read =br.readLine();
 		}
 		System.out.println(sb.toString());
-
+*/
 		
 		JsonNode node = mapper.readTree(new UnclosableInputStream(istream));
 		
