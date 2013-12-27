@@ -3,7 +3,7 @@ package us.kbase.meme;
 public class MemeServerConfig {
 	
 	//Set DEPLOY_CLUSTER to false before deployment if you do not wish to use cluster service  
-	protected static final boolean DEPLOY_CLUSTER = false;
+	protected static final boolean DEPLOY_CLUSTER = true;
 
 	//Service URLs
 	protected static final String JOB_SERVICE = "http://140.221.84.180:7083";
