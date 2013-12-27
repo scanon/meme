@@ -8,7 +8,7 @@ find_sites_with_mast_by_collection_from_ws - search a sequence database for occu
 
 =head1 SYNOPSIS
 
-find_sites_with_mast_by_collection_from_ws [--url=http://140.221.84.195:7049/ --ws=<workspace ID> --query=<MemePSPMCollection ID> --target=<sequence set ID> --matrix=<PSPM ID> --mt=<mt> --user=<username> --pw=<password>]
+find_sites_with_mast_by_collection_from_ws [--url=http://140.221.85.173:7077/ --ws=<workspace name> --query=<MemePSPMCollection reference> --target=<sequence set reference> --matrix=<PSPM ID> --mt=<mt> --user=<username> --pw=<password>]
 
 =head1 DESCRIPTION
 
@@ -18,13 +18,13 @@ a p-value, based on the product of the p-values of the individual motif occurren
 
 =head2 Documentation for underlying call
 
-Returns KBase ID of a list of MAST hits.
+Returns name of a list of MAST hits.
 
 =head1 OPTIONS
 
 =over 6
 
-=item B<--url>=I<[http://140.221.84.195:7049/]>
+=item B<--url>=I<[http://140.221.85.173:7077/]>
 the service url
 
 =item B<-h> B<--help>
@@ -33,11 +33,14 @@ print help information
 =item B<--version>
 print version information
 
+=item B<--ws>
+    workspace name
+
 =item B<--query>
-KBase ID of the query PSPM collection
+Workspace reference of the query PSPM collection
 
 =item B<--target>
-workspace ID of the target sequence set
+Workspace reference of the target sequence set
 
 =item B<--matrix>
 KBase ID of a MemePSPM from the query collection that will be used. If omitted, all motifs in the query collection will be used
@@ -55,7 +58,7 @@ Password for access to workspace
 
 =head1 EXAMPLE
 
-find_sites_with_mast_by_collection_from_ws --url=http://140.221.84.195:7049/ --ws=AKtest --query="kb|memepspmcollection.2" --target="KBase.SequenceSet.12345" --mt=0.001 
+find_sites_with_mast_by_collection_from_ws --url=http://140.221.85.173:7077/ --ws=AKtest --query="AKtest/kb|memepspmcollection.1" --target=\"AKtest/kb|sequenceset.8\" --mt=0.001 
 find_sites_with_mast_by_collection_from_ws --help
 find_sites_with_mast_by_collection_from_ws --version
 
@@ -71,9 +74,9 @@ use Bio::KBase::AuthToken;
 use Bio::KBase::AuthUser;
 
 
-my $usage = "Usage: find_sites_with_mast_by_collection_from_ws [--url=http://140.221.84.195:7049/ --ws=<workspace ID> --query=<MemePSPMCollection ID> --target=<sequence set ID> --matrix=<PSPM ID> --mt=<mt> --user=<username> --pw=<password>]\n";
+my $usage = "Usage: find_sites_with_mast_by_collection_from_ws [--url=http://140.221.85.173:7077/ --ws=<workspace name> --query=<MemePSPMCollection reference> --target=<sequence set reference> --matrix=<PSPM ID> --mt=<mt> --user=<username> --pw=<password>]\n";
 
-my $url       = "http://140.221.84.195:7049/";
+my $url       = "http://140.221.85.173:7077/";
 my $ws   	  = "";
 my $query     = "";
 my $target    = "";
@@ -105,7 +108,7 @@ print "VERSION\n";
 print "1.0\n";
 print "\n";
 print "SYNOPSIS\n";
-print "find_sites_with_mast_by_collection_from_ws [--url=http://140.221.84.195:7049/ --ws=<workspace ID> --query=<MemePSPMCollection ID> --target=<sequence set ID> --matrix=<PSPM ID> --mt=<mt> --user=<username> --pw=<password>]\n";
+print "find_sites_with_mast_by_collection_from_ws [--url=http://140.221.85.173:7077/ --ws=<workspace ID> --query=<MemePSPMCollection ID> --target=<sequence set ID> --matrix=<PSPM ID> --mt=<mt> --user=<username> --pw=<password>]\n";
 print "\n";
 print "DESCRIPTION\n";
 print "INPUT:            This command requires the URL of the service, ID of query PSPM collection, ID of target sequence set, p-value threshold .\n";
@@ -113,13 +116,13 @@ print "\n";
 print "OUTPUT:           The output of this command is KBase ID of a list of MAST hits.\n";
 print "\n";
 print "PARAMETERS:\n";
-print "--url             The URL of the service, --url=http://140.221.84.195:7049/, required.\n";
+print "--url             The URL of the service, --url=http://140.221.85.173:7077/, required.\n";
 print "\n";
-print "--ws              Workspace ID, required.\n";
+print "--ws              Workspace name, required.\n";
 print "\n";
-print "--query           KBase ID of the query PSPM collection, required.\n";
+print "--query           Workspace reference of the query PSPM collection, required.\n";
 print "\n";
-print "--target          KBase ID of the target sequence set, required.\n";
+print "--target          Workspace reference of the target sequence set, required.\n";
 print "\n";
 print "--matrix          KBase ID of a MemePSPM from the query collection that will be used. If omitted, all motifs in the query collection will be used.\n";
 print "\n";
@@ -135,9 +138,9 @@ print "--version         Print version information. \n";
 print "\n";
 print " \n";
 print "EXAMPLES \n";
-print "find_sites_with_mast_by_collection_from_ws --url=http://140.221.84.195:7049/ --ws=AKtest --query=\"kb|memepspmcollection.2\" --target=\"KBase.SequenceSet.12345\" --mt=0.001\n";
+print "find_sites_with_mast_by_collection_from_ws --url=http://140.221.85.173:7077/ --ws=AKtest --query=\"AKtest/kb|memepspmcollection.1\" --target=\"AKtest/kb|sequenceset.8\" --mt=0.001\n";
 print "\n";
-print "This command will return KBase ID of a list of occurences of motifs from the collection in the set of sequences with p-value below 0.001.\n";
+print "This command will return name of a list of occurences of motifs from the collection in the set of sequences with p-value below 0.001.\n";
 print "\n";
 print " \n";
 print "Report bugs to aekazakov\@lbl.gov\n";
@@ -170,9 +173,19 @@ if ($token->error_message){
 	exit(1);
 };
 
+my $meme_run_parameters = {
+	"mt"=>$mt,
+    "query_ref"=>$query,
+    "target_ref"=>$target
+};
+
+if ($pspm_id != ""){
+$meme_run_parameters->{"pspm_id"} = $pspm_id;
+}
+
 my $obj = {
 	method => "MEME.find_sites_with_mast_by_collection_from_ws",
-	params => [$ws, $query, $target, $pspm_id, $mt],
+	params => [$ws, $meme_run_parameters],
 };
 
 my $client = Bio::KBase::meme::Client::RpcClient->new;

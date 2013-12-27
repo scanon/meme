@@ -8,7 +8,7 @@ get_pspm_collection_from_meme_result_job_from_ws - converts MEME run result into
 
 =head1 SYNOPSIS
 
-get_pspm_collection_from_meme_result_job_from_ws [--url=http://140.221.84.195:7049/ --ws=<workspace ID> --input=<MemeRunResult ID> --user=<username> --pw=<password>]
+get_pspm_collection_from_meme_result_job_from_ws [--url=http://140.221.85.173:7077/ --ws=<workspace ID> --input=<MemeRunResult ID> --user=<username> --pw=<password>]
 
 =head1 DESCRIPTION
 
@@ -22,7 +22,7 @@ Returns Job object ID that keeps KBase ID of MemePSPMCollection.
 
 =over 6
 
-=item B<--url>=I<[http://140.221.84.195:7049/]>
+=item B<--url>=I<[http://140.221.85.173:7077/]>
 the service url
 
 =item B<-h> B<--help>
@@ -31,8 +31,11 @@ print help information
 =item B<--version>
 print version information
 
+=item B<--ws>
+workspace name where result will be stored
+
 =item B<--input>
-KBase ID of the MemeRunResult
+workspace reference of the MemeRunResult
 
 =item B<--user>
 User name for access to workspace
@@ -44,7 +47,7 @@ Password for access to workspace
 
 =head1 EXAMPLE
 
-get_pspm_collection_from_meme_result_job_from_ws --url=http://140.221.84.195:7049/ --ws=AKtest --input="kb|memerunresult.3" 
+get_pspm_collection_from_meme_result_job_from_ws --url=http://140.221.85.173:7077/ --ws=AKtest --input=\"AKtest/kb|memerunresult.15\" 
 get_pspm_collection_from_meme_result_job_from_ws --help
 get_pspm_collection_from_meme_result_job_from_ws --version
 
@@ -60,9 +63,9 @@ use Bio::KBase::AuthToken;
 use Bio::KBase::AuthUser;
 
 
-my $usage = "Usage: get_pspm_collection_from_meme_result_job_from_ws [--url=http://140.221.84.195:7049/ --ws=<workspace ID> --input=<MemeRunResult ID> --user=<username> --pw=<password>]\n";
+my $usage = "Usage: get_pspm_collection_from_meme_result_job_from_ws [--url=http://140.221.85.173:7077/ --ws=<workspace name> --input=<MemeRunResult reference> --user=<username> --pw=<password>]\n";
 
-my $url       = "http://140.221.84.195:7049/";
+my $url       = "http://140.221.85.173:7077/";
 my $ws   	  = "";
 my $input     = "";
 my $user       = "";
@@ -88,19 +91,19 @@ print "VERSION\n";
 print "1.0\n";
 print "\n";
 print "SYNOPSIS\n";
-print "get_pspm_collection_from_meme_result_job_from_ws [--url=http://140.221.84.195:7049/ --ws=<workspace ID> --input=<MemeRunResult ID> --user=<username> --pw=<password>]\n";
+print "get_pspm_collection_from_meme_result_job_from_ws [--url=http://140.221.85.173:7077/ --ws=<workspace ID> --input=<MemeRunResult ID> --user=<username> --pw=<password>]\n";
 print "\n";
 print "DESCRIPTION\n";
-print "INPUT:            This command requires the URL of the service, workspace ID, ID of MemeRunresult, .\n";
+print "INPUT:            This command requires the URL of the service, workspace name, workspace reference of MemeRunresult, .\n";
 print "\n";
 print "OUTPUT:           The output of this command is Job object ID.\n";
 print "\n";
 print "PARAMETERS:\n";
-print "--url             The URL of the service, --url=http://140.221.84.195:7049/, required.\n";
+print "--url             The URL of the service, --url=http://140.221.85.173:7077/, required.\n";
 print "\n";
-print "--ws              Workspace ID, required.\n";
+print "--ws              Workspace name, required.\n";
 print "\n";
-print "--input           KBase ID of the MemeRunResult , required.\n";
+print "--input           Workspace reference of the MemeRunResult , required.\n";
 print "\n";
 print "--user            User name for access to workspace.\n";
 print "\n";
@@ -112,7 +115,7 @@ print "--version         Print version information. \n";
 print "\n";
 print " \n";
 print "EXAMPLES \n";
-print "get_pspm_collection_from_meme_result_job_from_ws --url=http://140.221.84.195:7049/ --ws=AKtest --input=\"kb|memerunresult.3\"\n";
+print "get_pspm_collection_from_meme_result_job_from_ws --url=http://140.221.85.173:7077/ --ws=AKtest --input=\"AKtest/kb|memerunresult.15\"\n";
 print "\n";
 print "This command will return Job object ID.\n";
 print " \n";

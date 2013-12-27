@@ -8,7 +8,7 @@ use Carp;
 
 =head1 SYNOPSIS
 
-    find_motifs_with_meme_from_ws [--url=http://140.221.84.195:7049/ --ws=<workspace ID> --input=<sequence set ID> --mod=<oops|zoops|anr> --nmotifs=<nmotifs> --minw=<minw> --maxw=<maxw> --nsites=<nsites> --minsites=<minsites> --maxsites=<maxsites> --pal --revcomp --user=<username> --pw=<password>]
+    find_motifs_with_meme_from_ws [--url=http://140.221.85.173:7077/ --ws=<workspace name> --input=<sequence set reference> --mod=<oops|zoops|anr> --nmotifs=<nmotifs> --minw=<minw> --maxw=<maxw> --nsites=<nsites> --minsites=<minsites> --maxsites=<maxsites> --pal --revcomp --user=<username> --pw=<password>]
 
 =head1 DESCRIPTION
 
@@ -16,13 +16,13 @@ use Carp;
 
 =head2 Documentation for underlying call
 
-    Returns KBase ID of MemeRunResult object stored in workspace.
+    Returns name of MemeRunResult object stored in workspace.
 
 =head1 OPTIONS
 
 =over 6
 
-=item B<--url>=I<http://140.221.84.195:7049/>
+=item B<--url>=I<http://140.221.85.173:7077/>
     the service url
 
 =item B<-h> B<--help>
@@ -32,10 +32,10 @@ use Carp;
     print version information
 
 =item B<--ws>
-    workspace ID
+    workspace name where run result will be stored    
 
 =item B<--input>
-    KBase ID of the input sequence set
+    Workspace reference of the input sequence set
 
 =item B<--mod>
     distribution of motifs (oops =  One Occurrence Per Sequence, zoops = Zero or One Occurrence Per Sequence, anr = Any Number of Repetitions)
@@ -74,7 +74,7 @@ use Carp;
 
 =head1 EXAMPLE
 
-    find_motifs_with_meme_from_ws --url=http://140.221.84.195:7049/ --ws=AKtest --input=KBase.SequenceSet.12345 --mod=oops --nmotifs=2 --minw=14 --maxw=28
+    find_motifs_with_meme_from_ws --url=http://140.221.85.173:7077/ --ws=AKtest --input=\"AKtest/kb|sequenceset.8\" --mod=oops --nmotifs=2 --minw=14 --maxw=28
     find_motifs_with_meme_from_ws --help
     find_motifs_with_meme_from_ws --version
 
@@ -89,9 +89,9 @@ use Bio::KBase::meme::Client;
 use Bio::KBase::AuthToken;
 use Bio::KBase::AuthUser;
 
-my $usage = "Usage: find_motifs_with_meme_from_ws [--url=http://140.221.84.195:7049/ --ws=<workspace ID> --input=<sequence set ID> --mod=<oops|zoops|anr> --nmotifs=<nmotifs> --minw=<minw> --maxw=<maxw> --nsites=<nsites> --minsites=<minsites> --maxsites=<maxsites> --pal --revcomp --user=<username> --pw=<password>]\n";
+my $usage = "Usage: find_motifs_with_meme_from_ws [--url=http://140.221.85.173:7077/ --ws=<workspace name> --input=<sequence set reference> --mod=<oops|zoops|anr> --nmotifs=<nmotifs> --minw=<minw> --maxw=<maxw> --nsites=<nsites> --minsites=<minsites> --maxsites=<maxsites> --pal --revcomp --user=<username> --pw=<password>]\n";
 
-my $url        = "http://140.221.84.195:7049/";
+my $url        = "http://140.221.85.173:7077/";
 my $input      = "";
 my $ws		   = "";
 my $mod        = "oops";
@@ -135,19 +135,19 @@ print "VERSION\n";
 print "1.0\n";
 print "\n";
 print "SYNOPSIS\n";
-print "find_motifs_with_meme_from_ws [--url=http://140.221.84.195:7049/ --ws=<workspace ID> --input=<sequence set ID> --mod=<oops|zoops|anr> --nmotifs=<nmotifs> --minw=<minw> --maxw=<maxw> --nsites=<nsites> --minsites=<minsites> --maxsites=<maxsites> --pal --revcomp --user=<username> --pw=<password>]\n";
+print "find_motifs_with_meme_from_ws [--url=http://140.221.85.173:7077/ --ws=<workspace name> --input=<sequence set reference> --mod=<oops|zoops|anr> --nmotifs=<nmotifs> --minw=<minw> --maxw=<maxw> --nsites=<nsites> --minsites=<minsites> --maxsites=<maxsites> --pal --revcomp --user=<username> --pw=<password>]\n";
 print "\n";
 print "DESCRIPTION\n";
-print "INPUT:            This command requires the URL of the service, ID of a sequence set and parameters.\n";
+print "INPUT:            This command requires the URL of the service, reference of a sequence set and parameters.\n";
 print "\n";
-print "OUTPUT:           This command returns KBase ID of MEME run result.\n";
+print "OUTPUT:           This command returns name of MEME run result.\n";
 print "\n";
 print "PARAMETERS:\n";
-print "--url             The URL of the service, --url=http://140.221.84.195:7049/, required.\n";
+print "--url             The URL of the service, --url=http://140.221.85.173:7077/, required.\n";
 print "\n";
-print "--ws              Workspace ID, required.\n";
+print "--ws              Workspace name, required.\n";
 print "\n";
-print "--input           KBase ID of the input sequence set, required.\n";
+print "--input           Workspace reference of the input sequence set, required.\n";
 print "\n";
 print "--mod             Distribution of motifs (oops =  One Occurrence Per Sequence, zoops = Zero or One Occurrence Per Sequence, anr = Any Number of Repetitions), required.\n";
 print "\n";
@@ -177,7 +177,7 @@ print "--version         Print version information. \n";
 print "\n";
 print " \n";
 print "EXAMPLES \n";
-print "find_motifs_with_meme_from_ws --url=http://140.221.84.195:7049/ --ws=AKtest --input=KBase.SequenceSet.012345 --mod=oops --nmotifs=2 --minw=14 --maxw=28 \n";
+print "find_motifs_with_meme_from_ws --url=http://140.221.85.173:7077/ --ws=AKtest --input=\"AKtest/kb|sequenceset.8\" --mod=oops --nmotifs=2 --minw=14 --maxw=28 \n";
 print "\n";
 print "This command will return a collection of two motifs with length between 14 and 28 bp.\n";
 print "\n";
@@ -221,12 +221,13 @@ my $meme_run_parameters = {
     "minsites"=>$minsites,
     "maxsites"=>$maxsites,
     "pal"=>$pal,
-    "revcomp"=>$revcomp
+    "revcomp"=>$revcomp,
+    "source_ref"=>$input
 };
 
 my $obj = {
 	method => "MEME.find_motifs_with_meme_from_ws",
-	params => [$ws, $input, $meme_run_parameters],
+	params => [$ws, $meme_run_parameters],
 };
 
 my $client = Bio::KBase::meme::Client::RpcClient->new;

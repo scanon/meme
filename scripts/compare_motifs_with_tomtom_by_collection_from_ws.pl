@@ -8,7 +8,7 @@ compare_motifs_with_tomtom_by_collection_from_ws - find motifs that are similar 
 
 =head1 SYNOPSIS
 
-compare_motifs_with_tomtom_by_collection_from_ws [--url=http://140.221.84.195:7049/ --ws=<workspace ID> --query=<MemePSPMCollection ID> --target=<MemePSPMCollection ID> --matrix=<PSPM ID> --thresh=<threshold> --evalue --dist=<allr|ed|kullback|pearson|sandelin> --internal --min_overlap=<value> --user=<username> --pw=<password>] 
+compare_motifs_with_tomtom_by_collection_from_ws [--url=http://140.221.85.173:7077/ --ws=<workspace name> --query=<MemePSPMCollection reference> --target=<MemePSPMCollection reference> --matrix=<PSPM ID> --thresh=<threshold> --evalue --dist=<allr|ed|kullback|pearson|sandelin> --internal --min_overlap=<value> --user=<username> --pw=<password>] 
 
 =head1 DESCRIPTION
 
@@ -22,7 +22,7 @@ Returns KBase ID of TOMTOM run result.
 
 =over 6
 
-=item B<--url>=I<[http://140.221.84.195:7049/]>
+=item B<--url>=I<[http://140.221.85.173:7077/]>
 the service url
 
 =item B<-h> B<--help>
@@ -31,11 +31,14 @@ print help information
 =item B<--version>
 print version information
 
+=item B<--ws>
+Name of workspace where run result will be stored
+
 =item B<--query>
-KBase ID of the query PSPM collection
+Workspace reference of the query PSPM collection
 
 =item B<--target>
-KBase ID of the target PSPM collection
+Workspace reference of the target PSPM collection
 
 =item B<--matrix>
 KBase ID of a MemePSPM from the query collection that will be used. If omitted, all motifs in the query collection will be used
@@ -65,7 +68,7 @@ Only report motif matches that overlap by min overlap positions or more.
 
 =head1 EXAMPLE
 
- compare_motifs_with_tomtom_by_collection_from_ws --url=http://140.221.84.195:7049/ --ws=AKtest --query="kb|memepspmcollection.2" --target="kb|memepspmcollection.2" --thresh=0.0000001 --evalue --dist=pearson --internal --min_overlap=12
+ compare_motifs_with_tomtom_by_collection_from_ws --url=http://140.221.85.173:7077/ --ws=AKtest --query="AKtest/kb|memepspmcollection.1" --target="AKtest/kb|memepspmcollection.1" --thresh=0.0000001 --evalue --dist=pearson --internal --min_overlap=12
  compare_motifs_with_tomtom_by_collection_from_ws --help
  compare_motifs_with_tomtom_by_collection_from_ws --version
 
@@ -80,9 +83,9 @@ use Bio::KBase::meme::Client;
 use Bio::KBase::AuthToken;
 use Bio::KBase::AuthUser;
 
-my $usage = "Usage: compare_motifs_with_tomtom_by_collection_from_ws [--url=http://140.221.84.195:7049/ --ws=<workspace ID> --query=<MemePSPMCollection ID> --target=<MemePSPMCollection ID> --matrix=<PSPM ID> --thresh=<threshold> --evalue --dist=<allr|ed|kullback|pearson|sandelin> --internal --min_overlap=<value> --user=<username> --pw=<password>]\n";
+my $usage = "Usage: compare_motifs_with_tomtom_by_collection_from_ws [--url=http://140.221.85.173:7077/ --ws=<workspace ID> --query=<MemePSPMCollection reference> --target=<MemePSPMCollection reference> --matrix=<PSPM ID> --thresh=<threshold> --evalue --dist=<allr|ed|kullback|pearson|sandelin> --internal --min_overlap=<value> --user=<username> --pw=<password>]\n";
 
-my $url        = "http://140.221.84.195:7049/";
+my $url        = "http://140.221.85.173:7077/";
 my $ws		   = "";
 my $query      = "";
 my $target     = "";
@@ -115,14 +118,14 @@ GetOptions("help"           => \$help,
            
 if($help){
 print "NAME\n";
-print "compare_motifs_with_tomtom_by_collection_from_ws - search a sequence database for occurences of known motifs by MAST.\n";
+print "compare_motifs_with_tomtom_by_collection_from_ws - compare two collections of sequence motifs by TOMTOM.\n";
 print "\n";
 print "\n";
 print "VERSION\n";
 print "1.0\n";
 print "\n";
 print "SYNOPSIS\n";
-print "compare_motifs_with_tomtom_by_collection_from_ws [--url=http://140.221.84.195:7049/ --ws=<workspace ID> --query=<MemePSPMCollection ID> --target=<MemePSPMCollection ID> --matrix=<PSPM ID> --thresh=<threshold> --evalue --dist=<allr|ed|kullback|pearson|sandelin> --internal --min_overlap=<value> --user=<username> --pw=<password>] \n";
+print "compare_motifs_with_tomtom_by_collection_from_ws [--url=http://140.221.85.173:7077/ --ws=<workspace ID> --query=<MemePSPMCollection reference> --target=<MemePSPMCollection reference> --matrix=<PSPM ID> --thresh=<threshold> --evalue --dist=<allr|ed|kullback|pearson|sandelin> --internal --min_overlap=<value> --user=<username> --pw=<password>] \n";
 print "\n";
 print "DESCRIPTION\n";
 print "INPUT:            This command requires the URL of the service, IDs of two PSPM collections and parameters.\n";
@@ -130,13 +133,13 @@ print "\n";
 print "OUTPUT:           The output of this command is an ID of TomtomRunResult.\n";
 print "\n";
 print "PARAMETERS:\n";
-print "--url             The URL of the service, --url=http://140.221.84.195:7049/, required.\n";
+print "--url             The URL of the service, --url=http://140.221.85.173:7077/, required.\n";
 print "\n";
-print "--ws              Workspace ID, required.\n";
+print "--ws              Name of workspace where run result will be stored, required.\n";
 print "\n";
-print "--query           KBase ID of the query PSPM collection, required.\n";
+print "--query           Workspace reference of the query PSPM collection, required.\n";
 print "\n";
-print "--target           KBase ID of the target PSPM collection, required.\n";
+print "--target           Workspace reference of the target PSPM collection, required.\n";
 print "\n";
 print "--matrix           KBase ID of a MemePSPM from the query collection that will be used. If omitted, all motifs in the query collection will be used.\n";
 print "\n";
@@ -160,7 +163,7 @@ print "--version         Print version information. \n";
 print "\n";
 print " \n";
 print "EXAMPLES \n";
-print "compare_motifs_with_tomtom_by_collection_from_ws --url=http://140.221.84.195:7049/ --ws=AKtest --query=\"kb|memepspmcollection.2\" --target=\"kb|memepspmcollection.2\" --thresh=0.0000001 --evalue --dist=pearson --internal --min_overlap=12\n";
+print "compare_motifs_with_tomtom_by_collection_from_ws --url=http://140.221.85.173:7077/ --ws=AKtest --query=\"AKtest/kb|memepspmcollection.1\" --target=\"AKtest/kb|memepspmcollection.1\" --thresh=0.0000001 --evalue --dist=pearson --internal --min_overlap=12\n";
 print "\n";
 print "This command will return an ID of list of TOMTOM hits.\n";
 print "\n";
@@ -200,12 +203,15 @@ my $tomtom_run_parameters = {
     "evalue"=>$evalue,
     "dist"=>$dist,
     "internal"=>$internal,
-    "min_overlap"=>$min_overlap
+    "min_overlap"=>$min_overlap,
+    "query_ref"=>$query,
+    "target_ref"=>$target,
+    "pspm_id"=>$pspm_id
 };
 
 my $obj = {
 	method => "MEME.compare_motifs_with_tomtom_by_collection_from_ws",
-	params => [$ws, $query, $target, $pspm_id, $tomtom_run_parameters],
+	params => [$ws, $tomtom_run_parameters],
 };
 
 my $client = Bio::KBase::meme::Client::RpcClient->new;
