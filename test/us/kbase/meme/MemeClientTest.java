@@ -683,6 +683,99 @@ public class MemeClientTest {
 	}
 
 	@Test
+	public final void testFindSitesWithMastJobByWholeMotifCollectionFromWs() throws Exception {
+		String resultId = null;
+		AuthToken token = AuthService.login(USER_NAME, new String(PASSWORD)).getToken();
+		URL serviceUrl = new URL(serverUrl);
+		MEMEClient clientMeme = new MEMEClient(serviceUrl, token);
+		clientMeme.setAuthAllowedForHttp(true);
+		MastRunParameters mastParams = new MastRunParameters().withMt(0.0005D).withQueryRef(TEST_WORKSPACE + "/" + testCollectionId). withTargetRef(TEST_WORKSPACE + "/" + testSequenceSetId);
+
+		String jobId = clientMeme.findSitesWithMastJobByCollectionFromWs(TEST_WORKSPACE, mastParams);
+	
+		System.out.println("Job ID = " + jobId);
+		assertNotNull(jobId);
+		
+		URL jobServiceUrl = null;
+		UserAndJobStateClient client = null;
+
+		try {
+			jobServiceUrl = new URL(JOB_SERVICE);
+		} catch (MalformedURLException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		try {
+			client = new UserAndJobStateClient(jobServiceUrl, token);
+		} catch (UnauthorizedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		client.setAuthAllowedForHttp(true);
+		
+		String status = "";
+		
+		while (!status.equalsIgnoreCase("finished")){
+			
+			try {
+			    Thread.sleep(30000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		
+			try {
+				Tuple7<String,String,String,Long,String,Long,Long> t = client.getJobStatus(jobId); 
+				//System.out.println(t.getE1());
+				//System.out.println(t.getE2());
+				status = t.getE3();
+				//System.out.println(t.getE3());//Status
+				//System.out.println(t.getE4());
+				//System.out.println(t.getE5());
+				//System.out.println(t.getE6());
+				//System.out.println(t.getE7());
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			} catch (JsonClientException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+
+		try {
+			Results res = client.getResults(jobId);			
+			resultId = res.getWorkspaceids().get(0);
+			System.out.println("Result ID = " + resultId);
+			assertNotNull(resultId);
+			
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (JsonClientException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		String[] resultIdParts = resultId.split("/");
+		resultId = resultIdParts[1];
+//Read result from WS
+		MastRunResult result = WsDeluxeUtil.getObjectFromWsByRef(TEST_WORKSPACE + "/" +resultId, token.toString()).getData().asClassInstance(MastRunResult.class);
+		
+		assertNotNull(result);
+		assertFalse(result.getHits().size() == 0);
+		assertEquals("kb|sequence.40", result.getHits().get(0).getSeqId());
+		assertEquals("+", result.getHits().get(0).getStrand());
+		assertEquals("1", result.getHits().get(0).getPspmId());
+		assertEquals(Long.valueOf("122"), result.getHits().get(0).getHitStart());
+		assertEquals(Long.valueOf("145"), result.getHits().get(0).getHitEnd());
+		assertEquals(Double.valueOf("2594.71"), result.getHits().get(0).getScore());
+		assertEquals(Double.valueOf("5.82E-10"), result.getHits().get(0).getHitPvalue());
+	}
+
+	@Test
 	public final void testFindSitesWithMast() throws Exception {
 		URL serviceUrl = new URL(serverUrl);
 		MEMEClient client = new MEMEClient(serviceUrl, USER_NAME, PASSWORD);

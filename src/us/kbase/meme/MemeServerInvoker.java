@@ -385,7 +385,8 @@ public class MemeServerInvoker {
 		MastRunParameters params = new MastRunParameters();
 
 		if ( line.hasOption("pspm")){
-			params.setPspmId(line.getOptionValue("pspm"));
+			if (!line.getOptionValue("pspm").equals("None"))
+				params.setPspmId(line.getOptionValue("pspm"));
 		}
 
 		if (line.hasOption("thresh")){
