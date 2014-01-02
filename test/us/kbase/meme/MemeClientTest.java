@@ -768,7 +768,7 @@ public class MemeClientTest {
 		assertFalse(result.getHits().size() == 0);
 		assertEquals("kb|sequence.40", result.getHits().get(0).getSeqId());
 		assertEquals("+", result.getHits().get(0).getStrand());
-		assertEquals("1", result.getHits().get(0).getPspmId());
+		assertEquals("2", result.getHits().get(0).getPspmId());
 		assertEquals(Long.valueOf("122"), result.getHits().get(0).getHitStart());
 		assertEquals(Long.valueOf("145"), result.getHits().get(0).getHitEnd());
 		assertEquals(Double.valueOf("2594.71"), result.getHits().get(0).getScore());
