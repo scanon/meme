@@ -858,7 +858,7 @@ public class MemeServerImplTest {
 		assertNotNull(jobServicesList);
 	}
 
-/*	@Test
+	@Test
 	public void testCreateJob() {
 		URL jobServiceUrl = null;
 		UserAndJobStateClient client = null;
@@ -879,7 +879,7 @@ public class MemeServerImplTest {
 		}
 		client.setAuthAllowedForHttp(true);
 		try {
-			jobId = client.createJob();
+			String jobId = client.createJob();
 			System.out.println(jobId);
 			assertNotNull(jobId);
 		} catch (IOException e) {
@@ -891,7 +891,7 @@ public class MemeServerImplTest {
 		}
 	}
 
-	@Test
+/*	@Test
 	public void testStartJob() throws AuthException, IOException, JsonClientException {
 		//AuthToken token = AuthService.login(JOB_ACCOUNT, new String(JOB_PASSWORD)).getToken();
 		AuthToken token = AuthService.login(USER_NAME, new String(PASSWORD)).getToken();
@@ -1209,10 +1209,10 @@ public class MemeServerImplTest {
 			e.printStackTrace();
 		}
 	}
-
+*/
 	@Test
 	public void testDeleteJob() throws AuthException, IOException, UnauthorizedException, JsonClientException {
-//		String jobId = "52b131c0e4b0565cd80fb75b";
+		String jobId = "52c12b85e4b0565cd80fb811";
 
 //		AuthToken token = AuthService.login(JOB_ACCOUNT, new String(JOB_PASSWORD)).getToken();
 		AuthToken token = AuthService.login(USER_NAME, new String(PASSWORD)).getToken();
@@ -1220,7 +1220,7 @@ public class MemeServerImplTest {
 			MemeServerImpl.jobClient(token.toString()).forceDeleteJob(token.toString(), jobId); 
 	}
 	
-	@Test
+/*	@Test
 	public void testJsonCall() throws IOException, JsonClientException, AuthException {
 		
 		AuthToken token = AuthService.login(USER_NAME, new String(PASSWORD)).getToken();

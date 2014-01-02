@@ -326,7 +326,8 @@ public class MemeServerInvoker {
 		}
 
 		if ( line.hasOption("pspm")){
-			params.setPspmId(line.getOptionValue("pspm"));
+			if (!line.getOptionValue("pspm").equals("None"))
+				params.setPspmId(line.getOptionValue("pspm"));
 		}
 		
 		if (line.hasOption("target")) {
