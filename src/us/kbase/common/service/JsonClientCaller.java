@@ -142,6 +142,7 @@ public class JsonClientCaller {
 					new TypeReference<Map<String, String>>(){});
 			
 			String data = ret_error.get("data") == null ? ret_error.get("error") : ret_error.get("data");
+			System.out.println(data);
 			throw new ServerException(ret_error.get("message"),
 					new Integer(ret_error.get("code")), ret_error.get("name"),
 					data);

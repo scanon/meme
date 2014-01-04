@@ -15,9 +15,9 @@ import us.kbase.sequences.SequenceSet;
 
 public class testWsDeluxeUtil {
 	
-	private static final String USER_NAME = "aktest";
-	private static final String PASSWORD = "1475rokegi";
-	private static final String workspaceName = "AKtest";
+	private static final String USER_NAME = "kazakov";
+	private static final String PASSWORD = "";
+	private static final String workspaceName = "ENIGMA_KBASE";//"AKtest";
 	private static AuthToken token = null;
 
 	@Before
@@ -41,9 +41,9 @@ public class testWsDeluxeUtil {
 	@Test
 	public void testSequenceSetImport() throws Exception {
 		String fileName = "/home/kbase/dev_container/modules/meme/test/seqs.fasta";
-		String description = "Test";
-		
-		SequenceSet result = SequenceSetImporter.importSequenceSetFromFile(fileName, workspaceName, description, token.toString());
+		String description = "mod genes from Desulfovibrio spp.";//"Idr2 regulated genes from Halobacterium sp. NRC-1";
+		String setName = "mod_desulfovibrio";//"Halobacterium_sp_NRC-1_Idr2_regulon";//set to null for KBase ID assignment
+		SequenceSet result = SequenceSetImporter.importSequenceSetFromFile(fileName, workspaceName, setName, description, token.toString());
 		
 		
 		System.out.println(result.getSequenceSetId());
@@ -51,7 +51,7 @@ public class testWsDeluxeUtil {
 		System.out.println(result.getSequences().toString());
 		
 		assertNotNull(result);
-		assertEquals(result.getDescription(), "Test");
+		assertEquals(result.getDescription(), description);
 	}
 
 }

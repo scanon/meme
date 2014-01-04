@@ -38,7 +38,7 @@ public class MemeServerCaller {
 	private static final boolean BYPASS_HTTPS = MemeServerConfig.BYPASS_HTTPS;
 
 	
-	private static UserAndJobStateClient _jobClient = null;
+//	private static UserAndJobStateClient _jobClient = null;
 	
 	private static Integer connectionReadTimeOut = 30 * 60 * 1000;
 	private static boolean isAuthAllowedForHttp = false;
@@ -49,7 +49,7 @@ public class MemeServerCaller {
 		isAuthAllowedForHttp = AllowedForHttp;
 	}
 	
-	protected static UserAndJobStateClient jobClient(AuthToken token) throws TokenFormatException, UnauthorizedException, IOException {
+/*	protected static UserAndJobStateClient jobClient(AuthToken token) throws TokenFormatException, UnauthorizedException, IOException {
 		if(_jobClient == null)
 		{
 			URL jobServiceUrl = new URL (JOB_SERVICE);
@@ -58,7 +58,7 @@ public class MemeServerCaller {
 		}
 		return _jobClient;
 	} 
-
+*/
 	private static HttpURLConnection setupCall(AuthToken accessToken) throws IOException, JsonClientException {
 		URL clusterServiceUrl = new URL(CLUSTER_SERVICE);
 		HttpURLConnection conn = (HttpURLConnection) clusterServiceUrl.openConnection();
@@ -179,7 +179,10 @@ public class MemeServerCaller {
 
     	String returnVal = null;
         //Obtain job id
-        returnVal = jobClient(authPart).createJob();
+    	URL jobServiceUrl = new URL(JOB_SERVICE);
+    	UserAndJobStateClient jobClient = new UserAndJobStateClient(jobServiceUrl, authPart);
+    	jobClient.setAuthAllowedForHttp(true);
+        returnVal = jobClient.createJob();
         System.out.println(returnVal);
         
         if (deployCluster == false) { 
@@ -269,7 +272,10 @@ public class MemeServerCaller {
     public static String compareMotifsWithTomtomJobByCollectionFromWs(String wsName, TomtomRunParameters params, AuthToken authPart) throws Exception {
         String returnVal = null;
         //Ask for job id
-        returnVal = jobClient(authPart).createJob();
+    	URL jobServiceUrl = new URL(JOB_SERVICE);
+    	UserAndJobStateClient jobClient = new UserAndJobStateClient(jobServiceUrl, authPart);
+    	jobClient.setAuthAllowedForHttp(true);
+        returnVal = jobClient.createJob();
 
         if (deployCluster == false) { 
         	String result = MemeServerImpl.compareMotifsWithTomtomJobByCollectionFromWs(wsName, params, returnVal, authPart.toString());
@@ -351,7 +357,10 @@ public class MemeServerCaller {
 
     public static String findSitesWithMastJobByCollectionFromWs(String wsName, MastRunParameters params, AuthToken authPart) throws Exception {
         String returnVal = null;
-        returnVal = jobClient(authPart).createJob();
+    	URL jobServiceUrl = new URL(JOB_SERVICE);
+    	UserAndJobStateClient jobClient = new UserAndJobStateClient(jobServiceUrl, authPart);
+    	jobClient.setAuthAllowedForHttp(true);
+        returnVal = jobClient.createJob();
 
         if (deployCluster == false) { 
         	String result = MemeServerImpl.findSitesWithMastJobByCollectionFromWs(wsName, params, returnVal, authPart.toString());
@@ -390,7 +399,10 @@ public class MemeServerCaller {
 
     public static String getPspmCollectionFromMemeResultJobFromWs(String wsId, String memeRunResultRef, AuthToken authPart) throws Exception {
         String returnVal = null;
-        returnVal = jobClient(authPart).createJob();
+    	URL jobServiceUrl = new URL(JOB_SERVICE);
+    	UserAndJobStateClient jobClient = new UserAndJobStateClient(jobServiceUrl, authPart);
+    	jobClient.setAuthAllowedForHttp(true);
+        returnVal = jobClient.createJob();
 
         if (deployCluster == false) { 
         	String result = MemeServerImpl.getPspmCollectionFromMemeJobResultFromWs(wsId, memeRunResultRef, returnVal, authPart.toString());

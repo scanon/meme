@@ -14,15 +14,15 @@ import us.kbase.sequences.SequenceSet;
 
 public class SequenceSetImporter {
 	
-	public static SequenceSet importSequenceSetFromFile (String fileName, String wsName, String description, String token) {
+	public static SequenceSet importSequenceSetFromFile (String fileName, String wsName, String setName, String description, String token) {
 		SequenceSet set = new SequenceSet();
 		List<String> fileContent = readFile(fileName);
-		set = generateSequenceSet(fileContent, description);
+		set = generateSequenceSet(fileContent, setName, description);
 		WsDeluxeUtil.saveObjectToWorkspace(UObject.transformObjectToObject(set, UObject.class), "Sequences.SequenceSet", wsName, set.getSequenceSetId(), token);
 		return set;
 	}
 	
-	public static SequenceSet generateSequenceSet (List<String> fileContent, String description) {
+	public static SequenceSet generateSequenceSet (List<String> fileContent, String name, String description) {
 		String header = null;
 		String sequence = "";
 		SequenceSet returnVal = new SequenceSet();
@@ -56,7 +56,11 @@ public class SequenceSetImporter {
 		seqList.add(seq);
 		returnVal.setSequences(seqList);
 		returnVal.setDescription(description);
-		returnVal.setSequenceSetId(MemeServerImpl.getKbaseId("SequenceSet"));
+		if (name == null) { 
+			returnVal.setSequenceSetId(MemeServerImpl.getKbaseId("SequenceSet"));
+		} else {
+			returnVal.setSequenceSetId(name);
+		}
 		return returnVal;
 		
 	}

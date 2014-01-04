@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import us.kbase.auth.AuthService;
 import us.kbase.auth.AuthToken;
 import us.kbase.common.service.JsonClientCaller;
 import us.kbase.common.service.UObject;
@@ -119,10 +120,11 @@ public class RegpreciseKbase {
 		MemePSPMCollection collection = parseRegpreciseFile (regpreciseFile);
 
 		//write to workspace
-		String userName = "aktest";
-		String password = "1475rokegi";
-		AuthToken token = JsonClientCaller.requestTokenFromKBase(userName, password.toCharArray());
-		WsDeluxeUtil.saveObjectToWorkspace(UObject.transformObjectToObject(collection, UObject.class), "MEME.MemePSPMCollection", "AKtest", "kb_pspmcollection_regprecise", token.getTokenData());
+		String userName = "kazakov";
+		String password = "";
+		String workspaceName = "ENIGMA_KBASE";//"AKtest";
+		AuthToken token = AuthService.login(userName, new String(password)).getToken();
+		WsDeluxeUtil.saveObjectToWorkspace(UObject.transformObjectToObject(collection, UObject.class), "MEME.MemePSPMCollection", workspaceName, "kb_pspmcollection_regprecise", token.toString());
 
 
 	}
