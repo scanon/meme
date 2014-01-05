@@ -73,6 +73,7 @@ public class MemeServerImpl {
 		try {
 			//System.out.println(dateFormat.format(date));
 			UserAndJobStateClient jobClient = new UserAndJobStateClient(new URL(JOB_SERVICE_URL), new AuthToken(token));
+			jobClient.setAuthAllowedForHttp(true);
 			jobClient.startJob(jobId, token, status, desc, initProgress, dateFormat.format(date));
 			jobClient = null;
 		} catch (JsonClientException e) {
@@ -91,6 +92,7 @@ public class MemeServerImpl {
 		try {
 			date.setTime(date.getTime()+10000L);
 			UserAndJobStateClient jobClient = new UserAndJobStateClient(new URL(JOB_SERVICE_URL), new AuthToken(token));
+			jobClient.setAuthAllowedForHttp(true);
 			jobClient.updateJobProgress(jobId, token, status, tasks, dateFormat.format(date));
 			jobClient = null;
 		} catch (JsonClientException e) {
@@ -116,6 +118,7 @@ public class MemeServerImpl {
 			workspaceIds.add(wsId + "/" + objectId);
 			res.setWorkspaceids(workspaceIds);
 			UserAndJobStateClient jobClient = new UserAndJobStateClient(new URL(JOB_SERVICE_URL), new AuthToken(token));
+			jobClient.setAuthAllowedForHttp(true);
 			jobClient.completeJob(jobId, token, status, error, res); 
 			jobClient = null;
 		} catch (JsonClientException e) {
