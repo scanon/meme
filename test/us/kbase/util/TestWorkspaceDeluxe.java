@@ -31,12 +31,9 @@ import us.kbase.workspace.WorkspaceClient;
 
 public class TestWorkspaceDeluxe {
 
-	private static final String ADMIN_USER_NAME = "kazakov";
-	private static final String ADMIN_PASSWORD = "1475.kafa";
-
 	private static WorkspaceClient _wsClient = null;
 	private static final String USER_NAME = "aktest";
-	private static final String PASSWORD = "1475rokegi";
+	private static final String PASSWORD = "";
 	private static final String workspaceName = "AKtest";
 	private static final String WS_SERVICE_URL = "http://140.221.84.209:7058";
 
@@ -45,8 +42,7 @@ public class TestWorkspaceDeluxe {
 		{
 			URL workspaceClientUrl;
 			try {
-				AuthToken authToken = AuthService.login(ADMIN_USER_NAME, new String(ADMIN_PASSWORD)).getToken();
-				//AuthToken authToken = AuthService.login(USER_NAME, new String(PASSWORD)).getToken();
+				AuthToken authToken = AuthService.login(USER_NAME, new String(PASSWORD)).getToken();
 				workspaceClientUrl = new URL (WS_SERVICE_URL);
 				
 				_wsClient = new WorkspaceClient(workspaceClientUrl, authToken);
@@ -226,7 +222,7 @@ public class TestWorkspaceDeluxe {
 	@Test
 	public void testWsReadObject() throws Exception {
 		AuthToken authToken = AuthService.login(USER_NAME, new String(PASSWORD)).getToken();
-		String name = "kb|memepspmcollection.1";
+		String name = "kb|memerunresult.125";
 		//String exampleWs = "networks_typed_objects_examples";
 		
 		ObjectData output = WsDeluxeUtil.getObjectFromWorkspace(workspaceName, name, authToken.toString());
@@ -239,7 +235,7 @@ public class TestWorkspaceDeluxe {
 	@Test
 	public void testWsDeleteObject() throws Exception {
 		AuthToken authToken = AuthService.login(USER_NAME, new String(PASSWORD)).getToken();
-		String name = "kb|sequenceset.6";
+		String name = "kb|cmonkeyrunresult.136";
 		String ref = workspaceName + "/" + name;
 		
 		List<ObjectIdentity> objectsIdentity = new ArrayList<ObjectIdentity>();

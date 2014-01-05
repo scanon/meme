@@ -380,7 +380,9 @@ public class MemeServerImplTest {
 	@Test
 	public void testSearchMotifsFromSequencesWithMemeJob() throws Exception {
 		AuthToken token = AuthService.login(USER_NAME, new String(PASSWORD)).getToken();
-		String jobId = MemeServerImpl.jobClient(token.toString()).createJob();
+		URL jobServiceUrl = new URL(JOB_SERVICE);
+		UserAndJobStateClient jobClient = new UserAndJobStateClient(jobServiceUrl, token);
+		String jobId = jobClient.createJob();
 		System.out.println(jobId);
 		assertNotNull(jobId);
 
@@ -562,7 +564,10 @@ public class MemeServerImplTest {
 		paramsTomtom.setQueryRef(TEST_WORKSPACE + "/" + testCollectionId);
 		paramsTomtom.setTargetRef(TEST_WORKSPACE + "/" + testCollectionId);
 
-		String jobId = MemeServerImpl.jobClient(token.toString()).createJob();
+		URL jobServiceUrl = new URL(JOB_SERVICE);
+		UserAndJobStateClient jobClient = new UserAndJobStateClient(jobServiceUrl, token);
+		String jobId = jobClient.createJob();
+
 		System.out.println(jobId);
 		assertNotNull(jobId);
 		
@@ -664,11 +669,13 @@ public class MemeServerImplTest {
 	
 	@Test
 	public void testFindSitesWithMastJobByCollectionFromWs() throws Exception {
-
 		
 		AuthToken token = AuthService.login(USER_NAME, new String(PASSWORD)).getToken();
-		String jobId = MemeServerImpl.jobClient(token.toString()).createJob();
 		
+		URL jobServiceUrl = new URL(JOB_SERVICE);
+		UserAndJobStateClient jobClient = new UserAndJobStateClient(jobServiceUrl, token);
+		String jobId = jobClient.createJob();
+
 		MastRunParameters mastParams = new MastRunParameters().withMt(0.0005D).withPspmId(testMemePspmId).withQueryRef(TEST_WORKSPACE + "/" + testCollectionId). withTargetRef(TEST_WORKSPACE + "/" + testSequenceSetId);
 		
 		String resultId = MemeServerImpl.findSitesWithMastJobByCollectionFromWs(TEST_WORKSPACE, mastParams, jobId, token.toString());
@@ -691,7 +698,11 @@ public class MemeServerImplTest {
 	public void testGetPspmCollectionFromMemeJobResultFromWs() throws Exception{
 
 		AuthToken token = AuthService.login(USER_NAME, new String(PASSWORD)).getToken();
-		String jobId = MemeServerImpl.jobClient(token.toString()).createJob();
+		
+		URL jobServiceUrl = new URL(JOB_SERVICE);
+		UserAndJobStateClient jobClient = new UserAndJobStateClient(jobServiceUrl, token);
+		String jobId = jobClient.createJob();
+
 		String resultId = MemeServerImpl.getPspmCollectionFromMemeJobResultFromWs(TEST_WORKSPACE, TEST_WORKSPACE + "/" + testMemeRunResultId, jobId, token.toString());
 				
 		MemePSPMCollection result = WsDeluxeUtil.getObjectFromWsByRef(TEST_WORKSPACE + "/" +resultId, token.toString()).getData().asClassInstance(MemePSPMCollection.class);
@@ -1216,8 +1227,10 @@ public class MemeServerImplTest {
 
 //		AuthToken token = AuthService.login(JOB_ACCOUNT, new String(JOB_PASSWORD)).getToken();
 		AuthToken token = AuthService.login(USER_NAME, new String(PASSWORD)).getToken();
-		
-			MemeServerImpl.jobClient(token.toString()).forceDeleteJob(token.toString(), jobId); 
+
+		URL jobServiceUrl = new URL(JOB_SERVICE);
+		UserAndJobStateClient jobClient = new UserAndJobStateClient(jobServiceUrl, token);
+		jobClient.forceDeleteJob(token.toString(), jobId);
 	}
 	
 /*	@Test

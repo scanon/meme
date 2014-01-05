@@ -40,7 +40,7 @@ public class MemeServerImpl {
 	private static Pattern spacePattern = Pattern.compile("[\\n\\t ]");
 	private static Date date = new Date();
 	private static SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
-	private static UserAndJobStateClient _jobClient = null;
+//	private static UserAndJobStateClient _jobClient = null;
 	
 	protected static void cleanUpOnStart () throws IOException {
 		deleteFile(WORK_DIRECTORY, ".*.fasta");
@@ -50,7 +50,7 @@ public class MemeServerImpl {
 		deleteFile(WORK_DIRECTORY, ".*._mast.txt");
 	}
 	
-	protected static UserAndJobStateClient jobClient(String token) throws UnauthorizedException, IOException, AuthException {
+/*	protected static UserAndJobStateClient jobClient(String token) throws UnauthorizedException, IOException, AuthException {
 		if(_jobClient == null)
 		{
 			URL jobServiceUrl = new URL (JOB_SERVICE_URL);
@@ -60,6 +60,7 @@ public class MemeServerImpl {
 		}
 		return _jobClient;
 	}
+*/
 	
 	protected static void startJob (String jobId, String desc, Long tasks, String token) {
 	
@@ -71,7 +72,9 @@ public class MemeServerImpl {
 	
 		try {
 			//System.out.println(dateFormat.format(date));
-			jobClient(token).startJob(jobId, token, status, desc, initProgress, dateFormat.format(date));
+			UserAndJobStateClient jobClient = new UserAndJobStateClient(new URL(JOB_SERVICE_URL), new AuthToken(token));
+			jobClient.startJob(jobId, token, status, desc, initProgress, dateFormat.format(date));
+			jobClient = null;
 		} catch (JsonClientException e) {
 			System.err.println("Unable to start job "+ jobId + " (" + desc + "): JSON Client Exception");
 			e.printStackTrace();
@@ -87,7 +90,9 @@ public class MemeServerImpl {
 	protected static void updateJobProgress (String jobId, String status, Long tasks, String token){
 		try {
 			date.setTime(date.getTime()+10000L);
-			jobClient(token).updateJobProgress(jobId, token, status, tasks, dateFormat.format(date));
+			UserAndJobStateClient jobClient = new UserAndJobStateClient(new URL(JOB_SERVICE_URL), new AuthToken(token));
+			jobClient.updateJobProgress(jobId, token, status, tasks, dateFormat.format(date));
+			jobClient = null;
 		} catch (JsonClientException e) {
 			System.err.println("Unable to update job "+ jobId + " (" + status + "): JSON Client Exception");
 			e.printStackTrace();
@@ -110,7 +115,9 @@ public class MemeServerImpl {
 			List<String> workspaceIds = new ArrayList<String>();
 			workspaceIds.add(wsId + "/" + objectId);
 			res.setWorkspaceids(workspaceIds);
-			jobClient(token).completeJob(jobId, token, status, error, res); 
+			UserAndJobStateClient jobClient = new UserAndJobStateClient(new URL(JOB_SERVICE_URL), new AuthToken(token));
+			jobClient.completeJob(jobId, token, status, error, res); 
+			jobClient = null;
 		} catch (JsonClientException e) {
 			System.err.println("Unable to finish job "+ jobId + " (result object: " + objectId + " in workspace " + wsId + "): JSON Client Exception");
 			e.printStackTrace();
