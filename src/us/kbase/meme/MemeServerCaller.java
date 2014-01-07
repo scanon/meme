@@ -10,9 +10,6 @@ import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
-/*import java.util.List;
-import java.io.BufferedReader;
-import java.io.InputStreamReader;*/
 
 import javax.net.ssl.HttpsURLConnection;
 
@@ -22,7 +19,6 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import us.kbase.auth.AuthToken;
-import us.kbase.auth.TokenFormatException;
 import us.kbase.common.service.JacksonTupleModule;
 import us.kbase.common.service.JsonClientException;
 import us.kbase.common.service.ServerException;
@@ -36,9 +32,6 @@ public class MemeServerCaller {
 	private static final String CLUSTER_SERVICE = MemeServerConfig.CLUSTER_SERVICE;
 	private static boolean deployCluster = MemeServerConfig.DEPLOY_CLUSTER;
 	private static final boolean BYPASS_HTTPS = MemeServerConfig.BYPASS_HTTPS;
-
-	
-//	private static UserAndJobStateClient _jobClient = null;
 	
 	private static Integer connectionReadTimeOut = 30 * 60 * 1000;
 	private static boolean isAuthAllowedForHttp = false;
@@ -49,16 +42,6 @@ public class MemeServerCaller {
 		isAuthAllowedForHttp = AllowedForHttp;
 	}
 	
-/*	protected static UserAndJobStateClient jobClient(AuthToken token) throws TokenFormatException, UnauthorizedException, IOException {
-		if(_jobClient == null)
-		{
-			URL jobServiceUrl = new URL (JOB_SERVICE);
-			_jobClient = new UserAndJobStateClient (jobServiceUrl, token);
-			_jobClient.setAuthAllowedForHttp(true);
-		}
-		return _jobClient;
-	} 
-*/
 	private static HttpURLConnection setupCall(AuthToken accessToken) throws IOException, JsonClientException {
 		URL clusterServiceUrl = new URL(CLUSTER_SERVICE);
 		HttpURLConnection conn = (HttpURLConnection) clusterServiceUrl.openConnection();

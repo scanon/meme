@@ -22,7 +22,7 @@ public class MemeServerCallerTest {
 	private static final String USER_NAME = "aktest";
 	private static final String PASSWORD = "1475rokegi";
 	private static final String TEST_WORKSPACE = "AKtest";
-	private static final String JOB_SERVICE = "http://140.221.84.180:7083";
+	private static final String JOB_SERVICE = MemeServerConfig.JOB_SERVICE;
 	private String sequenceSetId = "kb|sequenceset.8";
 
 	@Test

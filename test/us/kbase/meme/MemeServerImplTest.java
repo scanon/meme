@@ -14,10 +14,13 @@ import us.kbase.common.service.JsonClientException;
 import us.kbase.common.service.UnauthorizedException;
 import us.kbase.sequences.SequenceSet;
 import us.kbase.sequences.Sequence;
+import us.kbase.userandjobstate.InitProgress;
 import us.kbase.userandjobstate.UserAndJobStateClient;
 import us.kbase.util.WsDeluxeUtil;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.io.IOException;
 import java.io.FileReader;
@@ -40,8 +43,7 @@ public class MemeServerImplTest {
 	private String fakeJobId = "12345.fasta";
 	private String inputSequenceSet = new String();
 	//private MemeRunResult memeRunResult = new MemeRunResult();
-	//private final String JOB_SERVICE = "http://kbase.us/services/userandjobstate";
-	private final String JOB_SERVICE = "http://140.221.84.180:7083";
+	private final String JOB_SERVICE = MemeServerConfig.JOB_SERVICE;
 	private static AuthToken token = null;
 	
 	@Before
@@ -902,13 +904,13 @@ public class MemeServerImplTest {
 		}
 	}
 
-/*	@Test
+	@Test
 	public void testStartJob() throws AuthException, IOException, JsonClientException {
-		//AuthToken token = AuthService.login(JOB_ACCOUNT, new String(JOB_PASSWORD)).getToken();
 		AuthToken token = AuthService.login(USER_NAME, new String(PASSWORD)).getToken();
 		
 			String status = "Starting...";
 			String desc = "Test job";
+			String jobId = "52cb2bfce4b0ef8357331cde";
 
 			InitProgress initProgress = new InitProgress();
 			initProgress.setPtype("task");
@@ -917,12 +919,15 @@ public class MemeServerImplTest {
 			Date date = new Date();
 			date.setTime(date.getTime()+100000L);
 			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ssZ");
-			MemeServerImpl.jobClient(token.toString()).startJob(jobId, token.toString(), status, desc, initProgress, dateFormat.format(date));
+			
+			URL jobServiceUrl = new URL(JOB_SERVICE);
+			UserAndJobStateClient client = new UserAndJobStateClient(jobServiceUrl, USER_NAME, PASSWORD);
+			client.startJob(jobId, token.toString(), status, desc, initProgress, dateFormat.format(date));
 			System.out.println(jobId);
 			assertNotNull(jobId);
 	}
 
-	@Test
+/*	@Test
 	public void testUpdateJob() throws AuthException, IOException {
 		URL jobServiceUrl = null;
 		UserAndJobStateClient client = null;
@@ -1223,7 +1228,7 @@ public class MemeServerImplTest {
 */
 	@Test
 	public void testDeleteJob() throws AuthException, IOException, UnauthorizedException, JsonClientException {
-		String jobId = "52c78a75e4b0b6f144e3db0c";
+		String jobId = "52cb2bfce4b0ef8357331cde";
 
 //		AuthToken token = AuthService.login(JOB_ACCOUNT, new String(JOB_PASSWORD)).getToken();
 		AuthToken token = AuthService.login(USER_NAME, new String(PASSWORD)).getToken();

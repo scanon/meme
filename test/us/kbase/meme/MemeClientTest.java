@@ -25,10 +25,9 @@ public class MemeClientTest {
 	
 	private SequenceSet testSequenceSet = new SequenceSet();
 	private MemeRunResult memeRunResult = new MemeRunResult();
-//	private String serverUrl = "http://140.221.85.173:7077";
-//	private String serverUrl = "http://140.221.84.191/services/meme/";
+	private String serverUrl = "http://140.221.85.173:7077";
 //	private String serverUrl = "http://kbase.us/services/meme/";
-	private String serverUrl = "http://127.0.0.1:7108";
+//	private String serverUrl = "http://127.0.0.1:7108";
 
 	private static final String USER_NAME = "aktest";
 	private static final String PASSWORD = "1475rokegi";
@@ -38,8 +37,8 @@ public class MemeClientTest {
 	private static final String PASSWORD = "";
 	private static final String TEST_WORKSPACE = "ENIGMA_KBASE";
 */
-	private final String JOB_SERVICE = "http://140.221.84.180:7083";
-	private String testSequenceSetId = "kb|sequenceset.9";//"Halobacterium_sp_NRC-1_Idr2_regulon";
+	private final String JOB_SERVICE = MemeServerConfig.JOB_SERVICE;
+	private String testSequenceSetId = "kb|sequenceset.8";//"Halobacterium_sp_NRC-1_Idr2_regulon";
 	private String testCollectionId1 = "kb|memepspmcollection.1";//"kb|memepspmcollection.41";	
 	private String testCollectionId2 = "kb|memepspmcollection.1";//"kb_pspmcollection_regprecise";
 	private String testMemeRunResultId = "kb|memerunresult.15";//"kb|memerunresult.123";
@@ -458,8 +457,8 @@ public class MemeClientTest {
 		paramsTomtom.setEvalue(0L);
 		paramsTomtom.setInternal(0L);
 		paramsTomtom.setMinOverlap(0L);
-		paramsTomtom.setQueryRef("AKtest/kb|memepspmcollection.40");//(TEST_WORKSPACE + "/" + testCollectionId);
-		paramsTomtom.setTargetRef("AKtest/kb_pspmcollection_regprecise");//(TEST_WORKSPACE + "/" + testCollectionId);
+		paramsTomtom.setQueryRef(TEST_WORKSPACE + "/" + testCollectionId1);
+		paramsTomtom.setTargetRef(TEST_WORKSPACE + "/" + testCollectionId2);
 				
 		String jobId = clientMeme.compareMotifsWithTomtomJobByCollectionFromWs(TEST_WORKSPACE, paramsTomtom);
 
@@ -775,10 +774,10 @@ public class MemeClientTest {
 		assertEquals("kb|sequence.40", result.getHits().get(0).getSeqId());
 		assertEquals("+", result.getHits().get(0).getStrand());
 		assertEquals("2", result.getHits().get(0).getPspmId());
-		assertEquals(Long.valueOf("122"), result.getHits().get(0).getHitStart());
-		assertEquals(Long.valueOf("145"), result.getHits().get(0).getHitEnd());
-		assertEquals(Double.valueOf("2594.71"), result.getHits().get(0).getScore());
-		assertEquals(Double.valueOf("5.82E-10"), result.getHits().get(0).getHitPvalue());
+		assertEquals(Long.valueOf("65"), result.getHits().get(0).getHitStart());
+		assertEquals(Long.valueOf("78"), result.getHits().get(0).getHitEnd());
+		assertEquals(Double.valueOf("1416.26"), result.getHits().get(0).getScore());
+		assertEquals(Double.valueOf("1.01E-5"), result.getHits().get(0).getHitPvalue());
 	}
 
 	@Test
