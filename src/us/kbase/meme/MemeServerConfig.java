@@ -9,7 +9,7 @@ public class MemeServerConfig {
 	public static final String JOB_SERVICE = "https://kbase.us/services/userandjobstate";//dev:"http://140.221.84.180:7083";
 	public static final String CLUSTER_SERVICE = "https://198.128.58.82/services/cs_test/jobs";
 	public static final String ID_SERVICE_URL = "http://kbase.us/services/idserver";
-	public static final String WS_SERVICE_URL = "https://kbase.us/services/workspace/";//"http://140.221.84.209:7058";//
+	public static final String WS_SERVICE_URL = "http://140.221.84.209:7058";
 
 	//File and directory paths
 	//Where temporary files would be created? 
