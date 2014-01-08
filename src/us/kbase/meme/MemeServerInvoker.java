@@ -329,7 +329,7 @@ public class MemeServerInvoker {
 		}
 
 		if ( line.hasOption("pspm")){
-			if (!cleanUpArgument(line.getOptionValue("pspm")).equals("None"))
+			if (!cleanUpArgument(line.getOptionValue("pspm")).equals("null"))
 				params.setPspmId(cleanUpArgument(line.getOptionValue("pspm")));
 		}
 		
@@ -388,7 +388,7 @@ public class MemeServerInvoker {
 		MastRunParameters params = new MastRunParameters();
 
 		if ( line.hasOption("pspm")){
-			if (!cleanUpArgument(line.getOptionValue("pspm")).equals("None"))
+			if (!cleanUpArgument(line.getOptionValue("pspm")).equals("null"))
 				params.setPspmId(cleanUpArgument(line.getOptionValue("pspm")));
 		}
 
