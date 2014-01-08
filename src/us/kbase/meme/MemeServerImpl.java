@@ -18,12 +18,10 @@ import java.util.Date;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import us.kbase.auth.AuthException;
 import us.kbase.auth.AuthToken;
 import us.kbase.auth.TokenFormatException;
 import us.kbase.common.service.JsonClientException;
 import us.kbase.common.service.UObject;
-import us.kbase.common.service.UnauthorizedException;
 import us.kbase.sequences.Sequence;
 import us.kbase.sequences.SequenceSet;
 import us.kbase.idserverapi.IDServerAPIClient;
@@ -497,8 +495,9 @@ public class MemeServerImpl {
 		String inputFileName = null;
 		String outputFileName = null;
 		if (DEPLOY_AWE) {
-			inputFileName = jobId + ".fasta";
-			outputFileName = jobId + ".out";
+			String currentDir = System.getProperty("user.dir");
+			inputFileName = currentDir + "/" + jobId + ".fasta";
+			outputFileName = currentDir + "/" + jobId + ".out";
 		} else { 
 			inputFileName = WORK_DIRECTORY + "/" + jobId + ".fasta";
 			outputFileName = WORK_DIRECTORY + "/" + jobId + ".out";
@@ -645,9 +644,10 @@ public class MemeServerImpl {
 		String outputFileName = null;
 		
 		if (DEPLOY_AWE) {
-			firstInputFile = tempFileId + "_query.meme";
-			secondInputFile = tempFileId + "_target.meme";
-			outputFileName = tempFileId + "_tomtom.txt";
+			String currentDir = System.getProperty("user.dir");
+			firstInputFile = currentDir + "/" + tempFileId + "_query.meme";
+			secondInputFile = currentDir + "/" + tempFileId + "_target.meme";
+			outputFileName = currentDir + "/" + tempFileId + "_tomtom.txt";
 		} else {
 			firstInputFile = WORK_DIRECTORY + "/" + tempFileId + "_query.meme";
 			secondInputFile = WORK_DIRECTORY + "/" + tempFileId + "_target.meme";
@@ -1025,9 +1025,10 @@ public class MemeServerImpl {
 		String sequenceFileName = null;
 		String outputFileName = null;
 		if (DEPLOY_AWE){
-			motifFileName = tempFileId + "_query.meme";
-			sequenceFileName = tempFileId + "_target.fasta";
-			outputFileName = tempFileId + "_mast.txt";
+			String currentDir = System.getProperty("user.dir");
+			motifFileName = currentDir + "/" + tempFileId + "_query.meme";
+			sequenceFileName = currentDir + "/" + tempFileId + "_target.fasta";
+			outputFileName = currentDir + "/" + tempFileId + "_mast.txt";
 		} else {
 			motifFileName = WORK_DIRECTORY + "/" + tempFileId
 					+ "_query.meme";
