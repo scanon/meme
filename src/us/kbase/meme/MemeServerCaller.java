@@ -105,9 +105,9 @@ public class MemeServerCaller {
     		String jsonArgs = "{\"info\": {\"pipeline\": \"meme-runner-pipeline\",\"name\": \"meme\",\"project\": \"default\""
     				+ ",\"user\": \"default\",\"clientgroups\":\"\",\"sessionId\":\""
     				+ returnVal + "\"},\"tasks\": [{\"cmd\": {\"args\": \""	
-    				+ " --method find_motifs_with_meme_job_from_ws"
     				+ " --job '" + returnVal
-    				+ "' --ws '" + wsName
+    				+ "' --method find_motifs_with_meme_job_from_ws"
+    				+ " --ws '" + wsName
     				+ "' --query '" + params.getSourceRef()
     				+ "' --mod '" + params.getMod()
     				+ "' --nmotifs '" + params.getNmotifs().toString()
@@ -222,9 +222,9 @@ public class MemeServerCaller {
        		String jsonArgs = "{\"info\": {\"pipeline\": \"meme-runner-pipeline\",\"name\": \"meme\",\"project\": \"default\""
     				+ ",\"user\": \"default\",\"clientgroups\":\"\",\"sessionId\":\""
     				+ returnVal + "\"},\"tasks\": [{\"cmd\": {\"args\": \""	
-    				+ " --method compare_motifs_with_tomtom_job_by_collection_from_ws"
     				+ " --job '" + returnVal
-    				+ "' --ws '" + wsName
+    				+ "' --method compare_motifs_with_tomtom_job_by_collection_from_ws"
+    				+ " --ws '" + wsName
     				+ "' --query '" + params.getQueryRef()
     				+ "' --target '" + params.getTargetRef()
     				+ "' --pspm '" + params.getPspmId()
@@ -332,9 +332,9 @@ public class MemeServerCaller {
        		String jsonArgs = "{\"info\": {\"pipeline\": \"meme-runner-pipeline\",\"name\": \"meme\",\"project\": \"default\""
     				+ ",\"user\": \"default\",\"clientgroups\":\"\",\"sessionId\":\""
     				+ returnVal + "\"},\"tasks\": [{\"cmd\": {\"args\": \""	
-    				+ " --method find_sites_with_mast_job_by_collection_from_ws"
     				+ " --job '" + returnVal
-    				+ "' --ws '" + wsName
+    				+ "' --method find_sites_with_mast_job_by_collection_from_ws"
+    				+ " --ws '" + wsName
     				+ "' --query '" + params.getQueryRef()
     				+ "' --target '" + params.getTargetRef()
     				+ "' --pspm '" + params.getPspmId()
