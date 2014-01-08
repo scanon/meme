@@ -105,8 +105,8 @@ public class MemeServerCaller {
     		String jsonArgs = "{\"info\": {\"pipeline\": \"meme-runner-pipeline\",\"name\": \"meme\",\"project\": \"default\""
     				+ ",\"user\": \"default\",\"clientgroups\":\"\",\"sessionId\":\""
     				+ returnVal + "\"},\"tasks\": [{\"cmd\": {\"args\": \""	
-    				+ " --job '" + returnVal
-    				+ "' --method find_motifs_with_meme_job_from_ws"
+    				+ " --job " + returnVal
+    				+ " --method find_motifs_with_meme_job_from_ws"
     				+ " --ws '" + wsName
     				+ "' --query '" + params.getSourceRef()
     				+ "' --mod '" + params.getMod()
@@ -222,8 +222,8 @@ public class MemeServerCaller {
        		String jsonArgs = "{\"info\": {\"pipeline\": \"meme-runner-pipeline\",\"name\": \"meme\",\"project\": \"default\""
     				+ ",\"user\": \"default\",\"clientgroups\":\"\",\"sessionId\":\""
     				+ returnVal + "\"},\"tasks\": [{\"cmd\": {\"args\": \""	
-    				+ " --job '" + returnVal
-    				+ "' --method compare_motifs_with_tomtom_job_by_collection_from_ws"
+    				+ " --job " + returnVal
+    				+ " --method compare_motifs_with_tomtom_job_by_collection_from_ws"
     				+ " --ws '" + wsName
     				+ "' --query '" + params.getQueryRef()
     				+ "' --target '" + params.getTargetRef()
@@ -332,8 +332,8 @@ public class MemeServerCaller {
        		String jsonArgs = "{\"info\": {\"pipeline\": \"meme-runner-pipeline\",\"name\": \"meme\",\"project\": \"default\""
     				+ ",\"user\": \"default\",\"clientgroups\":\"\",\"sessionId\":\""
     				+ returnVal + "\"},\"tasks\": [{\"cmd\": {\"args\": \""	
-    				+ " --job '" + returnVal
-    				+ "' --method find_sites_with_mast_job_by_collection_from_ws"
+    				+ " --job " + returnVal
+    				+ " --method find_sites_with_mast_job_by_collection_from_ws"
     				+ " --ws '" + wsName
     				+ "' --query '" + params.getQueryRef()
     				+ "' --target '" + params.getTargetRef()
