@@ -432,7 +432,7 @@ public class MemeServerInvoker {
 		    if( line.hasOption( "help" ) ) {
 		    	// automatically generate the help statement
 		    	HelpFormatter formatter = new HelpFormatter();
-		    	formatter.printHelp( "java -jar /kb/deployment/meme/meme_cluster.jar [parameters]", options );
+		    	formatter.printHelp( "java -jar /kb/deployment/meme/meme.jar [parameters]", options );
 
 		    }
 		    else {
@@ -462,7 +462,7 @@ public class MemeServerInvoker {
 		    		else {
 		    			System.err.println( "Unknown method: " + serverMethod + "\n");
 				    	HelpFormatter formatter = new HelpFormatter();
-				    	formatter.printHelp( "java -jar /kb/deployment/meme/meme_cluster.jar [parameters]", options );
+				    	formatter.printHelp( "java -jar /kb/deployment/meme/meme.jar [parameters]", options );
 		    			System.exit(1);
 		    		}
 		    		// do something with resulting value
@@ -471,7 +471,7 @@ public class MemeServerInvoker {
 		    	}
 		    	else {
 			    	HelpFormatter formatter = new HelpFormatter();
-			    	formatter.printHelp( "java -jar /kb/deployment/meme/meme_cluster.jar [parameters]", options );
+			    	formatter.printHelp( "java -jar /kb/deployment/meme/meme.jar [parameters]", options );
 		    		System.exit(1);
 		    	}
 		    }

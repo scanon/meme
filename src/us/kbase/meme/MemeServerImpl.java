@@ -37,6 +37,7 @@ public class MemeServerImpl {
 	private static final String WORK_DIRECTORY = MemeServerConfig.WORK_DIRECTORY;
 	private static final String ID_SERVICE_URL = MemeServerConfig.ID_SERVICE_URL;
 	private static final String JOB_SERVICE_URL = MemeServerConfig.JOB_SERVICE;
+	private static final boolean DEPLOY_AWE = MemeServerConfig.DEPLOY_AWE;
 
 	private static Pattern spacePattern = Pattern.compile("[\\n\\t ]");
 	private static Date date = new Date();
@@ -493,8 +494,16 @@ public class MemeServerImpl {
 
 		MemeRunResult returnVal = null;
 		// Generate unique jobId for the MEME run
-		String inputFileName = WORK_DIRECTORY + "/" + jobId + ".fasta";
-		String outputFileName = WORK_DIRECTORY + "/" + jobId + ".out";
+		String inputFileName = null;
+		String outputFileName = null;
+		if (DEPLOY_AWE) {
+			inputFileName = jobId + ".fasta";
+			outputFileName = jobId + ".out";
+		} else { 
+			inputFileName = WORK_DIRECTORY + "/" + jobId + ".fasta";
+			outputFileName = WORK_DIRECTORY + "/" + jobId + ".out";
+		}
+		
 		// Generate MEME command line
 		String memeCommand = generateMemeCommandLine(inputFileName,
 				params.getMod(), params.getNmotifs(), params.getMinw(),
@@ -628,12 +637,20 @@ public class MemeServerImpl {
 		} else {
 			tempFileId = jobId;
 		}
-		String firstInputFile = WORK_DIRECTORY + "/" + tempFileId
-				+ "_query.meme";
-		String secondInputFile = WORK_DIRECTORY + "/" + tempFileId
-				+ "_target.meme";
-		String outputFileName = WORK_DIRECTORY + "/" + tempFileId
-				+ "_tomtom.txt";
+
+		String firstInputFile = null;
+		String secondInputFile = null;
+		String outputFileName = null;
+		
+		if (DEPLOY_AWE) {
+			firstInputFile = tempFileId + "_query.meme";
+			secondInputFile = tempFileId + "_target.meme";
+			outputFileName = tempFileId + "_tomtom.txt";
+		} else {
+			firstInputFile = WORK_DIRECTORY + "/" + tempFileId + "_query.meme";
+			secondInputFile = WORK_DIRECTORY + "/" + tempFileId + "_target.meme";
+			outputFileName = WORK_DIRECTORY + "/" + tempFileId + "_tomtom.txt";
+		}
 		// Generate command line
 		String commandLineTomtom = generateTomtomCommandLine(firstInputFile,
 				secondInputFile, params);
@@ -1000,11 +1017,20 @@ public class MemeServerImpl {
 			tempFileId = jobId;
 		}
 
-		String motifFileName = WORK_DIRECTORY + "/" + tempFileId
-				+ "_query.meme";
-		String sequenceFileName = WORK_DIRECTORY + "/" + tempFileId
-				+ "_target.fasta";
-		String outputFileName = WORK_DIRECTORY + "/" + tempFileId + "_mast.txt";
+		String motifFileName = null;
+		String sequenceFileName = null;
+		String outputFileName = null;
+		if (DEPLOY_AWE){
+			motifFileName = tempFileId + "_query.meme";
+			sequenceFileName = tempFileId + "_target.fasta";
+			outputFileName = tempFileId + "_mast.txt";
+		} else {
+			motifFileName = WORK_DIRECTORY + "/" + tempFileId
+					+ "_query.meme";
+			sequenceFileName = WORK_DIRECTORY + "/" + tempFileId
+					+ "_target.fasta";
+			outputFileName = WORK_DIRECTORY + "/" + tempFileId + "_mast.txt";
+		}
 		Integer pspmNumber = -1;
 		if (params.getPspmId() != null) {
 			pspmNumber = getPSPMnumber(query, params.getPspmId());
