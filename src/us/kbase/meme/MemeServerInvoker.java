@@ -1,5 +1,7 @@
 package us.kbase.meme;
 
+import java.util.regex.Pattern;
+
 import org.apache.commons.cli.*;
 
 public class MemeServerInvoker {
@@ -9,6 +11,7 @@ public class MemeServerInvoker {
 	 */
 	
 	Options options = new Options();
+	final static Pattern p = Pattern.compile("^'(.*)'$");
 
 	@SuppressWarnings("static-access")
 	public MemeServerInvoker() {
@@ -154,7 +157,7 @@ public class MemeServerInvoker {
 		params.setSourceRef(line.getOptionValue("query"));
 		
 		if ( line.hasOption("mod")){
-			params.setMod(line.getOptionValue("mod"));
+			params.setMod(cleanUpArgument(line.getOptionValue("mod")));
 		}
 		else {
 			System.err.println( "Required MEME mod parameter missed");
@@ -162,65 +165,65 @@ public class MemeServerInvoker {
 		}
 		
 		if ( line.hasOption("nmotifs")){
-			params.setNmotifs(Long.parseLong(line.getOptionValue("nmotifs")));
+			params.setNmotifs(Long.parseLong(cleanUpArgument(line.getOptionValue("nmotifs"))));
 		}
 		else {
 			params.setNmotifs(0L);
 		}
 		
 		if ( line.hasOption("minw")){
-			params.setMinw(Long.parseLong(line.getOptionValue("minw")));
+			params.setMinw(Long.parseLong(cleanUpArgument(line.getOptionValue("minw"))));
 		}
 		else {
 			params.setMinw(0L);
 		}
 		
 		if ( line.hasOption("maxw")){
-			params.setMaxw(Long.parseLong(line.getOptionValue("maxw")));
+			params.setMaxw(Long.parseLong(cleanUpArgument(line.getOptionValue("maxw"))));
 		}
 		else {
 			params.setMaxw(0L);
 		}
 
 		if ( line.hasOption("nsites")){
-			params.setNsites(Long.parseLong(line.getOptionValue("nsites")));
+			params.setNsites(Long.parseLong(cleanUpArgument(line.getOptionValue("nsites"))));
 		}
 		else {
 			params.setNsites(0L);
 		}
 
 		if ( line.hasOption("minsites")){
-			params.setMinsites(Long.parseLong(line.getOptionValue("minsites")));
+			params.setMinsites(Long.parseLong(cleanUpArgument(line.getOptionValue("minsites"))));
 		}
 		else {
 			params.setMinsites(0L);
 		}
 
 		if ( line.hasOption("maxsites")){
-			params.setMaxsites(Long.parseLong(line.getOptionValue("maxsites")));
+			params.setMaxsites(Long.parseLong(cleanUpArgument(line.getOptionValue("maxsites"))));
 		}
 		else {
 			params.setMaxsites(0L);
 		}
 
 		if ( line.hasOption("pal")){
-			params.setPal(Long.parseLong(line.getOptionValue("pal")));
+			params.setPal(Long.parseLong(cleanUpArgument(line.getOptionValue("pal"))));
 		} 
 		else {
 			params.setPal(0L);
 		}
 
 		if ( line.hasOption("revcomp")){
-			params.setRevcomp(Long.parseLong(line.getOptionValue("revcomp")));
+			params.setRevcomp(Long.parseLong(cleanUpArgument(line.getOptionValue("revcomp"))));
 		} 
 		else {
 			params.setRevcomp(0L);
 		}
 
-		returnVal = MemeServerImpl.findMotifsWithMemeJobFromWs(line.getOptionValue("ws"), 
+		returnVal = MemeServerImpl.findMotifsWithMemeJobFromWs(cleanUpArgument(line.getOptionValue("ws")), 
 							params,
-							line.getOptionValue("job"),
-							line.getOptionValue("token"));
+							cleanUpArgument(line.getOptionValue("job")),
+							cleanUpArgument(line.getOptionValue("token")));
 		
 		return returnVal;
 		
@@ -290,14 +293,14 @@ public class MemeServerInvoker {
 		String returnVal = null;
 		
 		if ( line.hasOption("thresh")){
-			params.setThresh(Double.parseDouble(line.getOptionValue("thresh")));
+			params.setThresh(Double.parseDouble(cleanUpArgument(line.getOptionValue("thresh"))));
 		}
 		else {
 			params.setThresh(0.0);
 		}
 
 		if ( line.hasOption("dist")){
-			params.setDist(line.getOptionValue("dist"));
+			params.setDist(cleanUpArgument(line.getOptionValue("dist")));
 		}
 		else {
 			System.err.println( "Required TOMTOM dist parameter missed");
@@ -305,38 +308,38 @@ public class MemeServerInvoker {
 		}
 
 		if ( line.hasOption("min_overlap")){
-			params.setMinOverlap(Long.parseLong(line.getOptionValue("min_overlap")));
+			params.setMinOverlap(Long.parseLong(cleanUpArgument(line.getOptionValue("min_overlap"))));
 		}
 		else {
 			params.setMinOverlap(0L);
 		}
 
 		if ( line.hasOption("evalue")){
-			params.setEvalue(Long.parseLong(line.getOptionValue("evalue")));
+			params.setEvalue(Long.parseLong(cleanUpArgument(line.getOptionValue("evalue"))));
 		} 
 		else {
 			params.setEvalue(0L);
 		}
 
 		if ( line.hasOption("internal")){
-			params.setInternal(Long.parseLong(line.getOptionValue("internal")));
+			params.setInternal(Long.parseLong(cleanUpArgument(line.getOptionValue("internal"))));
 		} 
 		else {
 			params.setInternal(0L);
 		}
 
 		if ( line.hasOption("pspm")){
-			if (!line.getOptionValue("pspm").equals("None"))
-				params.setPspmId(line.getOptionValue("pspm"));
+			if (!cleanUpArgument(line.getOptionValue("pspm")).equals("None"))
+				params.setPspmId(cleanUpArgument(line.getOptionValue("pspm")));
 		}
 		
 		if (line.hasOption("target")) {
-			params.setQueryRef(line.getOptionValue("query"));
-			params.setTargetRef(line.getOptionValue("target"));
-			returnVal = MemeServerImpl.compareMotifsWithTomtomJobByCollectionFromWs(line.getOptionValue("ws"), 
+			params.setQueryRef(cleanUpArgument(line.getOptionValue("query")));
+			params.setTargetRef(cleanUpArgument(line.getOptionValue("target")));
+			returnVal = MemeServerImpl.compareMotifsWithTomtomJobByCollectionFromWs(cleanUpArgument(line.getOptionValue("ws")), 
 								params, 
-								line.getOptionValue("job"),
-								line.getOptionValue("token"));
+								cleanUpArgument(line.getOptionValue("job")),
+								cleanUpArgument(line.getOptionValue("token")));
 		
 		}
 		else {
@@ -385,24 +388,24 @@ public class MemeServerInvoker {
 		MastRunParameters params = new MastRunParameters();
 
 		if ( line.hasOption("pspm")){
-			if (!line.getOptionValue("pspm").equals("None"))
-				params.setPspmId(line.getOptionValue("pspm"));
+			if (!cleanUpArgument(line.getOptionValue("pspm")).equals("None"))
+				params.setPspmId(cleanUpArgument(line.getOptionValue("pspm")));
 		}
 
 		if (line.hasOption("thresh")){
-			params.setMt(Double.parseDouble(line.getOptionValue("thresh")));
+			params.setMt(Double.parseDouble(cleanUpArgument(line.getOptionValue("thresh"))));
 		}
 		else {
 			params.setMt(Double.valueOf("0.0"));
 		}
 		
 		if (line.hasOption("target")) {
-			params.setQueryRef(line.getOptionValue("query"));
-			params.setTargetRef(line.getOptionValue("target"));
-			returnVal = MemeServerImpl.findSitesWithMastJobByCollectionFromWs(line.getOptionValue("ws"),
+			params.setQueryRef(cleanUpArgument(line.getOptionValue("query")));
+			params.setTargetRef(cleanUpArgument(line.getOptionValue("target")));
+			returnVal = MemeServerImpl.findSitesWithMastJobByCollectionFromWs(cleanUpArgument(line.getOptionValue("ws")),
 								params,
-								line.getOptionValue("job"),
-								line.getOptionValue("token"));
+								cleanUpArgument(line.getOptionValue("job")),
+								cleanUpArgument(line.getOptionValue("token")));
 		}
 		else {
 			System.err.println( "Target ID required");
@@ -413,10 +416,10 @@ public class MemeServerInvoker {
 
 	private String generateCollection (CommandLine line) throws Exception {
 		String returnVal = null;
-		returnVal = MemeServerImpl.getPspmCollectionFromMemeJobResultFromWs(line.getOptionValue("ws"), 
-				line.getOptionValue("query"), 
-				line.getOptionValue("job"),
-				line.getOptionValue("token"));		
+		returnVal = MemeServerImpl.getPspmCollectionFromMemeJobResultFromWs(cleanUpArgument(line.getOptionValue("ws")), 
+				cleanUpArgument(line.getOptionValue("query")), 
+				cleanUpArgument(line.getOptionValue("job")),
+				cleanUpArgument(line.getOptionValue("token")));		
 		return returnVal;
 	}
 
@@ -528,7 +531,14 @@ public class MemeServerInvoker {
 	public void returnResult (String resultId) {
 		System.out.println(resultId);
 	}
-	
+
+	protected static String cleanUpArgument (String argument){
+		if (argument.matches(p.pattern())){
+			argument = argument.replaceFirst(p.pattern(), "$1");
+		}
+		return argument;
+	}
+
 	public static void main(String[] args) throws Exception {
 		
 		//AuthToken authToken = AuthService.login("aktest", "1475rokegi").getToken();
