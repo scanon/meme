@@ -18,8 +18,8 @@ MAIN_CLASS = us.kbase.meme.MemeServerInvoker
 SERVICE_PSGI = $(SERVICE_NAME).psgi
 TPAGE_ARGS = --define kb_top=$(TARGET) --define kb_runtime=$(DEPLOY_RUNTIME) --define kb_service_name=$(SERVICE_NAME) --define kb_service_dir=$(SERVICE_DIR) --define kb_service_port=$(SERVICE_PORT) --define kb_psgi=$(SERVICE_PSGI)
 SCRIPTS_TESTS = $(wildcard script-tests/*.t)
-JOB_DIR = /var/tmp/inferelator
-DEPLOY_JAR = $(KB_TOP)/lib/jars/inferelator
+JOB_DIR = /var/tmp/meme
+DEPLOY_JAR = $(KB_TOP)/lib/jars/meme
 DEPLOY_CLUSTER = /kb/deployment/meme
 SCRIPTS_TESTS_CLUSTER = $(wildcard script-test-cluster/*.t)
 	
@@ -37,7 +37,7 @@ distrib-jar:
 	rm -rf $(DEPLOY_JAR)
 	mkdir -p $(DEPLOY_JAR)/lib
 	cp ./lib/*.jar $(DEPLOY_JAR)/lib
-	cp ./dist/inferelator.jar $(DEPLOY_JAR)
+	cp ./dist/meme.jar $(DEPLOY_JAR)
 
 deploy-cluster: compile-cluster deploy-cluster-logic test-cluster
 
