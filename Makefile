@@ -50,7 +50,7 @@ deploy-cluster-logic:
 	mkdir $(DEPLOY_CLUSTER)
 	mkdir $(DEPLOY_CLUSTER)/lib
 	cp ./lib/*.jar $(DEPLOY_CLUSTER)/lib
-	cp ./dist/meme_cluster.jar $(DEPLOY_CLUSTER)
+	cp ./dist/meme.jar $(DEPLOY_CLUSTER)
 
 deploy-all: distrib deploy-client
 
