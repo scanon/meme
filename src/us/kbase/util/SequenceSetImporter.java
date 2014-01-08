@@ -7,14 +7,17 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import us.kbase.auth.TokenFormatException;
+import us.kbase.common.service.JsonClientException;
 import us.kbase.common.service.UObject;
+import us.kbase.common.service.UnauthorizedException;
 import us.kbase.meme.MemeServerImpl;
 import us.kbase.sequences.Sequence;
 import us.kbase.sequences.SequenceSet;
 
 public class SequenceSetImporter {
 	
-	public static SequenceSet importSequenceSetFromFile (String fileName, String wsName, String setName, String description, String token) {
+	public static SequenceSet importSequenceSetFromFile (String fileName, String wsName, String setName, String description, String token) throws TokenFormatException, UnauthorizedException, IOException, JsonClientException {
 		SequenceSet set = new SequenceSet();
 		List<String> fileContent = readFile(fileName);
 		set = generateSequenceSet(fileContent, setName, description);

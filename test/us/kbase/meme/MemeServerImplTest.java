@@ -123,6 +123,31 @@ public class MemeServerImplTest {
 	}
 
 	@Test
+	public void testWhichR() {
+		String testFileName = "test/javaoutput.txt";
+		MemeServerImpl.executeCommand("which R", testFileName);
+		String line = null;
+		try {
+			BufferedReader br = new BufferedReader(new FileReader(testFileName));
+			line = br.readLine();
+			br.close();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		finally {
+			try {
+				Runtime.getRuntime().exec("rm " + testFileName);
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		assertEquals("                    MEME — Multiple EM for Motif Elicitation", line);
+	}
+
+	
+	@Test
 	public void testProcessMotifDataLine() {
 		MemeMotif result = new MemeMotif();
 		MemeServerImpl.processMotifDataLine(result, "MOTIF  1	width =   24   sites =   6   llr = 90   E-value = 2.3e+003");

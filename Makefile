@@ -18,12 +18,26 @@ MAIN_CLASS = us.kbase.meme.MemeServerInvoker
 SERVICE_PSGI = $(SERVICE_NAME).psgi
 TPAGE_ARGS = --define kb_top=$(TARGET) --define kb_runtime=$(DEPLOY_RUNTIME) --define kb_service_name=$(SERVICE_NAME) --define kb_service_dir=$(SERVICE_DIR) --define kb_service_port=$(SERVICE_PORT) --define kb_psgi=$(SERVICE_PSGI)
 SCRIPTS_TESTS = $(wildcard script-tests/*.t)
+JOB_DIR = /var/tmp/inferelator
+DEPLOY_JAR = $(KB_TOP)/lib/jars/inferelator
 DEPLOY_CLUSTER = /kb/deployment/meme
 SCRIPTS_TESTS_CLUSTER = $(wildcard script-test-cluster/*.t)
 	
 default: compile
 
 deploy: distrib deploy-client
+
+deploy-jar: compile-jar deploy-sh-scripts distrib-jar test-jar
+
+compile-jar: src lib
+	./make_jar.sh $(MAIN_CLASS)
+
+distrib-jar:
+	export KB_TOP=$(TARGET)
+	rm -rf $(DEPLOY_JAR)
+	mkdir -p $(DEPLOY_JAR)/lib
+	cp ./lib/*.jar $(DEPLOY_JAR)/lib
+	cp ./dist/inferelator.jar $(DEPLOY_JAR)
 
 deploy-cluster: compile-cluster deploy-cluster-logic test-cluster
 
@@ -76,6 +90,23 @@ build-libs:
 		--js javascript/$(SERVICE_NAME)/Client \
 		$(SERVICE_SPEC) lib
 
+SRC_SH = $(wildcard scripts/*.sh)
+WRAP_SH_TOOL = wrap_sh
+WRAP_SH_SCRIPT = bash $(TOOLS_DIR)/$(WRAP_SH_TOOL).sh
+
+deploy-sh-scripts:
+	mkdir -p $(TARGET)/shbin; \
+	export KB_TOP=$(TARGET); \
+	export KB_RUNTIME=$(DEPLOY_RUNTIME); \
+	for src in $(SRC_SH) ; do \
+		basefile=`basename $$src`; \
+		base=`basename $$src .sh`; \
+		echo install $$src $$base ; \
+		cp $$src $(TARGET)/shbin ; \
+		$(WRAP_SH_SCRIPT) "$(TARGET)/shbin/$$basefile" $(TARGET)/bin/$$base ; \
+	done 
+
+
 test: test-scripts
 	@echo "running script tests"
 
@@ -115,6 +146,9 @@ distrib:
 	chmod +x $(TARGET_DIR)/start_service.sh
 	echo "./glassfish_stop_service.sh $(TARGET_PORT)" > $(TARGET_DIR)/stop_service.sh
 	chmod +x $(TARGET_DIR)/stop_service.sh
+
+test-jar:
+	@echo "nothing to test"
 
 clean:
 	@echo "nothing to clean"

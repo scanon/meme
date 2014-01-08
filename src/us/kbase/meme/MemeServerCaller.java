@@ -1,148 +1,77 @@
 package us.kbase.meme;
 
+import java.io.BufferedReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.security.KeyManagementException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.net.ssl.HttpsURLConnection;
-
-import com.fasterxml.jackson.core.JsonEncoding;
-import com.fasterxml.jackson.core.JsonGenerator;
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import us.kbase.auth.AuthToken;
-import us.kbase.common.service.JacksonTupleModule;
-import us.kbase.common.service.JsonClientException;
-import us.kbase.common.service.ServerException;
-import us.kbase.common.service.UnauthorizedException;
 import us.kbase.sequences.SequenceSet;
 import us.kbase.userandjobstate.UserAndJobStateClient;
 
 public class MemeServerCaller {
 
 	private static final String JOB_SERVICE = MemeServerConfig.JOB_SERVICE;
-	private static final String CLUSTER_SERVICE = MemeServerConfig.CLUSTER_SERVICE;
-	private static boolean deployCluster = MemeServerConfig.DEPLOY_CLUSTER;
-	private static final boolean BYPASS_HTTPS = MemeServerConfig.BYPASS_HTTPS;
+	private static final String AWE_SERVICE = MemeServerConfig.CLUSTER_SERVICE;
+	private static final String SHOCK_URL = MemeServerConfig.SHOCK_URL;
+	private static boolean deployAwe = MemeServerConfig.DEPLOY_AWE;
 	
 	private static Integer connectionReadTimeOut = 30 * 60 * 1000;
-	private static boolean isAuthAllowedForHttp = false;
-	private static ObjectMapper mapper = new ObjectMapper().registerModule(new JacksonTupleModule());
-
 	
-	protected static void setAuthAllowedForHttp(boolean AllowedForHttp) {
-		isAuthAllowedForHttp = AllowedForHttp;
-	}
-	
-	private static HttpURLConnection setupCall(AuthToken accessToken) throws IOException, JsonClientException {
-		URL clusterServiceUrl = new URL(CLUSTER_SERVICE);
-		HttpURLConnection conn = (HttpURLConnection) clusterServiceUrl.openConnection();
-
-		//TrustModifier bypasses HTTPS certificate check. Don't use this in production!
-		if (BYPASS_HTTPS) {
-			try {
-				TrustModifier.relaxHostChecking(conn);
-			} catch (KeyManagementException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (NoSuchAlgorithmException e) {
-				//TODO Auto-generated catch block
-				e.printStackTrace();
-			} catch (KeyStoreException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		
-		conn.setConnectTimeout(100000);
+	protected static String executePost(String jsonRequest) throws IOException {
+		URL url;
+		HttpURLConnection connection = null;
+		PrintWriter writer = null;
+		url = new URL(AWE_SERVICE);
+		String boundary = Long.toHexString(System.currentTimeMillis());
+		connection = (HttpURLConnection) url.openConnection();
+		connection.setConnectTimeout(10000);
 		if (connectionReadTimeOut != null) {
-			conn.setReadTimeout(connectionReadTimeOut);
+			connection.setReadTimeout(connectionReadTimeOut);
 		}
-		conn.setDoOutput(true);
-		conn.setRequestMethod("POST");
-		if (accessToken != null) {
-			if (!(conn instanceof HttpsURLConnection || isAuthAllowedForHttp)) {
-				throw new UnauthorizedException("RPC method required authentication shouldn't " +
-						"be called through unsecured http, use https instead or call " +
-						"setAuthAllowedForHttp(true) for your client");
-			}
-			if (accessToken == null || accessToken.isExpired()) {
-				throw new UnauthorizedException("This method requires authentication but token was not set");
-			}
-			conn.setRequestProperty("Authorization", " OAuth " + accessToken.toString());
-		}
-		return conn;
-	}
+		connection.setRequestMethod("POST");
+		connection.setRequestProperty("Content-Type",
+				"multipart/form-data; boundary=" + boundary);
+		connection.setDoOutput(true);
+		// connection.setDoInput(true);
+		OutputStream output = connection.getOutputStream();
+		writer = new PrintWriter(new OutputStreamWriter(output), true); //set true for autoFlush!
+		String CRLF = "\r\n";
+		writer.append("--" + boundary).append(CRLF);
+		writer.append(
+				"Content-Disposition: form-data; name=\"upload\"; filename=\"inferelator.awe\"")
+				.append(CRLF);
+		writer.append("Content-Type: application/octet-stream").append(CRLF);
+		writer.append(CRLF).flush();
+		writer.append(jsonRequest).append(CRLF);
+		writer.flush();
+		writer.append("--" + boundary + "--").append(CRLF);
+		writer.append(CRLF).flush();
 
-	protected static String jsonCall(Map<String, String> arg, AuthToken token) throws IOException, JsonClientException {
-		HttpURLConnection conn = setupCall(token);
-		OutputStream os = conn.getOutputStream();
-		JsonGenerator g = mapper.getFactory().createGenerator(os, JsonEncoding.UTF8);
-		
-		g.writeRaw("data=");
-		g.writeStartObject();
-		for (Map.Entry<String, String> entry : arg.entrySet())
-		{
-			g.writeStringField(entry.getKey(), entry.getValue());
+		// Get Response
+		InputStream is = connection.getInputStream();
+		BufferedReader rd = new BufferedReader(new InputStreamReader(is));
+		String line;
+		StringBuffer response = new StringBuffer();
+		while ((line = rd.readLine()) != null) {
+			response.append(line);
+			response.append('\r');
 		}
-		g.writeEndObject();
-		g.close();
+		rd.close();
 
-//	Make a copy of JSON data and display it
-/* 		JsonGenerator g2 = mapper.getFactory().createGenerator(System.out, JsonEncoding.UTF8);
-		g2.writeRaw("data=");
-		g2.writeStartObject();
-		for (Map.Entry<String, String> entry : arg.entrySet())
-		{
-			g2.writeStringField(entry.getKey(), entry.getValue());
-		}
-		g2.writeEndObject();
-		g2.close();
-*/
-		
-		String res = null;
-		int code = conn.getResponseCode();
-		conn.getResponseMessage();
+		if (writer != null)
+			writer.close();
 
-		InputStream istream;
-		if (code == 500) {
-			istream = conn.getErrorStream();
-		} else {
-			istream = conn.getInputStream();
-		 }
-		
-	//Display HTTPS response instead of processing it as JSON  	
-/* 		InputStreamReader is = new InputStreamReader(new UnclosableInputStream(conn.getInputStream()));
-		StringBuilder sb=new StringBuilder();
-		BufferedReader br = new BufferedReader(is);
-		String read = br.readLine();
-		while(read != null) {
-		    System.out.println(read);
-		    sb.append(read);
-		    read =br.readLine();
+		if (connection != null) {
+			connection.disconnect();
 		}
-		System.out.println(sb.toString());
-*/
-		
-		JsonNode node = mapper.readTree(new UnclosableInputStream(istream));
-		
-		if (node.has("error")) {
-			String ret_error = mapper.readValue(mapper.treeAsTokens(node.get("error")),	String.class);
-			if (ret_error != "") throw new ServerException(ret_error, 500, "Error on cloud");
-		}
-		if (node.has("id"))
-			res = "Cluster job ID = " + mapper.readValue(mapper.treeAsTokens(node.get("id")), String.class);
-		if (res == null)
-			throw new ServerException("An unknown server error occured", 0, "Unknown", null);
-		return res;
+		return response.toString();
 	}
 
 	
@@ -168,31 +97,55 @@ public class MemeServerCaller {
         returnVal = jobClient.createJob();
         System.out.println(returnVal);
         
-        if (deployCluster == false) { 
+        if (deployAwe == false) { 
         	String result = MemeServerImpl.findMotifsWithMemeJobFromWs(wsName, params, returnVal, authPart.toString());
         	System.out.println(result);            
         } else {
         	//Call invoker
-        	Map<String, String> jsonArgs = new HashMap<String, String>();
-        	jsonArgs.put("target", "cloud");
-        	jsonArgs.put("application", "meme");
-        	jsonArgs.put("method", "find_motifs_with_meme_job_from_ws");
-        	jsonArgs.put("job_id", returnVal);
-        	jsonArgs.put("workspace", wsName);
-        	jsonArgs.put("seq_ref", params.getSourceRef());
-        	jsonArgs.put("mod", params.getMod());
-        	jsonArgs.put("nmotifs", params.getNmotifs().toString());
-        	jsonArgs.put("minw", params.getMinw().toString());
-        	jsonArgs.put("maxw", params.getMaxw().toString());
-        	jsonArgs.put("pal", params.getPal().toString());
-        	jsonArgs.put("revcomp", params.getRevcomp().toString());
-        	jsonArgs.put("nsites", params.getNsites().toString());
-        	jsonArgs.put("minsites", params.getMinsites().toString());
-        	jsonArgs.put("maxsites", params.getMaxsites().toString());
-        	jsonArgs.put("token", authPart.toString());
-                
-        	String result = jsonCall(jsonArgs, authPart);
-        	System.out.println(result);
+    		String jsonArgs = "{\"info\": {\"pipeline\": \"meme-runner-pipeline\",\"name\": \"meme\",\"project\": \"default\""
+    				+ ",\"user\": \"default\",\"clientgroups\":\"\",\"sessionId\":\""
+    				+ returnVal + "\"},\"tasks\": [{\"cmd\": {\"args\": \""	
+    				+ " --method find_motifs_with_meme_job_from_ws"
+    				+ " --job '" + returnVal
+    				+ "' --ws '" + wsName
+    				+ "' --query '" + params.getSourceRef()
+    				+ "' --mod '" + params.getMod()
+    				+ "' --nmotifs '" + params.getNmotifs().toString()
+    				+ "' --minw '" + params.getMinw().toString()
+    				+ "' --maxw '" + params.getMaxw().toString()
+    				+ "' --nsites '" + params.getNsites().toString()
+    				+ "' --minsites '" + params.getMinsites().toString()
+    				+ "' --maxsites '" + params.getMaxsites().toString()
+    				+ "' --pal '" + params.getPal().toString()
+    				+ "' --revcomp '" + params.getRevcomp().toString()
+    				+ "' --token '" + authPart.toString() + "'"
+    				+ "\", \"description\": \"running MEME.find_motifs_with_meme_job_from_ws\", \"name\": \"run_meme\"}, \"dependsOn\": [], \"outputs\": {\""
+    				+ returnVal + ".tgz\": {\"host\": \"" 
+    				+ SHOCK_URL + "\"}},\"taskid\": \"0\",\"skip\": 0,\"totalwork\": 1}]}";
+
+
+			if (MemeServerConfig.LOG_AWE_CALLS) {
+				System.out.println(jsonArgs);
+				PrintWriter out = new PrintWriter(new FileWriter(
+						"/var/tmp/meme/meme-awe.log", true));
+				out.write("Job " + returnVal + " : call to AWE\n" + jsonArgs
+						+ "\n***\n");
+				out.write("***");
+				if (out != null) {
+					out.close();
+				}
+			}
+			String result = executePost(jsonArgs);
+			if (MemeServerConfig.LOG_AWE_CALLS) {
+				System.out.println(result);
+				PrintWriter out = new PrintWriter(new FileWriter(
+						"/var/tmp/meme/meme-awe.log", true));
+				out.write("Job " + returnVal + " : AWE response\n" + result
+						+ "\n***\n");
+				if (out != null) {
+					out.close();
+				}
+			}
         }
         return returnVal;
     }
@@ -260,29 +213,54 @@ public class MemeServerCaller {
     	jobClient.setAuthAllowedForHttp(true);
         returnVal = jobClient.createJob();
 
-        if (deployCluster == false) { 
+        if (deployAwe == false) { 
         	String result = MemeServerImpl.compareMotifsWithTomtomJobByCollectionFromWs(wsName, params, returnVal, authPart.toString());
             System.out.println(result);
         } else {
-        	//Call invoker
-        	Map<String, String> jsonArgs = new HashMap<String, String>();
-        	jsonArgs.put("target", "cloud");
-        	jsonArgs.put("application", "meme");
-        	jsonArgs.put("method", "compare_motifs_with_tomtom_job_by_collection_from_ws");
-        	jsonArgs.put("job_id", returnVal);
-        	jsonArgs.put("workspace", wsName);
-        	jsonArgs.put("query_ref", params.getQueryRef());
-        	jsonArgs.put("target_ref", params.getTargetRef());
-        	jsonArgs.put("thresh", params.getThresh().toString());
-        	jsonArgs.put("evalue", params.getEvalue().toString());
-        	jsonArgs.put("dist", params.getDist());
-        	jsonArgs.put("min_overlap", params.getMinOverlap().toString());
-        	jsonArgs.put("internal", params.getInternal().toString());
-        	jsonArgs.put("pspm", params.getPspmId());
-        	jsonArgs.put("token", authPart.toString());
+        	//Call AWE
         
-        String result = jsonCall(jsonArgs, authPart);
-        System.out.println(result);
+       		String jsonArgs = "{\"info\": {\"pipeline\": \"meme-runner-pipeline\",\"name\": \"meme\",\"project\": \"default\""
+    				+ ",\"user\": \"default\",\"clientgroups\":\"\",\"sessionId\":\""
+    				+ returnVal + "\"},\"tasks\": [{\"cmd\": {\"args\": \""	
+    				+ " --method compare_motifs_with_tomtom_job_by_collection_from_ws"
+    				+ " --job '" + returnVal
+    				+ "' --ws '" + wsName
+    				+ "' --query '" + params.getQueryRef()
+    				+ "' --target '" + params.getTargetRef()
+    				+ "' --pspm '" + params.getPspmId()
+    				+ "' --thresh '" + params.getThresh().toString()
+    				+ "' --dist '" + params.getDist()
+    				+ "' --min_overlap '" + params.getMinOverlap().toString()
+    				+ "' --evalue '" + params.getEvalue().toString()
+    				+ "' --internal '" + params.getInternal().toString()
+    				+ "' --token '" + authPart.toString() + "'"
+    				+ "\", \"description\": \"running MEME.compare_motifs_with_tomtom_job_by_collection_from_ws\", \"name\": \"run_meme\"}, \"dependsOn\": [], \"outputs\": {\""
+    				+ returnVal + ".tgz\": {\"host\": \"" 
+    				+ SHOCK_URL + "\"}},\"taskid\": \"0\",\"skip\": 0,\"totalwork\": 1}]}";
+
+
+			if (MemeServerConfig.LOG_AWE_CALLS) {
+				System.out.println(jsonArgs);
+				PrintWriter out = new PrintWriter(new FileWriter(
+						"/var/tmp/meme/meme-awe.log", true));
+				out.write("Job " + returnVal + " : call to AWE\n" + jsonArgs
+						+ "\n***\n");
+				out.write("***");
+				if (out != null) {
+					out.close();
+				}
+			}
+			String result = executePost(jsonArgs);
+			if (MemeServerConfig.LOG_AWE_CALLS) {
+				System.out.println(result);
+				PrintWriter out = new PrintWriter(new FileWriter(
+						"/var/tmp/meme/meme-awe.log", true));
+				out.write("Job " + returnVal + " : AWE response\n" + result
+						+ "\n***\n");
+				if (out != null) {
+					out.close();
+				}
+			}
         }
         return returnVal;
     }
@@ -345,25 +323,50 @@ public class MemeServerCaller {
     	jobClient.setAuthAllowedForHttp(true);
         returnVal = jobClient.createJob();
 
-        if (deployCluster == false) { 
+        if (deployAwe == false) { 
         	String result = MemeServerImpl.findSitesWithMastJobByCollectionFromWs(wsName, params, returnVal, authPart.toString());
         	System.out.println(result);
         } else {
-        	//Call invoker
-        	Map<String, String> jsonArgs = new HashMap<String, String>();
-        	jsonArgs.put("target", "cloud");
-        	jsonArgs.put("application", "meme");
-        	jsonArgs.put("method", "find_sites_with_mast_job_by_collection_from_ws");
-        	jsonArgs.put("job_id", returnVal);
-        	jsonArgs.put("workspace", wsName);
-        	jsonArgs.put("query_ref", params.getQueryRef());
-        	jsonArgs.put("target_ref", params.getTargetRef());
-        	jsonArgs.put("thresh", params.getMt().toString());
-        	jsonArgs.put("pspm", params.getPspmId());
-        	jsonArgs.put("token", authPart.toString());
+        	//Call AWE
         
-        	String result = jsonCall(jsonArgs, authPart);
-        	System.out.println(result);
+       		String jsonArgs = "{\"info\": {\"pipeline\": \"meme-runner-pipeline\",\"name\": \"meme\",\"project\": \"default\""
+    				+ ",\"user\": \"default\",\"clientgroups\":\"\",\"sessionId\":\""
+    				+ returnVal + "\"},\"tasks\": [{\"cmd\": {\"args\": \""	
+    				+ " --method find_sites_with_mast_job_by_collection_from_ws"
+    				+ " --job '" + returnVal
+    				+ "' --ws '" + wsName
+    				+ "' --query '" + params.getQueryRef()
+    				+ "' --target '" + params.getTargetRef()
+    				+ "' --pspm '" + params.getPspmId()
+    				+ "' --thresh '" + params.getMt().toString()
+    				+ "' --token '" + authPart.toString() + "'"
+    				+ "\", \"description\": \"running MEME.find_sites_with_mast_job_by_collection_from_ws\", \"name\": \"run_meme\"}, \"dependsOn\": [], \"outputs\": {\""
+    				+ returnVal + ".tgz\": {\"host\": \"" 
+    				+ SHOCK_URL + "\"}},\"taskid\": \"0\",\"skip\": 0,\"totalwork\": 1}]}";
+
+
+			if (MemeServerConfig.LOG_AWE_CALLS) {
+				System.out.println(jsonArgs);
+				PrintWriter out = new PrintWriter(new FileWriter(
+						"/var/tmp/meme/meme-awe.log", true));
+				out.write("Job " + returnVal + " : call to AWE\n" + jsonArgs
+						+ "\n***\n");
+				out.write("***");
+				if (out != null) {
+					out.close();
+				}
+			}
+			String result = executePost(jsonArgs);
+			if (MemeServerConfig.LOG_AWE_CALLS) {
+				System.out.println(result);
+				PrintWriter out = new PrintWriter(new FileWriter(
+						"/var/tmp/meme/meme-awe.log", true));
+				out.write("Job " + returnVal + " : AWE response\n" + result
+						+ "\n***\n");
+				if (out != null) {
+					out.close();
+				}
+			}
         }
         return returnVal;
     }
@@ -387,90 +390,9 @@ public class MemeServerCaller {
     	jobClient.setAuthAllowedForHttp(true);
         returnVal = jobClient.createJob();
 
-        if (deployCluster == false) { 
-        	String result = MemeServerImpl.getPspmCollectionFromMemeJobResultFromWs(wsId, memeRunResultRef, returnVal, authPart.toString());
-        	System.out.println(result);
-        } else {
-        	//Call invoker
-        	Map<String, String> jsonArgs = new HashMap<String, String>();
-        	jsonArgs.put("target", "cloud");
-        	jsonArgs.put("application", "meme");
-        	jsonArgs.put("method", "get_pspm_collection_from_meme_result_job_from_ws");
-        	jsonArgs.put("job_id", returnVal);
-        	jsonArgs.put("workspace", wsId);
-        	jsonArgs.put("query_ref", memeRunResultRef);
-        	jsonArgs.put("token", authPart.toString());
-        
-        	String result = jsonCall(jsonArgs, authPart);
-        	System.out.println(result);
-        }
+       	String result = MemeServerImpl.getPspmCollectionFromMemeJobResultFromWs(wsId, memeRunResultRef, returnVal, authPart.toString());
+       	System.out.println(result);
         return returnVal;
     }    
-
-	private static class UnclosableInputStream extends InputStream {
-		private InputStream inner;
-		private boolean isClosed = false;
-		
-		public UnclosableInputStream(InputStream inner) {
-			this.inner = inner;
-		}
-		
-		@Override
-		public int read() throws IOException {
-			if (isClosed)
-				return -1;
-			return inner.read();
-		}
-		
-		@Override
-		public int available() throws IOException {
-			if (isClosed)
-				return 0;
-			return inner.available();
-		}
-		
-		@Override
-		public void close() throws IOException {
-			isClosed = true;
-		}
-		
-		@Override
-		public synchronized void mark(int readlimit) {
-			inner.mark(readlimit);
-		}
-		
-		@Override
-		public boolean markSupported() {
-			return inner.markSupported();
-		}
-		
-		@Override
-		public int read(byte[] b) throws IOException {
-			if (isClosed)
-				return 0;
-			return inner.read(b);
-		}
-		
-		@Override
-		public int read(byte[] b, int off, int len) throws IOException {
-			if (isClosed)
-				return 0;
-			return inner.read(b, off, len);
-		}
-		
-		@Override
-		public synchronized void reset() throws IOException {
-			if (isClosed)
-				return;
-			inner.reset();
-		}
-		
-		@Override
-		public long skip(long n) throws IOException {
-			if (isClosed)
-				return 0;
-			return inner.skip(n);
-		}
-	}
 
 }
