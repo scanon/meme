@@ -525,10 +525,12 @@ public class MemeServerImpl {
 			returnVal.setId(getKbaseId(MemeRunResult.class.getSimpleName()));
 		} finally {
 			// Clean up
-			File fileDelete = new File(inputFileName);
-			fileDelete.delete();
-			fileDelete = new File(outputFileName);
-			fileDelete.delete();
+			if (!DEPLOY_AWE){
+				File fileDelete = new File(inputFileName);
+				fileDelete.delete();
+				fileDelete = new File(outputFileName);
+				fileDelete.delete();
+			}
 		}
 		returnVal.setParams(params);
 		return returnVal;
@@ -670,12 +672,14 @@ public class MemeServerImpl {
 				updateJobProgress(jobId, status, 1L, token);
 			result = parseTomtomOutput(outputFileName, params);
 		} finally {
-			File fileDelete = new File(firstInputFile);
-			fileDelete.delete();
-			fileDelete = new File(secondInputFile);
-			fileDelete.delete();
-			fileDelete = new File(outputFileName);
-			fileDelete.delete();
+			if (!DEPLOY_AWE){
+				File fileDelete = new File(firstInputFile);
+				fileDelete.delete();
+				fileDelete = new File(secondInputFile);
+				fileDelete.delete();
+				fileDelete = new File(outputFileName);
+				fileDelete.delete();
+			}
 		}
 		return result;
 	}
@@ -1057,12 +1061,14 @@ public class MemeServerImpl {
 				updateJobProgress(jobId, status, 1L, token);
 			hitList = parseMastOutput(outputFileName);
 		} finally {
-			File fileDelete = new File(motifFileName);
-			fileDelete.delete();
-			fileDelete = new File(sequenceFileName);
-			fileDelete.delete();
-			fileDelete = new File(outputFileName);
-			fileDelete.delete();
+			if (!DEPLOY_AWE){
+				File fileDelete = new File(motifFileName);
+				fileDelete.delete();
+				fileDelete = new File(sequenceFileName);
+				fileDelete.delete();
+				fileDelete = new File(outputFileName);
+				fileDelete.delete();
+			}
 		}
 		returnVal.setHits(hitList);
 
