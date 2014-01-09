@@ -38,7 +38,7 @@ public class MemeServerImpl {
 	private static final boolean DEPLOY_AWE = MemeServerConfig.DEPLOY_AWE;
 
 	private static Pattern spacePattern = Pattern.compile("[\\n\\t ]");
-	private static Date date = new Date();
+//	private static Date date = new Date();
 	private static SimpleDateFormat dateFormat = new SimpleDateFormat(
 			"yyyy-MM-dd'T'HH:mm:ssZ");
 
@@ -58,6 +58,7 @@ public class MemeServerImpl {
 		InitProgress initProgress = new InitProgress();
 		initProgress.setPtype("task");
 		initProgress.setMax(3L);
+		Date date = new Date();
 		date.setTime(date.getTime() + 1000000L);
 
 		UserAndJobStateClient jobClient = new UserAndJobStateClient(new URL(
@@ -71,6 +72,7 @@ public class MemeServerImpl {
 	protected static void updateJobProgress(String jobId, String status,
 			Long tasks, String token) throws TokenFormatException,
 			MalformedURLException, IOException, JsonClientException {
+		Date date = new Date();
 		date.setTime(date.getTime() + 10000L);
 		UserAndJobStateClient jobClient = new UserAndJobStateClient(new URL(
 				JOB_SERVICE_URL), new AuthToken(token));
@@ -199,6 +201,7 @@ public class MemeServerImpl {
 		List<MemeMotif> motifs = new ArrayList<MemeMotif>();
 		List<String> sites = new ArrayList<String>();
 		memeRunResult.setId(getKbaseId(MemeRunResult.class.getSimpleName()));
+		Date date = new Date();
 		memeRunResult.setTimestamp(String.valueOf(date.getTime()));
 		boolean trainingSetSection = false;
 		boolean commandLineSection = false;
@@ -736,6 +739,7 @@ public class MemeServerImpl {
 			MemeRunResult memeRunResult) throws Exception {
 		MemePSPMCollection returnVal = new MemePSPMCollection();
 		returnVal.setId(getKbaseId("MemePSPMCollection"));
+		Date date = new Date();
 		returnVal.setTimestamp(String.valueOf(date.getTime()));
 		returnVal.setSourceRef(memeRunResult.getId());
 		returnVal.setDescription("Based on " + memeRunResult.getId()
@@ -970,6 +974,7 @@ public class MemeServerImpl {
 	protected static TomtomRunResult parseTomtomOutput(String tomtomOutputFile,
 			TomtomRunParameters params) throws Exception {
 		TomtomRunResult returnVal = new TomtomRunResult();
+		Date date = new Date();
 		returnVal.setId(getKbaseId(TomtomRunResult.class.getSimpleName()));
 		returnVal.setTimestamp(String.valueOf(date.getTime()));
 		returnVal.setParams(params);
@@ -1015,6 +1020,7 @@ public class MemeServerImpl {
 			MastRunParameters params, String jobId, String token)
 			throws Exception {
 		MastRunResult returnVal = new MastRunResult();
+		Date date = new Date();
 		returnVal.setId(getKbaseId(MastRunResult.class.getSimpleName()));
 		returnVal.setTimestamp(String.valueOf(date.getTime()));
 		returnVal.setParams(params);
