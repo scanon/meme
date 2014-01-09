@@ -19,7 +19,7 @@ public class MemeServerConfig {
 
 	//Other options
 	//NEVER EVER BYPASS SSL CERTIFICATE CHECK IN PRODUCTION (unless you have to deal with expired ANL certificate)
-	protected static final boolean BYPASS_HTTPS = true;
+//	protected static final boolean BYPASS_HTTPS = true;
 
 	//Writes all JSON calls to AWE client and all AWE responses to /var/tmp/meme/meme-awe.log
 	//This is a serious security threat because log will contain all auth tokens

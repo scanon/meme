@@ -542,16 +542,18 @@ public class MemeServerImpl {
 		return returnVal;
 	}
 
+	@SuppressWarnings("unused")
 	public static String findMotifsWithMemeJobFromWs(String wsName,
 			MemeRunParameters params, String jobId, String token)
 			throws Exception {
 
 		// Start job
-		String desc = "MEME service job " + jobId
-				+ ". Method: findMotifsWithMemeJobFromWs. Input: "
-				+ params.getSourceRef() + ". Workspace: " + wsName + ".";
-		if (jobId != null)
+		if ((jobId != null)&&(!DEPLOY_AWE)){
+			String desc = "MEME service job " + jobId
+					+ ". Method: findMotifsWithMemeJobFromWs. Input: "
+					+ params.getSourceRef() + ". Workspace: " + wsName + ".";
 			startJob(jobId, desc, 3L, token);
+		}
 
 		SequenceSet input = WsDeluxeUtil
 				.getObjectFromWsByRef(params.getSourceRef(), token).getData()
@@ -693,17 +695,19 @@ public class MemeServerImpl {
 		return returnVal;
 	}
 
+	@SuppressWarnings("unused")
 	public static String compareMotifsWithTomtomJobByCollectionFromWs(
 			String wsName, TomtomRunParameters params, String jobId,
 			String token) throws MalformedURLException, Exception {
 
-		String desc = "MEME service job "
-				+ jobId
-				+ ". Method: compareMotifsWithTomtomJobByCollectionFromWs. Input: "
-				+ params.getQueryRef() + ", " + params.getTargetRef()
-				+ ". Workspace: " + wsName + ".";
-		if (jobId != null)
+		if ((jobId != null)&&(!DEPLOY_AWE)){
+			String desc = "MEME service job "
+					+ jobId
+					+ ". Method: compareMotifsWithTomtomJobByCollectionFromWs. Input: "
+					+ params.getQueryRef() + ", " + params.getTargetRef()
+					+ ". Workspace: " + wsName + ".";
 			startJob(jobId, desc, 3L, token);
+		}
 
 		MemePSPMCollection query = WsDeluxeUtil
 				.getObjectFromWsByRef(params.getQueryRef(), token).getData()
@@ -759,11 +763,12 @@ public class MemeServerImpl {
 			throws Exception {
 
 		// Start job
-		String desc = "MEME service job " + jobId
-				+ ". Method: getPspmCollectionFromMemeJobResultFromWs. Input: "
-				+ memeRunResultRef + ". Workspace: " + wsName + ".";
-		if (jobId != null)
+		if (jobId != null){
+			String desc = "MEME service job " + jobId
+					+ ". Method: getPspmCollectionFromMemeJobResultFromWs. Input: "
+					+ memeRunResultRef + ". Workspace: " + wsName + ".";
 			startJob(jobId, desc, 2L, token);
+		}
 
 		MemeRunResult memeRunResult = WsDeluxeUtil
 				.getObjectFromWsByRef(memeRunResultRef, token).getData()
@@ -1086,17 +1091,19 @@ public class MemeServerImpl {
 
 	}
 
+	@SuppressWarnings("unused")
 	public static String findSitesWithMastJobByCollectionFromWs(String wsName,
 			MastRunParameters params, String jobId, String token)
 			throws MalformedURLException, Exception {
 
 		// Start job
-		String desc = "MEME service job " + jobId
-				+ ". Method: findSitesWithMastJobByCollectionFromWs. Input: "
-				+ params.getQueryRef() + ", " + params.getTargetRef()
-				+ ". Workspace: " + wsName + ".";
-		if (jobId != null)
+		if ((jobId != null)&&(!DEPLOY_AWE)){
+			String desc = "MEME service job " + jobId
+					+ ". Method: findSitesWithMastJobByCollectionFromWs. Input: "
+					+ params.getQueryRef() + ", " + params.getTargetRef()
+					+ ". Workspace: " + wsName + ".";
 			startJob(jobId, desc, 2L, token);
+		}
 
 		MemePSPMCollection query = WsDeluxeUtil
 				.getObjectFromWsByRef(params.getQueryRef(), token).getData()

@@ -935,7 +935,7 @@ public class MemeServerImplTest {
 		
 			String status = "Starting...";
 			String desc = "Test job";
-			String jobId = "52cb2bfce4b0ef8357331cde";
+			String jobId = "52ce016ee4b0b6f144e3db2f";
 
 			InitProgress initProgress = new InitProgress();
 			initProgress.setPtype("task");
@@ -1253,7 +1253,7 @@ public class MemeServerImplTest {
 */
 	@Test
 	public void testDeleteJob() throws AuthException, IOException, UnauthorizedException, JsonClientException {
-		String jobId = "52cc8316e4b0ef8357331e0b";
+		String jobId = "52cdbe5ee4b0ef8357331f2f";
 
 //		AuthToken token = AuthService.login(JOB_ACCOUNT, new String(JOB_PASSWORD)).getToken();
 		AuthToken token = AuthService.login(USER_NAME, new String(PASSWORD)).getToken();
