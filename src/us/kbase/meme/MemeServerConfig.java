@@ -16,6 +16,7 @@ public class MemeServerConfig {
 	//File and directory paths
 	//Where temporary files would be created? 
 	protected static final String WORK_DIRECTORY = "/var/tmp/meme"; 
+	protected static final String AWF_CONFIG_FILE = "/kb/deployment/services/meme/meme.awf";
 
 	//Other options
 	//NEVER EVER BYPASS SSL CERTIFICATE CHECK IN PRODUCTION (unless you have to deal with expired ANL certificate)

@@ -1,18 +1,24 @@
 package us.kbase.meme;
 
-import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import org.apache.commons.io.FileUtils;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ContentType;
+import org.apache.http.entity.mime.MultipartEntityBuilder;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.util.EntityUtils;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -33,66 +39,11 @@ public class MemeServerCaller {
 
 	private static final String JOB_SERVICE = MemeServerConfig.JOB_SERVICE;
 	private static final String AWE_SERVICE = MemeServerConfig.CLUSTER_SERVICE;
-	private static final String SHOCK_URL = MemeServerConfig.SHOCK_URL;
 	private static boolean deployAwe = MemeServerConfig.DEPLOY_AWE;
+	private static final String AWF_CONFIG_FILE = MemeServerConfig.AWF_CONFIG_FILE;
 
-	private static Integer connectionReadTimeOut = 30 * 60 * 1000;
-	//private static Date date = new Date();
 	private static SimpleDateFormat dateFormat = new SimpleDateFormat(
 			"yyyy-MM-dd'T'HH:mm:ssZ");
-
-	protected static String executePost(String jsonRequest) throws IOException {
-		URL url;
-		HttpURLConnection connection = null;
-		PrintWriter writer = null;
-		url = new URL(AWE_SERVICE);
-		String boundary = Long.toHexString(System.currentTimeMillis());
-		connection = (HttpURLConnection) url.openConnection();
-		connection.setConnectTimeout(10000);
-		if (connectionReadTimeOut != null) {
-			connection.setReadTimeout(connectionReadTimeOut);
-		}
-		connection.setRequestMethod("POST");
-		connection.setRequestProperty("Content-Type",
-				"multipart/form-data; boundary=" + boundary);
-		connection.setDoOutput(true);
-		// connection.setDoInput(true);
-		OutputStream output = connection.getOutputStream();
-		writer = new PrintWriter(new OutputStreamWriter(output), true); // set
-																		// true
-																		// for
-																		// autoFlush!
-		String CRLF = "\r\n";
-		writer.append("--" + boundary).append(CRLF);
-		writer.append(
-				"Content-Disposition: form-data; name=\"upload\"; filename=\"inferelator.awe\"")
-				.append(CRLF);
-		writer.append("Content-Type: application/octet-stream").append(CRLF);
-		writer.append(CRLF).flush();
-		writer.append(jsonRequest).append(CRLF);
-		writer.flush();
-		writer.append("--" + boundary + "--").append(CRLF);
-		writer.append(CRLF).flush();
-
-		// Get Response
-		InputStream is = connection.getInputStream();
-		BufferedReader rd = new BufferedReader(new InputStreamReader(is));
-		String line;
-		StringBuffer response = new StringBuffer();
-		while ((line = rd.readLine()) != null) {
-			response.append(line);
-			response.append('\r');
-		}
-		rd.close();
-
-		if (writer != null)
-			writer.close();
-
-		if (connection != null) {
-			connection.disconnect();
-		}
-		return response.toString();
-	}
 
 	public static MemeRunResult findMotifsWithMeme(SequenceSet sequenceSet,
 			MemeRunParameters params) throws Exception {
@@ -139,43 +90,7 @@ public class MemeServerCaller {
 			System.out.println(result);
 		} else {
 			// Call invoker
-			String jsonArgs = "{\"info\": {\"pipeline\": \"meme-runner-pipeline\",\"name\": \"meme\",\"project\": \"default\""
-					+ ",\"user\": \"default\",\"clientgroups\":\"\",\"sessionId\":\""
-					+ returnVal
-					+ "\"},\"tasks\": [{\"cmd\": {\"args\": \""
-					+ " --job "
-					+ returnVal
-					+ " --method find_motifs_with_meme_job_from_ws"
-					+ " --ws '"
-					+ wsName
-					+ "' --query '"
-					+ params.getSourceRef()
-					+ "' --mod '"
-					+ params.getMod()
-					+ "' --nmotifs '"
-					+ params.getNmotifs().toString()
-					+ "' --minw '"
-					+ params.getMinw().toString()
-					+ "' --maxw '"
-					+ params.getMaxw().toString()
-					+ "' --nsites '"
-					+ params.getNsites().toString()
-					+ "' --minsites '"
-					+ params.getMinsites().toString()
-					+ "' --maxsites '"
-					+ params.getMaxsites().toString()
-					+ "' --pal '"
-					+ params.getPal().toString()
-					+ "' --revcomp '"
-					+ params.getRevcomp().toString()
-					+ "' --token '"
-					+ authPart.toString()
-					+ "'"
-					+ "\", \"description\": \"running MEME.find_motifs_with_meme_job_from_ws\", \"name\": \"run_meme\"}, \"dependsOn\": [], \"outputs\": {\""
-					+ returnVal
-					+ ".tgz\": {\"host\": \""
-					+ SHOCK_URL
-					+ "\"}},\"taskid\": \"0\",\"skip\": 0,\"totalwork\": 1}]}";
+			String jsonArgs = formatAWEConfig(returnVal, wsName, params, authPart.toString());
 
 			if (MemeServerConfig.LOG_AWE_CALLS) {
 				System.out.println(jsonArgs);
@@ -188,9 +103,9 @@ public class MemeServerCaller {
 					out.close();
 				}
 			}
-			String result = executePost(jsonArgs);
-			reportAweStatus(authPart, returnVal, result);
 
+			String result = submitJob(jsonArgs);
+			reportAweStatus(authPart, returnVal, result);
 			
 			if (MemeServerConfig.LOG_AWE_CALLS) {
 				System.out.println(result);
@@ -295,40 +210,7 @@ public class MemeServerCaller {
 			System.out.println(result);
 		} else {
 			// Call AWE
-
-			String jsonArgs = "{\"info\": {\"pipeline\": \"meme-runner-pipeline\",\"name\": \"meme\",\"project\": \"default\""
-					+ ",\"user\": \"default\",\"clientgroups\":\"\",\"sessionId\":\""
-					+ returnVal
-					+ "\"},\"tasks\": [{\"cmd\": {\"args\": \""
-					+ " --job "
-					+ returnVal
-					+ " --method compare_motifs_with_tomtom_job_by_collection_from_ws"
-					+ " --ws '"
-					+ wsName
-					+ "' --query '"
-					+ params.getQueryRef()
-					+ "' --target '"
-					+ params.getTargetRef()
-					+ "' --pspm '"
-					+ params.getPspmId()
-					+ "' --thresh '"
-					+ params.getThresh().toString()
-					+ "' --dist '"
-					+ params.getDist()
-					+ "' --min_overlap '"
-					+ params.getMinOverlap().toString()
-					+ "' --evalue '"
-					+ params.getEvalue().toString()
-					+ "' --internal '"
-					+ params.getInternal().toString()
-					+ "' --token '"
-					+ authPart.toString()
-					+ "'"
-					+ "\", \"description\": \"running MEME.compare_motifs_with_tomtom_job_by_collection_from_ws\", \"name\": \"run_meme\"}, \"dependsOn\": [], \"outputs\": {\""
-					+ returnVal
-					+ ".tgz\": {\"host\": \""
-					+ SHOCK_URL
-					+ "\"}},\"taskid\": \"0\",\"skip\": 0,\"totalwork\": 1}]}";
+			String jsonArgs = formatAWEConfig(returnVal, wsName, params, authPart.toString());
 
 			if (MemeServerConfig.LOG_AWE_CALLS) {
 				System.out.println(jsonArgs);
@@ -341,7 +223,7 @@ public class MemeServerCaller {
 					out.close();
 				}
 			}
-			String result = executePost(jsonArgs);
+			String result = submitJob(jsonArgs);
 			reportAweStatus(authPart, returnVal, result);
 
 			if (MemeServerConfig.LOG_AWE_CALLS) {
@@ -438,32 +320,7 @@ public class MemeServerCaller {
 			System.out.println(result);
 		} else {
 			// Call AWE
-
-			String jsonArgs = "{\"info\": {\"pipeline\": \"meme-runner-pipeline\",\"name\": \"meme\",\"project\": \"default\""
-					+ ",\"user\": \"default\",\"clientgroups\":\"\",\"sessionId\":\""
-					+ returnVal
-					+ "\"},\"tasks\": [{\"cmd\": {\"args\": \""
-					+ " --job "
-					+ returnVal
-					+ " --method find_sites_with_mast_job_by_collection_from_ws"
-					+ " --ws '"
-					+ wsName
-					+ "' --query '"
-					+ params.getQueryRef()
-					+ "' --target '"
-					+ params.getTargetRef()
-					+ "' --pspm '"
-					+ params.getPspmId()
-					+ "' --thresh '"
-					+ params.getMt().toString()
-					+ "' --token '"
-					+ authPart.toString()
-					+ "'"
-					+ "\", \"description\": \"running MEME.find_sites_with_mast_job_by_collection_from_ws\", \"name\": \"run_meme\"}, \"dependsOn\": [], \"outputs\": {\""
-					+ returnVal
-					+ ".tgz\": {\"host\": \""
-					+ SHOCK_URL
-					+ "\"}},\"taskid\": \"0\",\"skip\": 0,\"totalwork\": 1}]}";
+			String jsonArgs = formatAWEConfig(returnVal, wsName, params, authPart.toString());
 
 			if (MemeServerConfig.LOG_AWE_CALLS) {
 				System.out.println(jsonArgs);
@@ -476,7 +333,8 @@ public class MemeServerCaller {
 					out.close();
 				}
 			}
-			String result = executePost(jsonArgs);
+
+			String result = submitJob(jsonArgs);
 			reportAweStatus(authPart, returnVal, result);
 
 			if (MemeServerConfig.LOG_AWE_CALLS) {
@@ -491,6 +349,113 @@ public class MemeServerCaller {
 			}
 		}
 		return returnVal;
+	}
+
+	protected static String submitJob(String aweConfig) throws Exception {
+
+		String postResponse = null;
+		try {
+			CloseableHttpClient httpClient = HttpClients.createDefault();
+			HttpPost httpPost = new HttpPost(
+					AWE_SERVICE);
+			MultipartEntityBuilder builder = MultipartEntityBuilder.create();
+			InputStream stream = new ByteArrayInputStream(
+					aweConfig.getBytes("UTF-8"));
+			builder.addBinaryBody("upload", stream,
+					ContentType.APPLICATION_OCTET_STREAM, "bambi.awf");
+			httpPost.setEntity(builder.build());
+			HttpResponse response = httpClient.execute(httpPost);
+			postResponse = EntityUtils.toString(response.getEntity());
+		} catch (Exception e) {
+			throw new Exception("Can not submit AWE post request: "
+					+ e.getMessage());
+		}
+		return postResponse;
+	}
+
+	protected static String formatAWEConfig(String jobId, String wsName,
+			MemeRunParameters params, String token
+			) throws Exception {
+
+		String formattedConfig;
+		try {
+			String config = FileUtils.readFileToString(new File(
+					AWF_CONFIG_FILE));
+			String args = " --job "
+					+ jobId + " --method find_motifs_with_meme_job_from_ws"
+					+ " --ws '" + wsName
+					+ "' --query '" + params.getSourceRef()
+					+ "' --mod '" + params.getMod()
+					+ "' --nmotifs '" + params.getNmotifs().toString()
+					+ "' --minw '" + params.getMinw().toString()
+					+ "' --maxw '" + params.getMaxw().toString()
+					+ "' --nsites '" + params.getNsites().toString()
+					+ "' --minsites '" + params.getMinsites().toString()
+					+ "' --maxsites '" + params.getMaxsites().toString()
+					+ "' --pal '" + params.getPal().toString()
+					+ "' --revcomp '" + params.getRevcomp().toString()
+					+ "' --token '" + token	+ "'";
+
+			formattedConfig = String.format(config, jobId, args, jobId);
+		} catch (IOException e) {
+			throw new Exception("Can not load AWE config file: "
+					+ AWF_CONFIG_FILE);
+		}
+		return formattedConfig;
+	}
+
+	protected static String formatAWEConfig(String jobId, String wsName,
+			TomtomRunParameters params, String token
+			) throws Exception {
+
+		String formattedConfig;
+		try {
+			String config = FileUtils.readFileToString(new File(
+					AWF_CONFIG_FILE));
+			String args = " --job " + jobId
+					+ " --method compare_motifs_with_tomtom_job_by_collection_from_ws"
+					+ " --ws '" + wsName
+					+ "' --query '" + params.getQueryRef()
+					+ "' --target '" + params.getTargetRef()
+					+ "' --pspm '" + params.getPspmId()
+					+ "' --thresh '" + params.getThresh().toString()
+					+ "' --dist '" + params.getDist()
+					+ "' --min_overlap '" + params.getMinOverlap().toString()
+					+ "' --evalue '" + params.getEvalue().toString()
+					+ "' --internal '" + params.getInternal().toString()
+					+ "' --token '" + token + "'";
+
+			formattedConfig = String.format(config, jobId, args, jobId);
+		} catch (IOException e) {
+			throw new Exception("Can not load AWE config file: "
+					+ AWF_CONFIG_FILE);
+		}
+		return formattedConfig;
+	}
+
+	protected static String formatAWEConfig(String jobId, String wsName,
+			MastRunParameters params, String token
+			) throws Exception {
+
+		String formattedConfig;
+		try {
+			String config = FileUtils.readFileToString(new File(
+					AWF_CONFIG_FILE));
+			String args = " --job " + jobId
+					+ " --method find_sites_with_mast_job_by_collection_from_ws"
+					+ " --ws '" + wsName
+					+ "' --query '" + params.getQueryRef()
+					+ "' --target '" + params.getTargetRef()
+					+ "' --pspm '" + params.getPspmId()
+					+ "' --thresh '" + params.getMt().toString()
+					+ "' --token '" + token + "'";
+
+			formattedConfig = String.format(config, jobId, args, jobId);
+		} catch (IOException e) {
+			throw new Exception("Can not load AWE config file: "
+					+ AWF_CONFIG_FILE);
+		}
+		return formattedConfig;
 	}
 
 	protected static void reportAweStatus(AuthToken authPart, String returnVal,
