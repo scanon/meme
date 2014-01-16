@@ -12,8 +12,8 @@ import us.kbase.auth.AuthToken;
 import us.kbase.common.service.JsonClientCaller;
 import us.kbase.common.service.JsonClientException;
 import us.kbase.common.service.UnauthorizedException;
-import us.kbase.sequences.SequenceSet;
-import us.kbase.sequences.Sequence;
+import us.kbase.kbasesequences.SequenceSet;
+import us.kbase.kbasesequences.Sequence;
 import us.kbase.userandjobstate.InitProgress;
 import us.kbase.userandjobstate.UserAndJobStateClient;
 import us.kbase.util.WsDeluxeUtil;
@@ -1253,7 +1253,7 @@ public class MemeServerImplTest {
 */
 	@Test
 	public void testDeleteJob() throws AuthException, IOException, UnauthorizedException, JsonClientException {
-		String jobId = "52cee44ce4b0ef835733203e";
+		String jobId = "52cf48dee4b0ef8357332057";
 
 //		AuthToken token = AuthService.login(JOB_ACCOUNT, new String(JOB_PASSWORD)).getToken();
 		AuthToken token = AuthService.login(USER_NAME, new String(PASSWORD)).getToken();

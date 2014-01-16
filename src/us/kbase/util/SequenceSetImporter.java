@@ -11,9 +11,9 @@ import us.kbase.auth.TokenFormatException;
 import us.kbase.common.service.JsonClientException;
 import us.kbase.common.service.UObject;
 import us.kbase.common.service.UnauthorizedException;
+import us.kbase.kbasesequences.Sequence;
+import us.kbase.kbasesequences.SequenceSet;
 import us.kbase.meme.MemeServerImpl;
-import us.kbase.sequences.Sequence;
-import us.kbase.sequences.SequenceSet;
 
 public class SequenceSetImporter {
 	
@@ -21,7 +21,7 @@ public class SequenceSetImporter {
 		SequenceSet set = new SequenceSet();
 		List<String> fileContent = readFile(fileName);
 		set = generateSequenceSet(fileContent, setName, description);
-		WsDeluxeUtil.saveObjectToWorkspace(UObject.transformObjectToObject(set, UObject.class), "Sequences.SequenceSet", wsName, set.getSequenceSetId(), token);
+		WsDeluxeUtil.saveObjectToWorkspace(UObject.transformObjectToObject(set, UObject.class), "KBaseSequences.SequenceSet", wsName, set.getSequenceSetId(), token);
 		return set;
 	}
 	

@@ -22,8 +22,8 @@ import us.kbase.auth.AuthToken;
 import us.kbase.auth.TokenFormatException;
 import us.kbase.common.service.JsonClientException;
 import us.kbase.common.service.UObject;
-import us.kbase.sequences.Sequence;
-import us.kbase.sequences.SequenceSet;
+import us.kbase.kbasesequences.Sequence;
+import us.kbase.kbasesequences.SequenceSet;
 import us.kbase.idserverapi.IDServerAPIClient;
 import us.kbase.userandjobstate.InitProgress;
 import us.kbase.userandjobstate.Results;
@@ -31,6 +31,11 @@ import us.kbase.userandjobstate.UserAndJobStateClient;
 import us.kbase.util.WsDeluxeUtil;
 
 public class MemeServerImpl {
+	private static final String MAST_RUN_RESULT_TYPE = MemeServerConfig.MAST_RUN_RESULT_TYPE;
+	private static final String MEME_PSPM_COLLECTION_TYPE = MemeServerConfig.MEME_PSPM_COLLECTION_TYPE;
+	private static final String TOMTOM_RUN_RESULT_TYPE = MemeServerConfig.TOMTOM_RUN_RESULT_TYPE;
+	private static final String MEME_RUN_RESULT_TYPE = MemeServerConfig.MEME_RUN_RESULT_TYPE;
+	
 	private static Integer temporaryFileId = 0;
 	private static final String WORK_DIRECTORY = MemeServerConfig.WORK_DIRECTORY;
 	private static final String ID_SERVICE_URL = MemeServerConfig.ID_SERVICE_URL;
@@ -569,7 +574,7 @@ public class MemeServerImpl {
 		// Save to workspace
 		WsDeluxeUtil.saveObjectToWorkspace(
 				UObject.transformObjectToObject(memeRunResult, UObject.class),
-				"MEME.MemeRunResult", wsName, returnVal, token);
+				MEME_RUN_RESULT_TYPE, wsName, returnVal, token);
 
 		// Finalize job
 		if (jobId != null)
@@ -727,7 +732,7 @@ public class MemeServerImpl {
 		String returnVal = result.getId();
 		WsDeluxeUtil.saveObjectToWorkspace(
 				UObject.transformObjectToObject(result, UObject.class),
-				"MEME.TomtomRunResult", wsName, returnVal, token);
+				TOMTOM_RUN_RESULT_TYPE, wsName, returnVal, token);
 
 		// Finish job
 		if (jobId != null)
@@ -787,7 +792,7 @@ public class MemeServerImpl {
 
 		WsDeluxeUtil.saveObjectToWorkspace(
 				UObject.transformObjectToObject(collection, UObject.class),
-				"MEME.MemePSPMCollection", wsName, returnVal, token);
+				MEME_PSPM_COLLECTION_TYPE, wsName, returnVal, token);
 		// Finish job
 		if (jobId != null)
 			finishJob(jobId, wsName, returnVal, token);
@@ -1123,7 +1128,7 @@ public class MemeServerImpl {
 		String returnVal = result.getId();
 		WsDeluxeUtil.saveObjectToWorkspace(
 				UObject.transformObjectToObject(result, UObject.class),
-				"MEME.MastRunResult", wsName, returnVal, token);
+				MAST_RUN_RESULT_TYPE, wsName, returnVal, token);
 
 		// Finish job
 		if (jobId != null)

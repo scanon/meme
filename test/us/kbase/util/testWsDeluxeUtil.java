@@ -11,13 +11,13 @@ import org.junit.Test;
 import us.kbase.auth.AuthException;
 import us.kbase.auth.AuthService;
 import us.kbase.auth.AuthToken;
-import us.kbase.sequences.SequenceSet;
+import us.kbase.kbasesequences.SequenceSet;
 
 public class testWsDeluxeUtil {
 	
-	private static final String USER_NAME = "kazakov";
-	private static final String PASSWORD = "";
-	private static final String workspaceName = "ENIGMA_KBASE";//"AKtest";
+	private static final String USER_NAME = "aktest";
+	private static final String PASSWORD = "1475rokegi";
+	private static final String workspaceName = "AKtest";//"ENIGMA_KBASE";//
 	private static AuthToken token = null;
 
 	@Before

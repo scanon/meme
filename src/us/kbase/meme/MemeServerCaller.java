@@ -31,7 +31,7 @@ import us.kbase.auth.TokenFormatException;
 import us.kbase.common.service.JacksonTupleModule;
 import us.kbase.common.service.JsonClientException;
 import us.kbase.common.service.ServerException;
-import us.kbase.sequences.SequenceSet;
+import us.kbase.kbasesequences.SequenceSet;
 import us.kbase.userandjobstate.InitProgress;
 import us.kbase.userandjobstate.UserAndJobStateClient;
 

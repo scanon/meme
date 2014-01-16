@@ -19,4 +19,4 @@ Default installation of MEME server will use cluster service for all functions r
 DEPLOY_CLUSTER = true to DEPLOY_CLUSTER = false in us.kbase.meme.MemeServerConfig source file.
 
 
-To install MEME service back-end on cluster, run command 'make deploy-cluster'. 
+To install MEME service back-end on AWE client, run command 'make deploy-jar'. 

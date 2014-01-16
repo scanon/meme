@@ -16,7 +16,7 @@ import us.kbase.auth.AuthToken;
 import us.kbase.common.service.JsonClientException;
 import us.kbase.common.service.Tuple7;
 import us.kbase.common.service.UnauthorizedException;
-import us.kbase.sequences.SequenceSet;
+import us.kbase.kbasesequences.SequenceSet;
 import us.kbase.userandjobstate.Results;
 import us.kbase.userandjobstate.UserAndJobStateClient;
 import us.kbase.util.WsDeluxeUtil;
@@ -38,11 +38,11 @@ public class MemeClientTest {
 	private static final String TEST_WORKSPACE = "ENIGMA_KBASE";
 */
 	private final String JOB_SERVICE = MemeServerConfig.JOB_SERVICE;
-	private String testSequenceSetId = "kb|sequenceset.8";//"Halobacterium_sp_NRC-1_Idr2_regulon";
-	private String testCollectionId1 = "kb|memepspmcollection.1";//"kb|memepspmcollection.41";	
-	private String testCollectionId2 = "kb|memepspmcollection.1";//"kb_pspmcollection_regprecise";
-	private String testMemeRunResultId = "kb|memerunresult.15";//"kb|memerunresult.123";
-	private String testMemePspmId = "kb|memepspm.2";	
+	private String testSequenceSetId = "mod_desulfovibrio";//"Halobacterium_sp_NRC-1_Idr2_regulon";
+	private String testCollectionId1 = "kb|memepspmcollection.57";//"kb|memepspmcollection.41";	
+	private String testCollectionId2 = "kb|memepspmcollection.57";//"kb_pspmcollection_regprecise";
+	private String testMemeRunResultId = "kb|memerunresult.187";
+	private String testMemePspmId = "kb|memepspm.115";	
 	private static AuthToken token = null;
 
 		
@@ -132,7 +132,7 @@ public class MemeClientTest {
 		assertEquals(6,result.getMotifs().get(0).getSites().size());
 		assertEquals(Double.valueOf("90"),result.getMotifs().get(0).getLlr());
 		assertEquals(Double.valueOf("2300"),result.getMotifs().get(0).getEvalue());
-		assertEquals("kb|sequence.43",result.getMotifs().get(0).getSites().get(0).getSourceSequenceId());
+		assertEquals("kb|sequence.115",result.getMotifs().get(0).getSites().get(0).getSourceSequenceId());
 		assertEquals(Long.valueOf("134"),result.getMotifs().get(0).getSites().get(0).getStart());
 		assertEquals(Double.valueOf("0.000000000152"),result.getMotifs().get(0).getSites().get(0).getPvalue());
 		assertEquals("ACTGGTTTTG",result.getMotifs().get(0).getSites().get(0).getLeftFlank());
@@ -215,7 +215,7 @@ public class MemeClientTest {
 		assertEquals(6,result.getMotifs().get(0).getSites().size());
 		assertEquals(Double.valueOf("90"),result.getMotifs().get(0).getLlr());
 		assertEquals(Double.valueOf("2300"),result.getMotifs().get(0).getEvalue());
-		assertEquals("kb|sequence.43",result.getMotifs().get(0).getSites().get(0).getSourceSequenceId());
+		assertEquals("kb|sequence.115",result.getMotifs().get(0).getSites().get(0).getSourceSequenceId());
 		assertEquals(Long.valueOf("134"),result.getMotifs().get(0).getSites().get(0).getStart());
 		assertEquals(Double.valueOf("0.000000000152"),result.getMotifs().get(0).getSites().get(0).getPvalue());
 		assertEquals("ACTGGTTTTG",result.getMotifs().get(0).getSites().get(0).getLeftFlank());
@@ -351,7 +351,7 @@ public class MemeClientTest {
 		assertEquals(6,result.getMotifs().get(0).getSites().size());
 		assertEquals(Double.valueOf("90"),result.getMotifs().get(0).getLlr());
 		assertEquals(Double.valueOf("2300"),result.getMotifs().get(0).getEvalue());
-		assertEquals("kb|sequence.43",result.getMotifs().get(0).getSites().get(0).getSourceSequenceId());
+		assertEquals("kb|sequence.115",result.getMotifs().get(0).getSites().get(0).getSourceSequenceId());
 		assertEquals(Long.valueOf("134"),result.getMotifs().get(0).getSites().get(0).getStart());
 		assertEquals(Double.valueOf("0.000000000152"),result.getMotifs().get(0).getSites().get(0).getPvalue());
 		assertEquals("ACTGGTTTTG",result.getMotifs().get(0).getSites().get(0).getLeftFlank());
@@ -560,7 +560,7 @@ public class MemeClientTest {
 		MastRunResult result = client.findSitesWithMastByCollection(memePspmCollection, testSequenceSet, mastParams);
 		assertNotNull(result);
 		assertFalse(result.getHits().size() == 0);
-		assertEquals("kb|sequence.40", result.getHits().get(0).getSeqId());
+		assertEquals("kb|sequence.112", result.getHits().get(0).getSeqId());
 		assertEquals("+", result.getHits().get(0).getStrand());
 		assertEquals("1", result.getHits().get(0).getPspmId());
 		assertEquals(Long.valueOf("122"), result.getHits().get(0).getHitStart());
@@ -585,7 +585,7 @@ public class MemeClientTest {
 		
 		assertNotNull(result);
 		assertFalse(result.getHits().size() == 0);
-		assertEquals("kb|sequence.40", result.getHits().get(0).getSeqId());
+		assertEquals("kb|sequence.112", result.getHits().get(0).getSeqId());
 		assertEquals("+", result.getHits().get(0).getStrand());
 		assertEquals("1", result.getHits().get(0).getPspmId());
 		assertEquals(Long.valueOf("122"), result.getHits().get(0).getHitStart());
@@ -678,7 +678,7 @@ public class MemeClientTest {
 		
 		assertNotNull(result);
 		assertFalse(result.getHits().size() == 0);
-		assertEquals("kb|sequence.40", result.getHits().get(0).getSeqId());
+		assertEquals("kb|sequence.112", result.getHits().get(0).getSeqId());
 		assertEquals("+", result.getHits().get(0).getStrand());
 		assertEquals("1", result.getHits().get(0).getPspmId());
 		assertEquals(Long.valueOf("122"), result.getHits().get(0).getHitStart());
@@ -771,7 +771,7 @@ public class MemeClientTest {
 		
 		assertNotNull(result);
 		assertFalse(result.getHits().size() == 0);
-		assertEquals("kb|sequence.40", result.getHits().get(0).getSeqId());
+		assertEquals("kb|sequence.112", result.getHits().get(0).getSeqId());
 		assertEquals("+", result.getHits().get(0).getStrand());
 		assertEquals("2", result.getHits().get(0).getPspmId());
 		assertEquals(Long.valueOf("65"), result.getHits().get(0).getHitStart());
@@ -796,7 +796,7 @@ public class MemeClientTest {
 		MastRunResult result = client.findSitesWithMast(pspm, testSequenceSet, mastParams);
 		assertNotNull(result);
 		assertFalse(result.getHits().size() == 0);
-		assertEquals("kb|sequence.40", result.getHits().get(0).getSeqId());
+		assertEquals("kb|sequence.112", result.getHits().get(0).getSeqId());
 		assertEquals("+", result.getHits().get(0).getStrand());
 		assertEquals("1", result.getHits().get(0).getPspmId());
 		assertEquals(Long.valueOf("122"), result.getHits().get(0).getHitStart());

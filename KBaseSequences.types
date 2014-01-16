@@ -1,4 +1,4 @@
-module Sequences
+module KBaseSequences
 {
 	/* Represents a particular sequence from sequence set
 		string sequence_id - identifier of a sequence

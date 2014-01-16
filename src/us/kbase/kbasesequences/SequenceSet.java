@@ -1,5 +1,5 @@
 
-package us.kbase.sequences;
+package us.kbase.kbasesequences;
 
 import java.util.HashMap;
 import java.util.List;

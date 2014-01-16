@@ -3,7 +3,7 @@ package us.kbase.meme;
 import us.kbase.auth.AuthToken;
 import us.kbase.common.service.JsonServerMethod;
 import us.kbase.common.service.JsonServerServlet;
-import us.kbase.sequences.SequenceSet;
+import us.kbase.kbasesequences.SequenceSet;
 
 //BEGIN_HEADER
 //END_HEADER
@@ -71,7 +71,7 @@ public class MEMEServer extends JsonServerServlet {
      * SequenceSet sequenceSet - input set of sequences
      * MemeRunParameters params - parameters of MEME run
      * </pre>
-     * @param   sequenceSet   instance of type {@link us.kbase.sequences.SequenceSet SequenceSet}
+     * @param   sequenceSet   instance of type {@link us.kbase.kbasesequences.SequenceSet SequenceSet}
      * @param   params   instance of type {@link us.kbase.meme.MemeRunParameters MemeRunParameters}
      * @return   parameter "meme_run_result" of type {@link us.kbase.meme.MemeRunResult MemeRunResult}
      */
@@ -224,7 +224,7 @@ public class MEMEServer extends JsonServerServlet {
      * MastRunParameters params - parameters of MAST run
      * </pre>
      * @param   query   instance of type {@link us.kbase.meme.MemePSPM MemePSPM}
-     * @param   target   instance of type {@link us.kbase.sequences.SequenceSet SequenceSet}
+     * @param   target   instance of type {@link us.kbase.kbasesequences.SequenceSet SequenceSet}
      * @param   params   instance of type {@link us.kbase.meme.MastRunParameters MastRunParameters}
      * @return   parameter "mast_run_result" of type {@link us.kbase.meme.MastRunResult MastRunResult}
      */
@@ -247,7 +247,7 @@ public class MEMEServer extends JsonServerServlet {
      * MastRunParameters params - parameters of MAST run
      * </pre>
      * @param   query   instance of type {@link us.kbase.meme.MemePSPMCollection MemePSPMCollection}
-     * @param   target   instance of type {@link us.kbase.sequences.SequenceSet SequenceSet}
+     * @param   target   instance of type {@link us.kbase.kbasesequences.SequenceSet SequenceSet}
      * @param   params   instance of type {@link us.kbase.meme.MastRunParameters MastRunParameters}
      * @return   parameter "mast_run_result" of type {@link us.kbase.meme.MastRunResult MastRunResult}
      */

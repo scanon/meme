@@ -10,7 +10,7 @@ import us.kbase.auth.AuthToken;
 import us.kbase.common.service.JsonClientCaller;
 import us.kbase.common.service.JsonClientException;
 import us.kbase.common.service.UnauthorizedException;
-import us.kbase.sequences.SequenceSet;
+import us.kbase.kbasesequences.SequenceSet;
 
 /**
  * <p>Original spec-file module name: MEME</p>
@@ -59,7 +59,7 @@ public class MEMEClient {
     private static URL DEFAULT_URL = null;
     static {
         try {
-            DEFAULT_URL = new URL("http://kbase.us/services/meme");
+            DEFAULT_URL = new URL("http://kbase.us/services/meme/");
         } catch (MalformedURLException mue) {
             throw new RuntimeException("Compile error in client - bad url compiled");
         }
@@ -109,7 +109,7 @@ public class MEMEClient {
      * SequenceSet sequenceSet - input set of sequences
      * MemeRunParameters params - parameters of MEME run
      * </pre>
-     * @param   sequenceSet   instance of type {@link us.kbase.sequences.SequenceSet SequenceSet}
+     * @param   sequenceSet   instance of type {@link us.kbase.kbasesequences.SequenceSet SequenceSet}
      * @param   params   instance of type {@link us.kbase.meme.MemeRunParameters MemeRunParameters}
      * @return   parameter "meme_run_result" of type {@link us.kbase.meme.MemeRunResult MemeRunResult}
      * @throws IOException if an IO exception occurs
@@ -278,7 +278,7 @@ public class MEMEClient {
      * MastRunParameters params - parameters of MAST run
      * </pre>
      * @param   query   instance of type {@link us.kbase.meme.MemePSPM MemePSPM}
-     * @param   target   instance of type {@link us.kbase.sequences.SequenceSet SequenceSet}
+     * @param   target   instance of type {@link us.kbase.kbasesequences.SequenceSet SequenceSet}
      * @param   params   instance of type {@link us.kbase.meme.MastRunParameters MastRunParameters}
      * @return   parameter "mast_run_result" of type {@link us.kbase.meme.MastRunResult MastRunResult}
      * @throws IOException if an IO exception occurs
@@ -304,7 +304,7 @@ public class MEMEClient {
      * MastRunParameters params - parameters of MAST run
      * </pre>
      * @param   query   instance of type {@link us.kbase.meme.MemePSPMCollection MemePSPMCollection}
-     * @param   target   instance of type {@link us.kbase.sequences.SequenceSet SequenceSet}
+     * @param   target   instance of type {@link us.kbase.kbasesequences.SequenceSet SequenceSet}
      * @param   params   instance of type {@link us.kbase.meme.MastRunParameters MastRunParameters}
      * @return   parameter "mast_run_result" of type {@link us.kbase.meme.MastRunResult MastRunResult}
      * @throws IOException if an IO exception occurs
