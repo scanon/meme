@@ -61,11 +61,11 @@ $test_command = $command_line." --method find_motifs_with_meme_job_from_ws --job
 print $test_command."\n\n";
 system ($test_command);
 
-#3 get_pspm_collection_from_meme_result_from_ws
-$job = $job_client->create_and_start_job($auth_token, "Test job started", "MEME server back-end test: get_pspm_collection_from_meme_result_from_ws", $progress, $timestamp);
-$test_command = $command_line." --method get_pspm_collection_from_meme_result_job_from_ws --job $job --ws $ws --query $meme_run_result_id --token \"$auth_token\"";
-print $test_command."\n\n";
-system ($test_command);
+#3 (function removed from back-end) get_pspm_collection_from_meme_result_from_ws
+#$job = $job_client->create_and_start_job($auth_token, "Test job started", "MEME server back-end test: get_pspm_collection_from_meme_result_from_ws", $progress, $timestamp);
+#$test_command = $command_line." --method get_pspm_collection_from_meme_result_job_from_ws --job $job --ws $ws --query $meme_run_result_id --token \"$auth_token\"";
+#print $test_command."\n\n";
+#system ($test_command);
 
 #4 compare_motifs_with_tomtom_by_collection_from_ws
 $job = $job_client->create_and_start_job($auth_token, "Test job started", "MEME server back-end test: compare_motifs_with_tomtom_by_collection_from_ws", $progress, $timestamp);

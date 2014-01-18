@@ -23,7 +23,7 @@ DEPLOY_CLUSTER = /kb/deployment/meme
 	
 default: compile
 
-deploy: distrib deploy-client
+deploy: distrib deploy-client deploy-jar
 
 deploy-jar: compile-jar deploy-sh-scripts distrib-jar
 
