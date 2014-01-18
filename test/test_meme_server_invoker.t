@@ -27,7 +27,7 @@ my $job_client = Bio::KBase::userandjobstate::Client->new("https://kbase.us/serv
 
 my $deployment_dir = "/kb/deployment/lib/jars/meme/";
 
-my $command_line = "java -jar ".$deployment_dir."meme_cluster.jar";
+my $command_line = "java -jar ".$deployment_dir."meme.jar";
 
 my $ws = "AKtest";
 my $sequence_set_id = "\"AKtest/mod_desulfovibrio\"";
