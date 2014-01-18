@@ -25,8 +25,8 @@ import us.kbase.workspace.TypeInfo;
 
 public class TestWorkspaceDeluxe {
 
-	private static final String USER_NAME = "aktest";
-	private static final String PASSWORD = "1475rokegi";
+	private static final String USER_NAME = "";
+	private static final String PASSWORD = "";
 	private static final String workspaceName = "AKtest";
 
 	@Test
@@ -184,7 +184,7 @@ public class TestWorkspaceDeluxe {
 	@Test
 	public void testWsReadObject() throws Exception {
 		AuthToken authToken = AuthService.login(USER_NAME, new String(PASSWORD)).getToken();
-		String name = "kb|mastrunresult.52";
+		String name = "kb|memepspmcollection.57";
 		//String exampleWs = "networks_typed_objects_examples";
 		
 		ObjectData output = WsDeluxeUtil.getObjectFromWorkspace(workspaceName, name, authToken.toString());

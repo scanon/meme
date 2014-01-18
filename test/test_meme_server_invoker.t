@@ -25,17 +25,29 @@ my $auth_token = $token->token;
 
 my $job_client = Bio::KBase::userandjobstate::Client->new("http://140.221.84.180:7083", "user_id", $user, "password", $pw);
 
-my $deployment_dir = "/kb/deployment/meme/";
+my $deployment_dir = "/kb/deployment/lib/jars/meme/";
 
 my $command_line = "java -jar ".$deployment_dir."meme_cluster.jar";
 
 my $ws = "AKtest";
-my $sequence_set_id = "\"AKtest/kb|sequenceset.8\"";
-my $meme_run_result_id = "\"AKtest/kb|memerunresult.15\"";
-my $meme_pspm_collection_id = "\"AKtest/kb|memepspmcollection.1\"";
-#my $meme_pspm_id = "\"kb|memepspm.14\"";
+my $sequence_set_ref = "\"AKtest/mod_desulfovibrio\"";
+my $meme_pspm_collection_ref = "\"AKtest/kb|memepspmcollection.57\"";
+my $meme_pspm_id = "\"kb|memepspm.115\"";
+my $meme_run_result_ref = "\"AKtest/kb|memerunresult.187\"";
 
 my $test_command = "";
+
+my @time = (localtime(time + 900))[0..5];
+my $tdiff = (localtime)[2] - (gmtime)[2];
+if ($tdiff > 12) {$tdiff-= 24;};
+print gmtime."\n".localtime."\n\n";
+my $timestamp = sprintf ("%d-%02d-%02dT%02d:%02d:%02d%+03d", $time[5] + 1900, $time[4] +1, $time[3], $time[2], $time[1], $time[0], $tdiff);
+$timestamp = $timestamp."00";
+
+my $progress = {
+    "ptype"=>"task",
+    "max"=>5
+};
 
 
 #1 help
@@ -44,19 +56,19 @@ print $test_command."\n\n";
 system ($test_command);
 
 #2 find_motifs_with_meme_job_from_ws
-my $job = $job_client->create_job();
+my $job = $job_client->create_and_start_job($auth_token, "Test job started", "MEME server back-end test: find_motifs_with_meme_job_from_ws", $progress, $timestamp);
 $test_command = $command_line." --method find_motifs_with_meme_job_from_ws --job $job --ws $ws --query $sequence_set_id --mod oops --nmotifs 2 --minw 14 --maxw 28 --pal 1 --token \"$auth_token\"";
 print $test_command."\n\n";
 system ($test_command);
 
 #3 get_pspm_collection_from_meme_result_from_ws
-$job = $job_client->create_job();
+my $job = $job_client->create_and_start_job($auth_token, "Test job started", "MEME server back-end test: get_pspm_collection_from_meme_result_from_ws", $progress, $timestamp);
 $test_command = $command_line." --method get_pspm_collection_from_meme_result_job_from_ws --job $job --ws $ws --query $meme_run_result_id --token \"$auth_token\"";
 print $test_command."\n\n";
 system ($test_command);
 
 #4 compare_motifs_with_tomtom_by_collection_from_ws
-$job = $job_client->create_job();
+my $job = $job_client->create_and_start_job($auth_token, "Test job started", "MEME server back-end test: compare_motifs_with_tomtom_by_collection_from_ws", $progress, $timestamp);
 $test_command = $command_line." --method compare_motifs_with_tomtom_job_by_collection_from_ws --job $job --ws $ws --query $meme_pspm_collection_id --target $meme_pspm_collection_id --thresh 0.000001 --evalue 1 --dist pearson --min_overlap 12 --internal 1 --token \"$auth_token\"";
 print $test_command."\n\n";
 system ($test_command);
@@ -74,7 +86,7 @@ system ($test_command);
 #system ($test_command);
 
 #7 find_sites_with_mast_by_collection_from_ws
-$job = $job_client->create_job();
+my $job = $job_client->create_and_start_job($auth_token, "Test job started", "MEME server back-end test: find_sites_with_mast_by_collection_from_ws", $progress, $timestamp);
 $test_command = $command_line." --method find_sites_with_mast_job_by_collection_from_ws --job $job --ws $ws --query $meme_pspm_collection_id --target $sequence_set_id --thresh 0.001 --token \"$auth_token\"";
 print $test_command."\n\n";
 system ($test_command);

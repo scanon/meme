@@ -17,17 +17,15 @@ SERVLET_CLASS = us.kbase.meme.MEMEServer
 MAIN_CLASS = us.kbase.meme.MemeServerInvoker
 SERVICE_PSGI = $(SERVICE_NAME).psgi
 TPAGE_ARGS = --define kb_top=$(TARGET) --define kb_runtime=$(DEPLOY_RUNTIME) --define kb_service_name=$(SERVICE_NAME) --define kb_service_dir=$(SERVICE_DIR) --define kb_service_port=$(SERVICE_PORT) --define kb_psgi=$(SERVICE_PSGI)
-SCRIPTS_TESTS = $(wildcard script-tests/*.t)
 JOB_DIR = /var/tmp/meme
 DEPLOY_JAR = $(KB_TOP)/lib/jars/meme
 DEPLOY_CLUSTER = /kb/deployment/meme
-SCRIPTS_TESTS_CLUSTER = $(wildcard script-test-cluster/*.t)
 	
 default: compile
 
 deploy: distrib deploy-client
 
-deploy-jar: compile-jar deploy-sh-scripts distrib-jar test-jar
+deploy-jar: compile-jar deploy-sh-scripts distrib-jar
 
 compile-jar: src lib
 	./make_jar.sh $(MAIN_CLASS)
@@ -38,19 +36,6 @@ distrib-jar:
 	mkdir -p $(DEPLOY_JAR)/lib
 	cp ./lib/*.jar $(DEPLOY_JAR)/lib
 	cp ./dist/meme.jar $(DEPLOY_JAR)
-
-deploy-cluster: compile-cluster deploy-cluster-logic test-cluster
-
-compile-cluster: src lib
-	./make_jar.sh $(MAIN_CLASS)
-
-deploy-cluster-logic:
-	test -d $(WORK_DIR) || mkdir -p $(WORK_DIR)
-	rm -r $(DEPLOY_CLUSTER)
-	mkdir $(DEPLOY_CLUSTER)
-	mkdir $(DEPLOY_CLUSTER)/lib
-	cp ./lib/*.jar $(DEPLOY_CLUSTER)/lib
-	cp ./dist/meme.jar $(DEPLOY_CLUSTER)
 
 deploy-all: distrib deploy-client
 
@@ -106,32 +91,6 @@ deploy-sh-scripts:
 		$(WRAP_SH_SCRIPT) "$(TARGET)/shbin/$$basefile" $(TARGET)/bin/$$base ; \
 	done 
 
-
-test: test-scripts
-	@echo "running script tests"
-
-test-scripts:
-	# run each test
-	for t in $(SCRIPTS_TESTS) ; do \
-		if [ -f $$t ] ; then \
-			$(DEPLOY_RUNTIME)/bin/perl $$t ; \
-			if [ $$? -ne 0 ] ; then \
-				exit 1 ; \
-			fi \
-		fi \
-	done
-
-test-cluster:
-	# run each test
-	for t in $(SCRIPTS_TESTS_CLUSTER) ; do \
-		if [ -f $$t ] ; then \
-			$(DEPLOY_RUNTIME)/bin/perl $$t ; \
-			if [ $$? -ne 0 ] ; then \
-				exit 1 ; \
-			fi \
-		fi \
-	done
-
 compile: src lib
 	./make_war.sh $(SERVLET_CLASS)
 
@@ -148,8 +107,22 @@ distrib:
 	echo "./glassfish_stop_service.sh $(TARGET_PORT)" > $(TARGET_DIR)/stop_service.sh
 	chmod +x $(TARGET_DIR)/stop_service.sh
 
+test: test-scripts test-jar
+	@echo "running script tests"
+
+test-scripts:
+	# run each test
+	$(DEPLOY_RUNTIME)/bin/perl test/script_tests-command-line.t ; \
+	if [ $$? -ne 0 ] ; then \
+		exit 1 ; \
+	fi \
+
 test-jar:
-	@echo "nothing to test"
+	# run each test
+	$(DEPLOY_RUNTIME)/bin/perl test/test_meme_server_invoker.t ; \
+	if [ $$? -ne 0 ] ; then \
+		exit 1 ; \
+	fi \
 
 clean:
 	@echo "nothing to clean"

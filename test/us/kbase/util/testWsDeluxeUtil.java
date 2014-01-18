@@ -15,9 +15,9 @@ import us.kbase.kbasesequences.SequenceSet;
 
 public class testWsDeluxeUtil {
 	
-	private static final String USER_NAME = "aktest";
-	private static final String PASSWORD = "1475rokegi";
-	private static final String workspaceName = "AKtest";//"ENIGMA_KBASE";//
+	private static final String USER_NAME = "";
+	private static final String PASSWORD = "";
+	private static final String workspaceName = "ENIGMA_KBASE";//"AKtest";//
 	private static AuthToken token = null;
 
 	@Before
@@ -40,9 +40,9 @@ public class testWsDeluxeUtil {
 
 	@Test
 	public void testSequenceSetImport() throws Exception {
-		String fileName = "/home/kbase/dev_container/modules/meme/test/seqs.fasta";
-		String description = "mod genes from Desulfovibrio spp.";//"Idr2 regulated genes from Halobacterium sp. NRC-1";
-		String setName = "mod_desulfovibrio";//"Halobacterium_sp_NRC-1_Idr2_regulon";//set to null for KBase ID assignment
+		String fileName = "/home/kbase/dev_container/modules/meme/test/idr2.fasta";
+		String description = "Idr2 regulated genes from Halobacterium sp. NRC-1";//"mod genes from Desulfovibrio spp.";//
+		String setName = "Halobacterium_sp_NRC-1_Idr2_regulon";//"mod_desulfovibrio";//set to null for KBase ID assignment
 		SequenceSet result = SequenceSetImporter.importSequenceSetFromFile(fileName, workspaceName, setName, description, token.toString());
 		
 		

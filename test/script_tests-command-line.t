@@ -11,16 +11,16 @@ use Test::Cmd;
 use JSON;
 
 
-my $url = "http://localhost:7108/";
+my $url = "http://140.221.85.173:7077/";
 my $bin  = "scripts";
 
 my $ws = "AKtest";
 my $user = "aktest";
 my $pw = "1475rokegi";
-my $sequence_set_ref = "\"AKtest/kb|sequenceset.8\"";
-my $meme_pspm_collection_ref = "\"AKtest/kb|memepspmcollection.1\"";
-my $meme_pspm_id = "\"kb|memepspm.2\"";
-my $meme_run_result_ref = "\"AKtest/kb|memerunresult.15\"";
+my $sequence_set_ref = "\"AKtest/mod_desulfovibrio\"";
+my $meme_pspm_collection_ref = "\"AKtest/kb|memepspmcollection.57\"";
+my $meme_pspm_id = "\"kb|memepspm.115\"";
+my $meme_run_result_ref = "\"AKtest/kb|memerunresult.187\"";
 
 
 #1

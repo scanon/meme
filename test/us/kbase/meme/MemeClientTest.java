@@ -25,23 +25,19 @@ public class MemeClientTest {
 	
 	private SequenceSet testSequenceSet = new SequenceSet();
 	private MemeRunResult memeRunResult = new MemeRunResult();
-//	private String serverUrl = "http://140.221.85.173:7077";
+	private String serverUrl = "http://140.221.85.173:7077";
 //	private String serverUrl = "http://kbase.us/services/meme/";
-	private String serverUrl = "http://127.0.0.1:7108";
+//	private String serverUrl = "http://127.0.0.1:7108";
 
-	private static final String USER_NAME = "aktest";
-	private static final String PASSWORD = "1475rokegi";
+	private static final String USER_NAME = "";
+	private static final String PASSWORD = "";
 	private static final String TEST_WORKSPACE = "AKtest";
 	
-/*	private static final String USER_NAME = "kazakov";
-	private static final String PASSWORD = "";
-	private static final String TEST_WORKSPACE = "ENIGMA_KBASE";
-*/
 	private final String JOB_SERVICE = MemeServerConfig.JOB_SERVICE;
-	private String testSequenceSetId = "mod_desulfovibrio";//"Halobacterium_sp_NRC-1_Idr2_regulon";
-	private String testCollectionId1 = "kb|memepspmcollection.57";//"kb|memepspmcollection.41";	
-	private String testCollectionId2 = "kb|memepspmcollection.57";//"kb_pspmcollection_regprecise";
-	private String testMemeRunResultId = "kb|memerunresult.187";
+	private String testSequenceSetId = "Halobacterium_sp_NRC-1_Idr2_regulon";//"mod_desulfovibrio";//
+	private String testCollectionId1 = "kb|memepspmcollection.64";//"kb|memepspmcollection.41";//	
+	private String testCollectionId2 = "kb_pspmcollection_regprecise";//"kb|memepspmcollection.57";//
+	private String testMemeRunResultId = "kb|memerunresult.205";
 	private String testMemePspmId = "kb|memepspm.115";	
 	private static AuthToken token = null;
 
@@ -159,12 +155,12 @@ public class MemeClientTest {
 		MemeRunParameters params = new MemeRunParameters();
 		params.setMod("oops");
 		params.setNmotifs(2L);
-		params.setMinw(14L);
+		params.setMinw(12L);
 		params.setMaxw(24L);
 		params.setNsites(0L);
 		params.setMinsites(0L);
 		params.setMaxsites(0L);
-		params.setPal(1L);
+		params.setPal(0L);
 		params.setRevcomp(0L);
 		params.setSourceId(testSequenceSetId);
 		params.setSourceRef(TEST_WORKSPACE + "/" + testSequenceSetId);
@@ -417,7 +413,7 @@ public class MemeClientTest {
 		
 		TomtomRunParameters paramsTomtom = new TomtomRunParameters();
 		paramsTomtom.setDist("pearson");
-		paramsTomtom.setThresh(0.001);
+		paramsTomtom.setThresh(0.1);
 		paramsTomtom.setEvalue(0L);
 		paramsTomtom.setInternal(0L);
 		paramsTomtom.setMinOverlap(6L);
@@ -426,6 +422,7 @@ public class MemeClientTest {
 
 				
 		String resultId = client.compareMotifsWithTomtomByCollectionFromWs(TEST_WORKSPACE, paramsTomtom);
+		System.out.println(resultId);
 		TomtomRunResult result = WsDeluxeUtil.getObjectFromWsByRef(TEST_WORKSPACE + "/" +resultId, token.toString()).getData().asClassInstance(TomtomRunResult.class);
 		
 		assertNotNull(result.getHits().get(0).getTargetPspmId());
@@ -575,9 +572,10 @@ public class MemeClientTest {
 		MEMEClient client = new MEMEClient(serviceUrl, USER_NAME, PASSWORD);
 		client.setAuthAllowedForHttp(true);
 
-		MastRunParameters mastParams = new MastRunParameters().withMt(0.0005D).withPspmId(testMemePspmId).withQueryRef(TEST_WORKSPACE + "/" + testCollectionId1). withTargetRef(TEST_WORKSPACE + "/" + testSequenceSetId);
+		MastRunParameters mastParams = new MastRunParameters().withMt(0.0005D).withQueryRef(TEST_WORKSPACE + "/" + testCollectionId1). withTargetRef(TEST_WORKSPACE + "/" + testSequenceSetId);
 		
 		String resultId = client.findSitesWithMastByCollectionFromWs(TEST_WORKSPACE, mastParams);
+		System.out.println(resultId);
 
 		AuthToken token = AuthService.login(USER_NAME, new String(PASSWORD)).getToken();
 		MastRunResult result = WsDeluxeUtil.getObjectFromWsByRef(TEST_WORKSPACE + "/" +resultId, token.toString()).getData().asClassInstance(MastRunResult.class);
@@ -961,6 +959,7 @@ public class MemeClientTest {
 		client.setAuthAllowedForHttp(true);
 		
 		String resultId = client.getPspmCollectionFromMemeResultFromWs(TEST_WORKSPACE, TEST_WORKSPACE + "/" + testMemeRunResultId);
+		System.out.println(resultId);
 
 		MemePSPMCollection result = WsDeluxeUtil.getObjectFromWsByRef(TEST_WORKSPACE + "/" +resultId, token.toString()).getData().asClassInstance(MemePSPMCollection.class);
 		

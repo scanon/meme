@@ -31,16 +31,17 @@ import java.net.URL;
 
 public class MemeServerImplTest {
 	
-	private final String USER_NAME = "aktest";
-	private final String PASSWORD = "1475rokegi";
+	private final String USER_NAME = "";
+	private final String PASSWORD = "";
 	private final String TEST_WORKSPACE = "AKtest";
 
 	private SequenceSet testSequenceSet = new SequenceSet();
-	private String testSequenceSetId = "kb|sequenceset.8";
-	private String testCollectionId = "kb|memepspmcollection.1";	
-	private String testMemeRunResultId = "kb|memerunresult.15";
-	private String testMemePspmId = "kb|memepspm.2";	
+	private String testSequenceSetId = "mod_desulfovibrio";//"Halobacterium_sp_NRC-1_Idr2_regulon";
+	private String testCollectionId = "kb|memepspmcollection.57";//"kb|memepspmcollection.41";	
+	private String testMemeRunResultId = "kb|memerunresult.187";
+	private String testMemePspmId = "kb|memepspm.115";	
 	private String fakeJobId = "12345.fasta";
+
 	private String inputSequenceSet = new String();
 	//private MemeRunResult memeRunResult = new MemeRunResult();
 	private final String JOB_SERVICE = MemeServerConfig.JOB_SERVICE;
@@ -57,6 +58,7 @@ public class MemeServerImplTest {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+
 		testSequenceSet = WsDeluxeUtil.getObjectFromWsByRef(TEST_WORKSPACE + "/" + testSequenceSetId, token.toString()).getData().asClassInstance(SequenceSet.class);
     	for(Sequence sequence:testSequenceSet.getSequences()){
     		inputSequenceSet += ">"+sequence.getSequenceId()+"\n";
@@ -1253,7 +1255,7 @@ public class MemeServerImplTest {
 */
 	@Test
 	public void testDeleteJob() throws AuthException, IOException, UnauthorizedException, JsonClientException {
-		String jobId = "52cf48dee4b0ef8357332057";
+		String jobId = "52d86514e4b0ef8357332079";
 
 //		AuthToken token = AuthService.login(JOB_ACCOUNT, new String(JOB_PASSWORD)).getToken();
 		AuthToken token = AuthService.login(USER_NAME, new String(PASSWORD)).getToken();

@@ -22,7 +22,7 @@ public class MemeServerConfig {
 	//Writes all JSON calls to AWE client and all AWE responses to /var/tmp/meme/meme-awe.log
 	//This is a serious security threat because log will contain all auth tokens
 	//SET IT TO FALSE ON PRODUCTION  
-	public static final boolean LOG_AWE_CALLS = true;
+	public static final boolean LOG_AWE_CALLS = false;
 
 	protected static final String MAST_RUN_RESULT_TYPE = "MEME.MastRunResult";
 	protected static final String MEME_PSPM_COLLECTION_TYPE = "MEME.MemePSPMCollection";
