@@ -30,10 +30,10 @@ my $deployment_dir = "/kb/deployment/lib/jars/meme/";
 my $command_line = "java -jar ".$deployment_dir."meme_cluster.jar";
 
 my $ws = "AKtest";
-my $sequence_set_ref = "\"AKtest/mod_desulfovibrio\"";
-my $meme_pspm_collection_ref = "\"AKtest/kb|memepspmcollection.57\"";
+my $sequence_set_id = "\"AKtest/mod_desulfovibrio\"";
+my $meme_pspm_collection_id = "\"AKtest/kb|memepspmcollection.57\"";
 my $meme_pspm_id = "\"kb|memepspm.115\"";
-my $meme_run_result_ref = "\"AKtest/kb|memerunresult.187\"";
+my $meme_run_result_id = "\"AKtest/kb|memerunresult.187\"";
 
 my $test_command = "";
 
