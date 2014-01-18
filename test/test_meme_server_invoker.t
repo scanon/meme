@@ -23,7 +23,7 @@ if ($token->error_message){
 
 my $auth_token = $token->token;
 
-my $job_client = Bio::KBase::userandjobstate::Client->new("http://140.221.84.180:7083", "user_id", $user, "password", $pw);
+my $job_client = Bio::KBase::userandjobstate::Client->new("https://kbase.us/services/userandjobstate", "user_id", $user, "password", $pw);
 
 my $deployment_dir = "/kb/deployment/lib/jars/meme/";
 
