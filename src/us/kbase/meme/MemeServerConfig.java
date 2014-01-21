@@ -4,10 +4,14 @@ public class MemeServerConfig {
 	
 	//Set DEPLOY_CLUSTER to false before deployment if you do not wish to use cluster service  
 	protected static final boolean DEPLOY_AWE = true;
+	
+	//Service credentials
+	protected static final String SERVICE_LOGIN = "meme";
+	protected static final String SERVICE_PASSWORD = "CheburashkaiKrokodilGena1969";
 
 	//Service URLs
 	public static final String JOB_SERVICE = "https://kbase.us/services/userandjobstate";//dev:"http://140.221.84.180:7083";
-	public static final String CLUSTER_SERVICE = "http://140.221.85.171:7080/job";//"https://198.128.58.82/services/cs_test/jobs";
+	public static final String CLUSTER_SERVICE = "http://140.221.85.171:7080/job";
 	public static final String ID_SERVICE_URL = "http://kbase.us/services/idserver";
 	public static final String WS_SERVICE_URL = "https://kbase.us/services/ws";//dev: "http://140.221.84.209:7058";
 

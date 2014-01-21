@@ -26,8 +26,9 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import us.kbase.auth.AuthException;
+import us.kbase.auth.AuthService;
 import us.kbase.auth.AuthToken;
-import us.kbase.auth.TokenFormatException;
 import us.kbase.common.service.JacksonTupleModule;
 import us.kbase.common.service.JsonClientException;
 import us.kbase.common.service.ServerException;
@@ -74,13 +75,11 @@ public class MemeServerCaller {
 				jobServiceUrl, authPart);
 		// jobClient.setAuthAllowedForHttp(true);
 		returnVal = jobClient.createJob();
-		jobClient.startJob(returnVal, authPart.toString(),
-				"Starting MEME service job...", "MEME service job " + returnVal
+		startJob(returnVal, "MEME service job " + returnVal
 						+ ". Method: findMotifsWithMemeJobFromWs. Input: "
 						+ params.getSourceRef() + ". Workspace: " + wsName
 						+ ".",
-				new InitProgress().withPtype("task").withMax(5L),
-				dateFormat.format(date));
+				new Long(5), authPart.toString());
 		jobClient = null;
 		System.out.println(returnVal);
 
@@ -194,13 +193,10 @@ public class MemeServerCaller {
 				jobServiceUrl, authPart);
 		// jobClient.setAuthAllowedForHttp(true);
 		returnVal = jobClient.createJob();
-		jobClient.startJob(returnVal, authPart.toString(),
-				"Starting MEME service job...", "MEME service job " + returnVal
+		startJob(returnVal, "MEME service job " + returnVal
 				+ ". Method: compareMotifsWithTomtomJobByCollectionFromWs. Input: "
 				+ params.getQueryRef() + ", " + params.getTargetRef()
-				+ ". Workspace: " + wsName + ".",
-				new InitProgress().withPtype("task").withMax(5L),
-				dateFormat.format(date));
+				+ ". Workspace: " + wsName + ".", new Long(5), authPart.toString());
 		jobClient = null;
 
 		if (deployAwe == false) {
@@ -304,13 +300,10 @@ public class MemeServerCaller {
 				jobServiceUrl, authPart);
 		// jobClient.setAuthAllowedForHttp(true);
 		returnVal = jobClient.createJob();
-		jobClient.startJob(returnVal, authPart.toString(),
-				"Starting MEME service job...", "MEME service job " + returnVal
+		startJob(returnVal, "MEME service job " + returnVal
 				+ ". Method: findSitesWithMastJobByCollectionFromWs. Input: "
 				+ params.getQueryRef() + ", " + params.getTargetRef()
-				+ ". Workspace: " + wsName + ".",
-				new InitProgress().withPtype("task").withMax(5L),
-				dateFormat.format(date));
+				+ ". Workspace: " + wsName + ".", new Long(5), authPart.toString());
 		jobClient = null;
 
 		if (deployAwe == false) {
@@ -460,8 +453,8 @@ public class MemeServerCaller {
 
 	protected static void reportAweStatus(AuthToken authPart, String returnVal,
 			String result) throws IOException, JsonProcessingException,
-			TokenFormatException, MalformedURLException, JsonClientException,
-			JsonParseException, JsonMappingException, ServerException {
+			MalformedURLException, JsonClientException,
+			JsonParseException, JsonMappingException, ServerException, AuthException {
 		JsonNode rootNode = new ObjectMapper().registerModule(new JacksonTupleModule()).readTree(result);
 		String aweId = "";
 		if (rootNode.has("data")){
@@ -503,7 +496,7 @@ public class MemeServerCaller {
 		URL jobServiceUrl = new URL(JOB_SERVICE);
 		UserAndJobStateClient jobClient = new UserAndJobStateClient(
 				jobServiceUrl, authPart);
-		jobClient.setAuthAllowedForHttp(true);
+		//jobClient.setAuthAllowedForHttp(true);
 		returnVal = jobClient.createJob();
 
 		String result = MemeServerImpl
@@ -514,16 +507,35 @@ public class MemeServerCaller {
 	}
 
 	protected static void updateJobProgress(String jobId, String status,
-			Long tasks, String token) throws TokenFormatException,
-			MalformedURLException, IOException, JsonClientException {
+			Long tasks, String token) throws MalformedURLException, IOException, JsonClientException, AuthException {
 		Date date = new Date();
-		date.setTime(date.getTime() + 10000L);
+		date.setTime(date.getTime() + 100000L);
 		UserAndJobStateClient jobClient = new UserAndJobStateClient(new URL(
 				JOB_SERVICE), new AuthToken(token));
 		// jobClient.setAuthAllowedForHttp(true);
-		jobClient.updateJobProgress(jobId, token, status, tasks,
+		jobClient.updateJobProgress(jobId, AuthService.login(MemeServerConfig.SERVICE_LOGIN, new String(MemeServerConfig.SERVICE_PASSWORD)).getToken().toString(), status, tasks,
 				dateFormat.format(date));
 		jobClient = null;
 	}
+	
+	protected static void startJob(String jobId, String desc, Long tasks,
+			String token) throws MalformedURLException,
+			IOException, JsonClientException, AuthException {
+
+		String status = "MEME service job started. Preparing input...";
+		InitProgress initProgress = new InitProgress();
+		initProgress.setPtype("task");
+		initProgress.setMax(tasks);
+		Date date = new Date();
+		date.setTime(date.getTime() + 100000L);
+
+		UserAndJobStateClient jobClient = new UserAndJobStateClient(new URL(
+				JOB_SERVICE), new AuthToken(token));
+		// jobClient.setAuthAllowedForHttp(true);
+		jobClient.startJob(jobId, AuthService.login(MemeServerConfig.SERVICE_LOGIN, new String(MemeServerConfig.SERVICE_PASSWORD)).getToken().toString(), status, desc, initProgress,
+				dateFormat.format(date));
+		jobClient = null;
+	}
+
 
 }

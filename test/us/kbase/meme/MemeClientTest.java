@@ -25,20 +25,20 @@ public class MemeClientTest {
 	
 	private SequenceSet testSequenceSet = new SequenceSet();
 	private MemeRunResult memeRunResult = new MemeRunResult();
-	private String serverUrl = "http://140.221.85.173:7077";
+//	private String serverUrl = "http://140.221.85.173:7077";
 //	private String serverUrl = "http://kbase.us/services/meme/";
-//	private String serverUrl = "http://127.0.0.1:7108";
+	private String serverUrl = "http://127.0.0.1:7108";
 
 	private static final String USER_NAME = "";
 	private static final String PASSWORD = "";
 	private static final String TEST_WORKSPACE = "AKtest";
 	
 	private final String JOB_SERVICE = MemeServerConfig.JOB_SERVICE;
-	private String testSequenceSetId = "Halobacterium_sp_NRC-1_Idr2_regulon";//"mod_desulfovibrio";//
-	private String testCollectionId1 = "kb|memepspmcollection.64";//"kb|memepspmcollection.41";//	
-	private String testCollectionId2 = "kb_pspmcollection_regprecise";//"kb|memepspmcollection.57";//
-	private String testMemeRunResultId = "kb|memerunresult.205";
-	private String testMemePspmId = "kb|memepspm.115";	
+	private String testSequenceSetId = "mod_desulfovibrio";//"Halobacterium_sp_NRC-1_Idr2_regulon";//
+	private String testCollectionId1 = "kb|memepspmcollection.57";//"kb|memepspmcollection.64";//	
+	private String testCollectionId2 = "kb|memepspmcollection.57";//"kb_pspmcollection_regprecise";//
+	private String testMemeRunResultId = "kb|memerunresult.187";
+	private String testMemePspmId = "kb|memepspm.115";
 	private static AuthToken token = null;
 
 		
