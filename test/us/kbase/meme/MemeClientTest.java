@@ -54,7 +54,7 @@ public class MemeClientTest {
 			e.printStackTrace();
 		}
 
-		testSequenceSet = WsDeluxeUtil.getObjectFromWsByRef(TEST_WORKSPACE + "/" + testSequenceSetId, token.toString()).getData().asClassInstance(SequenceSet.class);
+		//testSequenceSet = WsDeluxeUtil.getObjectFromWsByRef(TEST_WORKSPACE + "/" + testSequenceSetId, token.toString()).getData().asClassInstance(SequenceSet.class);
 
 	}
 

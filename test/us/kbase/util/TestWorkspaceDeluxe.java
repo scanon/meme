@@ -42,8 +42,8 @@ public class TestWorkspaceDeluxe {
 		
 		AuthToken authToken = AuthService.login(USER_NAME, new String(PASSWORD)).getToken();
 		RegisterTypespecParams params = new RegisterTypespecParams();
-		//String specFileName = "/home/kbase/dev_container/modules/inferelator/kbase_inferelator.spec";
-		String specFileName = "/home/kbase/dev_container/modules/cmonkey/kbase_cmonkey.spec";
+		String specFileName = "/home/kbase/dev_container/modules/inferelator/Inferelator.spec";
+		//String specFileName = "/home/kbase/dev_container/modules/cmonkey/Cmonkey.spec";
 		//String specFileName = "/home/kbase/dev_container/modules/meme/kbase_meme.spec";
 		String spec = "";
 		BufferedReader br = null;
@@ -80,15 +80,15 @@ public class TestWorkspaceDeluxe {
 		types.add("MemeSite");
 		types.add("MastHit");*/
 //		params.setNewTypes(addTypes);
-		List<String> removeTypes = new ArrayList<String>();
-		removeTypes.add("CmonkeyNetwork");
-		removeTypes.add("CmonkeyCluster");
-		removeTypes.add("CmonkeyMotif");
+//		List<String> removeTypes = new ArrayList<String>();
+//		removeTypes.add("CmonkeyNetwork");
+//		removeTypes.add("CmonkeyCluster");
+//		removeTypes.add("CmonkeyMotif");
 //		removeTypes.add("MemeMotif");
 //		removeTypes.add("MemePSPM");
 //		removeTypes.add("MemeSite");
 //		removeTypes.add("MastHit");
-		params.setRemoveTypes(removeTypes);
+//		params.setRemoveTypes(removeTypes);
 		
 		params.setDryrun(1L);
 		Map<String,String> result = WsDeluxeUtil.wsClient(authToken.toString()).registerTypespec(params);
@@ -133,8 +133,8 @@ public class TestWorkspaceDeluxe {
 	@Test
 	public void testWsReleaseModule() throws Exception {
 		AuthToken authToken = AuthService.login(USER_NAME, new String(PASSWORD)).getToken();
-		//String module = "MEME"; 
-		String module = "Cmonkey";
+		String module = "Inferelator"; 
+		//String module = "Cmonkey";
 		List<String> result = WsDeluxeUtil.wsClient(authToken.toString()).releaseModule(module);
 		System.out.println(result.toString());
 		

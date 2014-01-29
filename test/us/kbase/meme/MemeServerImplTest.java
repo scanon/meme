@@ -31,8 +31,8 @@ import java.net.URL;
 
 public class MemeServerImplTest {
 	
-	private final String USER_NAME = "";
-	private final String PASSWORD = "";
+	private final String USER_NAME = "aktest";
+	private final String PASSWORD = "1475rokegi";
 	private final String TEST_WORKSPACE = "AKtest";
 
 	private SequenceSet testSequenceSet = new SequenceSet();
@@ -1255,14 +1255,15 @@ public class MemeServerImplTest {
 */
 	@Test
 	public void testDeleteJob() throws AuthException, IOException, UnauthorizedException, JsonClientException {
-		String jobId = "52d86514e4b0ef8357332079";
+		String jobId = "52ddee8de4b0ef83573320a4";
 
 //		AuthToken token = AuthService.login(JOB_ACCOUNT, new String(JOB_PASSWORD)).getToken();
 		AuthToken token = AuthService.login(USER_NAME, new String(PASSWORD)).getToken();
+		AuthToken memeToken = AuthService.login(MemeServerConfig.SERVICE_LOGIN, new String(MemeServerConfig.SERVICE_PASSWORD)).getToken();
 
 		URL jobServiceUrl = new URL(JOB_SERVICE);
 		UserAndJobStateClient jobClient = new UserAndJobStateClient(jobServiceUrl, token);
-		jobClient.forceDeleteJob(token.toString(), jobId);
+		jobClient.forceDeleteJob(memeToken.toString(), jobId);
 	}
 	
 /*	@Test
