@@ -19,7 +19,6 @@ SERVICE_PSGI = $(SERVICE_NAME).psgi
 TPAGE_ARGS = --define kb_top=$(TARGET) --define kb_runtime=$(DEPLOY_RUNTIME) --define kb_service_name=$(SERVICE_NAME) --define kb_service_dir=$(SERVICE_DIR) --define kb_service_port=$(SERVICE_PORT) --define kb_psgi=$(SERVICE_PSGI)
 JOB_DIR = /var/tmp/meme
 DEPLOY_JAR = $(KB_TOP)/lib/jars/meme
-DEPLOY_CLUSTER = /kb/deployment/meme
 	
 default: compile
 
@@ -107,7 +106,7 @@ distrib:
 	echo "./glassfish_stop_service.sh $(TARGET_PORT)" > $(TARGET_DIR)/stop_service.sh
 	chmod +x $(TARGET_DIR)/stop_service.sh
 
-test: test-scripts test-jar
+test: test-scripts
 	@echo "running script tests"
 
 test-scripts:

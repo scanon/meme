@@ -38,7 +38,7 @@ public class MemeServerImpl {
 	private static final String MEME_PSPM_COLLECTION_TYPE = MemeServerConfig.MEME_PSPM_COLLECTION_TYPE;
 	private static final String TOMTOM_RUN_RESULT_TYPE = MemeServerConfig.TOMTOM_RUN_RESULT_TYPE;
 	private static final String MEME_RUN_RESULT_TYPE = MemeServerConfig.MEME_RUN_RESULT_TYPE;
-	
+
 	private static Integer temporaryFileId = 0;
 	private static final String WORK_DIRECTORY = MemeServerConfig.WORK_DIRECTORY;
 	private static final String ID_SERVICE_URL = MemeServerConfig.ID_SERVICE_URL;
@@ -46,7 +46,7 @@ public class MemeServerImpl {
 	private static final boolean DEPLOY_AWE = MemeServerConfig.DEPLOY_AWE;
 
 	private static Pattern spacePattern = Pattern.compile("[\\n\\t ]");
-//	private static Date date = new Date();
+	// private static Date date = new Date();
 	private static SimpleDateFormat dateFormat = new SimpleDateFormat(
 			"yyyy-MM-dd'T'HH:mm:ssZ");
 
@@ -59,8 +59,8 @@ public class MemeServerImpl {
 	}
 
 	protected static void startJob(String jobId, String desc, Long tasks,
-			String token) throws MalformedURLException,
-			IOException, JsonClientException, AuthException {
+			String token) throws MalformedURLException, IOException,
+			JsonClientException, AuthException {
 
 		String status = "MEME service job started. Preparing input...";
 		InitProgress initProgress = new InitProgress();
@@ -72,25 +72,37 @@ public class MemeServerImpl {
 		UserAndJobStateClient jobClient = new UserAndJobStateClient(new URL(
 				JOB_SERVICE_URL), new AuthToken(token));
 		// jobClient.setAuthAllowedForHttp(true);
-		jobClient.startJob(jobId, AuthService.login(MemeServerConfig.SERVICE_LOGIN, new String(MemeServerConfig.SERVICE_PASSWORD)).getToken().toString(), status, desc, initProgress,
+		jobClient.startJob(
+				jobId,
+				AuthService
+						.login(MemeServerConfig.SERVICE_LOGIN,
+								new String(MemeServerConfig.SERVICE_PASSWORD))
+						.getToken().toString(), status, desc, initProgress,
 				dateFormat.format(date));
 		jobClient = null;
 	}
 
 	protected static void updateJobProgress(String jobId, String status,
-			Long tasks, String token) throws MalformedURLException, IOException, JsonClientException, AuthException {
+			Long tasks, String token) throws MalformedURLException,
+			IOException, JsonClientException, AuthException {
 		Date date = new Date();
 		date.setTime(date.getTime() + 10000L);
 		UserAndJobStateClient jobClient = new UserAndJobStateClient(new URL(
 				JOB_SERVICE_URL), new AuthToken(token));
 		// jobClient.setAuthAllowedForHttp(true);
-		jobClient.updateJobProgress(jobId, AuthService.login(MemeServerConfig.SERVICE_LOGIN, new String(MemeServerConfig.SERVICE_PASSWORD)).getToken().toString(), status, tasks,
+		jobClient.updateJobProgress(
+				jobId,
+				AuthService
+						.login(MemeServerConfig.SERVICE_LOGIN,
+								new String(MemeServerConfig.SERVICE_PASSWORD))
+						.getToken().toString(), status, tasks,
 				dateFormat.format(date));
 		jobClient = null;
 	}
 
 	protected static void finishJob(String jobId, String wsId, String objectId,
-			String token) throws MalformedURLException, IOException, JsonClientException, AuthException {
+			String token) throws MalformedURLException, IOException,
+			JsonClientException, AuthException {
 		String status = "Finished";
 		String error = null;
 
@@ -101,18 +113,29 @@ public class MemeServerImpl {
 		UserAndJobStateClient jobClient = new UserAndJobStateClient(new URL(
 				JOB_SERVICE_URL), new AuthToken(token));
 		// jobClient.setAuthAllowedForHttp(true);
-		jobClient.completeJob(jobId, AuthService.login(MemeServerConfig.SERVICE_LOGIN, new String(MemeServerConfig.SERVICE_PASSWORD)).getToken().toString(), status, error, res);
+		jobClient.completeJob(
+				jobId,
+				AuthService
+						.login(MemeServerConfig.SERVICE_LOGIN,
+								new String(MemeServerConfig.SERVICE_PASSWORD))
+						.getToken().toString(), status, error, res);
 		jobClient = null;
 	}
-	
-	protected static void finishJobWithError(String jobId, String error, String status, String token) throws UnauthorizedException,
-	IOException, JsonClientException, AuthException {
+
+	protected static void finishJobWithError(String jobId, String error,
+			String status, String token) throws UnauthorizedException,
+			IOException, JsonClientException, AuthException {
 		Results res = new Results();
 		URL jobServiceUrl = new URL(JOB_SERVICE_URL);
-		UserAndJobStateClient jobClient = new UserAndJobStateClient(jobServiceUrl, new AuthToken(token));
-		jobClient.completeJob(jobId, AuthService.login(MemeServerConfig.SERVICE_LOGIN, new String(MemeServerConfig.SERVICE_PASSWORD)).getToken().toString(), status, error, res);
+		UserAndJobStateClient jobClient = new UserAndJobStateClient(
+				jobServiceUrl, new AuthToken(token));
+		jobClient.completeJob(
+				jobId,
+				AuthService
+						.login(MemeServerConfig.SERVICE_LOGIN,
+								new String(MemeServerConfig.SERVICE_PASSWORD))
+						.getToken().toString(), status, error, res);
 	}
-
 
 	protected static String getTemporaryFileId() {
 		temporaryFileId++;
@@ -517,11 +540,11 @@ public class MemeServerImpl {
 			String currentDir = System.getProperty("user.dir");
 			inputFileName = currentDir + "/" + jobId + ".fasta";
 			outputFileName = currentDir + "/" + jobId + ".out";
-		} else { 
+		} else {
 			inputFileName = WORK_DIRECTORY + "/" + jobId + ".fasta";
 			outputFileName = WORK_DIRECTORY + "/" + jobId + ".out";
 		}
-		
+
 		// Generate MEME command line
 		String memeCommand = generateMemeCommandLine(inputFileName,
 				params.getMod(), params.getNmotifs(), params.getMinw(),
@@ -543,7 +566,7 @@ public class MemeServerImpl {
 			returnVal.setId(getKbaseId(MemeRunResult.class.getSimpleName()));
 		} finally {
 			// Clean up
-			if (!DEPLOY_AWE){
+			if (!DEPLOY_AWE) {
 				File fileDelete = new File(inputFileName);
 				fileDelete.delete();
 				fileDelete = new File(outputFileName);
@@ -562,72 +585,89 @@ public class MemeServerImpl {
 	}
 
 	public static String findMotifsWithMemeJobFromWs(String wsName,
-			MemeRunParameters params, String jobId, String token) throws Exception
-			 {
+			MemeRunParameters params, String jobId, String token)
+			throws Exception {
 
 		// Start job
-/*		if ((jobId != null)&&(!DEPLOY_AWE)){
-			String desc = "MEME service job " + jobId
-					+ ". Method: findMotifsWithMemeJobFromWs. Input: "
-					+ params.getSourceRef() + ". Workspace: " + wsName + ".";
-			startJob(jobId, desc, 3L, token);
-		}
-*/
+		/*
+		 * if ((jobId != null)&&(!DEPLOY_AWE)){ String desc =
+		 * "MEME service job " + jobId +
+		 * ". Method: findMotifsWithMemeJobFromWs. Input: " +
+		 * params.getSourceRef() + ". Workspace: " + wsName + ".";
+		 * startJob(jobId, desc, 3L, token); }
+		 */
 		SequenceSet input;
 		try {
 			input = WsDeluxeUtil
-					.getObjectFromWsByRef(params.getSourceRef(), token).getData()
-					.asClassInstance(SequenceSet.class);
+					.getObjectFromWsByRef(params.getSourceRef(), token)
+					.getData().asClassInstance(SequenceSet.class);
 		} catch (TokenFormatException e) {
-			finishJobWithError(jobId, e.getMessage(), "Sequence set download error", token);
+			if (jobId != null)
+				finishJobWithError(jobId, e.getMessage(),
+						"Sequence set download error", token);
 			e.printStackTrace();
-			throw new Exception ("Sequence set download error");
+			throw new Exception("Sequence set download error");
 		} catch (UnauthorizedException e) {
-			finishJobWithError(jobId, e.getMessage(), "Sequence set download error", token);
+			if (jobId != null)
+				finishJobWithError(jobId, e.getMessage(),
+						"Sequence set download error", token);
 			e.printStackTrace();
-			throw new Exception ("Sequence set download error");
+			throw new Exception("Sequence set download error");
 		} catch (IOException e) {
-			finishJobWithError(jobId, e.getMessage(), "Sequence set download error", token);
+			if (jobId != null)
+				finishJobWithError(jobId, e.getMessage(),
+						"Sequence set download error", token);
 			e.printStackTrace();
-			throw new Exception ("Sequence set download error");
+			throw new Exception("Sequence set download error");
 		} catch (JsonClientException e) {
-			finishJobWithError(jobId, e.getMessage(), "Sequence set download error", token);
+			if (jobId != null)
+				finishJobWithError(jobId, e.getMessage(),
+						"Sequence set download error", token);
 			e.printStackTrace();
-			throw new Exception ("Sequence set download error");
+			throw new Exception("Sequence set download error");
 		}
 
 		MemeRunResult memeRunResult;
 		try {
-			memeRunResult = findMotifsWithMeme(input, params, jobId,
-					token);
+			memeRunResult = findMotifsWithMeme(input, params, jobId, token);
 		} catch (Exception e) {
-			finishJobWithError(jobId, e.getMessage(), "MEME execution error", token);
+			if (jobId != null)
+				finishJobWithError(jobId, e.getMessage(),
+						"MEME execution error", token);
 			e.printStackTrace();
-			throw new Exception ("MEME execution error");
+			throw new Exception("MEME execution error");
 		}
 		String returnVal = memeRunResult.getId();
 
 		// Save to workspace
 		try {
-			WsDeluxeUtil.saveObjectToWorkspace(
-					UObject.transformObjectToObject(memeRunResult, UObject.class),
-					MEME_RUN_RESULT_TYPE, wsName, returnVal, token);
+			WsDeluxeUtil.saveObjectToWorkspace(UObject.transformObjectToObject(
+					memeRunResult, UObject.class), MEME_RUN_RESULT_TYPE,
+					wsName, returnVal, token);
 		} catch (TokenFormatException e) {
-			finishJobWithError(jobId, e.getMessage(), "MemeRunResult upload error", token);
+			if (jobId != null)
+				finishJobWithError(jobId, e.getMessage(),
+						"MemeRunResult upload error", token);
 			e.printStackTrace();
-			throw new Exception ("MemeRunResult upload error");
+			throw new Exception("MemeRunResult upload error");
 		} catch (UnauthorizedException e) {
-			finishJobWithError(jobId, e.getMessage(), "MemeRunResult upload error", token);
+			if (jobId != null)
+				finishJobWithError(jobId, e.getMessage(),
+						"MemeRunResult upload error", token);
 			e.printStackTrace();
-			throw new Exception ("MemeRunResult upload error");
+			throw new Exception("MemeRunResult upload error");
 		} catch (IOException e) {
-			finishJobWithError(jobId, e.getMessage(), "MemeRunResult upload error", token);
+			if (jobId != null)
+				finishJobWithError(jobId, e.getMessage(),
+						"MemeRunResult upload error", token);
 			e.printStackTrace();
-			throw new Exception ("MemeRunResult upload error");
+			throw new Exception("MemeRunResult upload error");
 		} catch (JsonClientException e) {
-			finishJobWithError(jobId, e.getMessage(), "MemeRunResult upload error", token);
+			if (jobId != null)
+				finishJobWithError(jobId, e.getMessage(),
+						"MemeRunResult upload error", token);
 			e.printStackTrace();
-			throw new Exception ("MemeRunResult upload error");
+			throw new Exception("MemeRunResult upload error");
 		}
 
 		// Finalize job
@@ -706,7 +746,7 @@ public class MemeServerImpl {
 		String firstInputFile = null;
 		String secondInputFile = null;
 		String outputFileName = null;
-		
+
 		if (DEPLOY_AWE) {
 			String currentDir = System.getProperty("user.dir");
 			firstInputFile = currentDir + "/" + tempFileId + "_query.meme";
@@ -714,7 +754,8 @@ public class MemeServerImpl {
 			outputFileName = currentDir + "/" + tempFileId + "_tomtom.txt";
 		} else {
 			firstInputFile = WORK_DIRECTORY + "/" + tempFileId + "_query.meme";
-			secondInputFile = WORK_DIRECTORY + "/" + tempFileId + "_target.meme";
+			secondInputFile = WORK_DIRECTORY + "/" + tempFileId
+					+ "_target.meme";
 			outputFileName = WORK_DIRECTORY + "/" + tempFileId + "_tomtom.txt";
 		}
 		// Generate command line
@@ -736,7 +777,7 @@ public class MemeServerImpl {
 				updateJobProgress(jobId, status, 1L, token);
 			result = parseTomtomOutput(outputFileName, params);
 		} finally {
-			if (!DEPLOY_AWE){
+			if (!DEPLOY_AWE) {
 				File fileDelete = new File(firstInputFile);
 				fileDelete.delete();
 				fileDelete = new File(secondInputFile);
@@ -757,74 +798,90 @@ public class MemeServerImpl {
 		return returnVal;
 	}
 
-//	@SuppressWarnings("unused")
+	// @SuppressWarnings("unused")
 	public static String compareMotifsWithTomtomJobByCollectionFromWs(
 			String wsName, TomtomRunParameters params, String jobId,
 			String token) throws Exception {
 
-/*		if ((jobId != null)&&(!DEPLOY_AWE)){
-			String desc = "MEME service job "
-					+ jobId
-					+ ". Method: compareMotifsWithTomtomJobByCollectionFromWs. Input: "
-					+ params.getQueryRef() + ", " + params.getTargetRef()
-					+ ". Workspace: " + wsName + ".";
-			startJob(jobId, desc, 3L, token);
-		}
-*/
+		/*
+		 * if ((jobId != null)&&(!DEPLOY_AWE)){ String desc =
+		 * "MEME service job " + jobId +
+		 * ". Method: compareMotifsWithTomtomJobByCollectionFromWs. Input: " +
+		 * params.getQueryRef() + ", " + params.getTargetRef() + ". Workspace: "
+		 * + wsName + "."; startJob(jobId, desc, 3L, token); }
+		 */
 		MemePSPMCollection query;
 		try {
 			query = WsDeluxeUtil
-					.getObjectFromWsByRef(params.getQueryRef(), token).getData()
-					.asClassInstance(MemePSPMCollection.class);
+					.getObjectFromWsByRef(params.getQueryRef(), token)
+					.getData().asClassInstance(MemePSPMCollection.class);
 		} catch (TokenFormatException e) {
-			finishJobWithError(jobId, e.getMessage(), "Query motif collection download error", token);
+			if (jobId != null)
+				finishJobWithError(jobId, e.getMessage(),
+						"Query motif collection download error", token);
 			e.printStackTrace();
-			throw new Exception ("Query motif collection download error");
+			throw new Exception("Query motif collection download error");
 		} catch (UnauthorizedException e) {
-			finishJobWithError(jobId, e.getMessage(), "Query motif collection download error", token);
+			if (jobId != null)
+				finishJobWithError(jobId, e.getMessage(),
+						"Query motif collection download error", token);
 			e.printStackTrace();
-			throw new Exception ("Query motif collection download error");
+			throw new Exception("Query motif collection download error");
 		} catch (IOException e) {
-			finishJobWithError(jobId, e.getMessage(), "Query motif collection download error", token);
+			if (jobId != null)
+				finishJobWithError(jobId, e.getMessage(),
+						"Query motif collection download error", token);
 			e.printStackTrace();
-			throw new Exception ("Query motif collection download error");
+			throw new Exception("Query motif collection download error");
 		} catch (JsonClientException e) {
-			finishJobWithError(jobId, e.getMessage(), "Query motif collection download error", token);
+			if (jobId != null)
+				finishJobWithError(jobId, e.getMessage(),
+						"Query motif collection download error", token);
 			e.printStackTrace();
-			throw new Exception ("Query motif collection download error");
+			throw new Exception("Query motif collection download error");
 		}
 
 		MemePSPMCollection target;
 		try {
 			target = WsDeluxeUtil
-					.getObjectFromWsByRef(params.getTargetRef(), token).getData()
-					.asClassInstance(MemePSPMCollection.class);
+					.getObjectFromWsByRef(params.getTargetRef(), token)
+					.getData().asClassInstance(MemePSPMCollection.class);
 		} catch (TokenFormatException e) {
-			finishJobWithError(jobId, e.getMessage(), "Target motif collection download error", token);
+			if (jobId != null)
+				finishJobWithError(jobId, e.getMessage(),
+						"Target motif collection download error", token);
 			e.printStackTrace();
-			throw new Exception ("Target motif collection download error");
+			throw new Exception("Target motif collection download error");
 		} catch (UnauthorizedException e) {
-			finishJobWithError(jobId, e.getMessage(), "Target motif collection download error", token);
+			if (jobId != null)
+				finishJobWithError(jobId, e.getMessage(),
+						"Target motif collection download error", token);
 			e.printStackTrace();
-			throw new Exception ("Target motif collection download error");
+			throw new Exception("Target motif collection download error");
 		} catch (IOException e) {
-			finishJobWithError(jobId, e.getMessage(), "Target motif collection download error", token);
+			if (jobId != null)
+				finishJobWithError(jobId, e.getMessage(),
+						"Target motif collection download error", token);
 			e.printStackTrace();
-			throw new Exception ("Target motif collection download error");
+			throw new Exception("Target motif collection download error");
 		} catch (JsonClientException e) {
-			finishJobWithError(jobId, e.getMessage(), "Target motif collection download error", token);
+			if (jobId != null)
+				finishJobWithError(jobId, e.getMessage(),
+						"Target motif collection download error", token);
 			e.printStackTrace();
-			throw new Exception ("Target motif collection download error");
+			throw new Exception("Target motif collection download error");
 		}
 
 		TomtomRunResult result;
 		try {
-			result = compareMotifsWithTomtomByCollection(query,
-					target, params, jobId, token);
+			result = compareMotifsWithTomtomByCollection(query, target, params,
+					jobId, token);
 		} catch (Exception e) {
-			finishJobWithError(jobId, e.getMessage(), "TOMTOM execution error", token);
+			if (jobId != null)
+				finishJobWithError(jobId, e.getMessage(),
+						"TOMTOM execution error", token);
 			e.printStackTrace();
-			throw new Exception ("TOMTOM execution error");
+			throw new Exception("TOMTOM execution error");
 		}
 
 		// Write result to WS
@@ -834,21 +891,29 @@ public class MemeServerImpl {
 					UObject.transformObjectToObject(result, UObject.class),
 					TOMTOM_RUN_RESULT_TYPE, wsName, returnVal, token);
 		} catch (TokenFormatException e) {
-			finishJobWithError(jobId, e.getMessage(), "TomtomRunResult upload error", token);
+			if (jobId != null)
+				finishJobWithError(jobId, e.getMessage(),
+						"TomtomRunResult upload error", token);
 			e.printStackTrace();
-			throw new Exception ("TomtomRunResult upload error");
+			throw new Exception("TomtomRunResult upload error");
 		} catch (UnauthorizedException e) {
-			finishJobWithError(jobId, e.getMessage(), "TomtomRunResult upload error", token);
+			if (jobId != null)
+				finishJobWithError(jobId, e.getMessage(),
+						"TomtomRunResult upload error", token);
 			e.printStackTrace();
-			throw new Exception ("TomtomRunResult upload error");
+			throw new Exception("TomtomRunResult upload error");
 		} catch (IOException e) {
-			finishJobWithError(jobId, e.getMessage(), "TomtomRunResult upload error", token);
+			if (jobId != null)
+				finishJobWithError(jobId, e.getMessage(),
+						"TomtomRunResult upload error", token);
 			e.printStackTrace();
-			throw new Exception ("TomtomRunResult upload error");
+			throw new Exception("TomtomRunResult upload error");
 		} catch (JsonClientException e) {
-			finishJobWithError(jobId, e.getMessage(), "TomtomRunResult upload error", token);
+			if (jobId != null)
+				finishJobWithError(jobId, e.getMessage(),
+						"TomtomRunResult upload error", token);
 			e.printStackTrace();
-			throw new Exception ("TomtomRunResult upload error");
+			throw new Exception("TomtomRunResult upload error");
 		}
 
 		// Finish job
@@ -885,12 +950,13 @@ public class MemeServerImpl {
 	}
 
 	public static String getPspmCollectionFromMemeJobResultFromWs(
-			String wsName, String memeRunResultRef, String jobId, String token) throws Exception
-			{
+			String wsName, String memeRunResultRef, String jobId, String token)
+			throws Exception {
 
 		// Start job
-		if (jobId != null){
-			String desc = "MEME service job " + jobId
+		if (jobId != null) {
+			String desc = "MEME service job "
+					+ jobId
 					+ ". Method: getPspmCollectionFromMemeJobResultFromWs. Input: "
 					+ memeRunResultRef + ". Workspace: " + wsName + ".";
 			startJob(jobId, desc, 2L, token);
@@ -902,30 +968,40 @@ public class MemeServerImpl {
 					.getObjectFromWsByRef(memeRunResultRef, token).getData()
 					.asClassInstance(MemeRunResult.class);
 		} catch (TokenFormatException e) {
-			finishJobWithError(jobId, e.getMessage(), "MemeRunResult download error", token);
+			if (jobId != null)
+				finishJobWithError(jobId, e.getMessage(),
+						"MemeRunResult download error", token);
 			e.printStackTrace();
-			throw new Exception ("MemeRunResult download error");
+			throw new Exception("MemeRunResult download error");
 		} catch (UnauthorizedException e) {
-			finishJobWithError(jobId, e.getMessage(), "MemeRunResult download error", token);
+			if (jobId != null)
+				finishJobWithError(jobId, e.getMessage(),
+						"MemeRunResult download error", token);
 			e.printStackTrace();
-			throw new Exception ("MemeRunResult download error");
+			throw new Exception("MemeRunResult download error");
 		} catch (IOException e) {
-			finishJobWithError(jobId, e.getMessage(), "MemeRunResult download error", token);
+			if (jobId != null)
+				finishJobWithError(jobId, e.getMessage(),
+						"MemeRunResult download error", token);
 			e.printStackTrace();
-			throw new Exception ("MemeRunResult download error");
+			throw new Exception("MemeRunResult download error");
 		} catch (JsonClientException e) {
-			finishJobWithError(jobId, e.getMessage(), "MemeRunResult download error", token);
+			if (jobId != null)
+				finishJobWithError(jobId, e.getMessage(),
+						"MemeRunResult download error", token);
 			e.printStackTrace();
-			throw new Exception ("MemeRunResult download error");
+			throw new Exception("MemeRunResult download error");
 		}
 
 		MemePSPMCollection collection;
 		try {
 			collection = getPspmCollectionFromMemeResult(memeRunResult);
 		} catch (Exception e) {
-			finishJobWithError(jobId, e.getMessage(), "Conversion unsuccessful", token);
+			if (jobId != null)
+				finishJobWithError(jobId, e.getMessage(),
+						"Conversion unsuccessful", token);
 			e.printStackTrace();
-			throw new Exception ("Conversion unsuccessful");
+			throw new Exception("Conversion unsuccessful");
 		}
 		collection.setSourceRef(memeRunResultRef);
 		String returnVal = collection.getId();
@@ -938,21 +1014,29 @@ public class MemeServerImpl {
 					UObject.transformObjectToObject(collection, UObject.class),
 					MEME_PSPM_COLLECTION_TYPE, wsName, returnVal, token);
 		} catch (TokenFormatException e) {
-			finishJobWithError(jobId, e.getMessage(), "Meme PSPM collection upload error", token);
+			if (jobId != null)
+				finishJobWithError(jobId, e.getMessage(),
+						"Meme PSPM collection upload error", token);
 			e.printStackTrace();
-			throw new Exception ("Meme PSPM collection upload error");
+			throw new Exception("Meme PSPM collection upload error");
 		} catch (UnauthorizedException e) {
-			finishJobWithError(jobId, e.getMessage(), "Meme PSPM collection upload error", token);
+			if (jobId != null)
+				finishJobWithError(jobId, e.getMessage(),
+						"Meme PSPM collection upload error", token);
 			e.printStackTrace();
-			throw new Exception ("Meme PSPM collection upload error");
+			throw new Exception("Meme PSPM collection upload error");
 		} catch (IOException e) {
-			finishJobWithError(jobId, e.getMessage(), "Meme PSPM collection upload error", token);
+			if (jobId != null)
+				finishJobWithError(jobId, e.getMessage(),
+						"Meme PSPM collection upload error", token);
 			e.printStackTrace();
-			throw new Exception ("Meme PSPM collection upload error");
+			throw new Exception("Meme PSPM collection upload error");
 		} catch (JsonClientException e) {
-			finishJobWithError(jobId, e.getMessage(), "Meme PSPM collection upload error", token);
+			if (jobId != null)
+				finishJobWithError(jobId, e.getMessage(),
+						"Meme PSPM collection upload error", token);
 			e.printStackTrace();
-			throw new Exception ("Meme PSPM collection upload error");
+			throw new Exception("Meme PSPM collection upload error");
 		}
 		// Finish job
 		if (jobId != null)
@@ -1201,14 +1285,13 @@ public class MemeServerImpl {
 		String motifFileName = null;
 		String sequenceFileName = null;
 		String outputFileName = null;
-		if (DEPLOY_AWE){
+		if (DEPLOY_AWE) {
 			String currentDir = System.getProperty("user.dir");
 			motifFileName = currentDir + "/" + tempFileId + "_query.meme";
 			sequenceFileName = currentDir + "/" + tempFileId + "_target.fasta";
 			outputFileName = currentDir + "/" + tempFileId + "_mast.txt";
 		} else {
-			motifFileName = WORK_DIRECTORY + "/" + tempFileId
-					+ "_query.meme";
+			motifFileName = WORK_DIRECTORY + "/" + tempFileId + "_query.meme";
 			sequenceFileName = WORK_DIRECTORY + "/" + tempFileId
 					+ "_target.fasta";
 			outputFileName = WORK_DIRECTORY + "/" + tempFileId + "_mast.txt";
@@ -1239,7 +1322,7 @@ public class MemeServerImpl {
 				updateJobProgress(jobId, status, 1L, token);
 			hitList = parseMastOutput(outputFileName);
 		} finally {
-			if (!DEPLOY_AWE){
+			if (!DEPLOY_AWE) {
 				File fileDelete = new File(motifFileName);
 				fileDelete.delete();
 				fileDelete = new File(sequenceFileName);
@@ -1263,73 +1346,90 @@ public class MemeServerImpl {
 
 	}
 
-//	@SuppressWarnings("unused")
+	// @SuppressWarnings("unused")
 	public static String findSitesWithMastJobByCollectionFromWs(String wsName,
-			MastRunParameters params, String jobId, String token) throws Exception
-			{
+			MastRunParameters params, String jobId, String token)
+			throws Exception {
 
 		// Start job
-/*		if ((jobId != null)&&(!DEPLOY_AWE)){
-			String desc = "MEME service job " + jobId
-					+ ". Method: findSitesWithMastJobByCollectionFromWs. Input: "
-					+ params.getQueryRef() + ", " + params.getTargetRef()
-					+ ". Workspace: " + wsName + ".";
-			startJob(jobId, desc, 2L, token);
-		}
-*/
+		/*
+		 * if ((jobId != null)&&(!DEPLOY_AWE)){ String desc =
+		 * "MEME service job " + jobId +
+		 * ". Method: findSitesWithMastJobByCollectionFromWs. Input: " +
+		 * params.getQueryRef() + ", " + params.getTargetRef() + ". Workspace: "
+		 * + wsName + "."; startJob(jobId, desc, 2L, token); }
+		 */
 		MemePSPMCollection query;
 		try {
 			query = WsDeluxeUtil
-					.getObjectFromWsByRef(params.getQueryRef(), token).getData()
-					.asClassInstance(MemePSPMCollection.class);
+					.getObjectFromWsByRef(params.getQueryRef(), token)
+					.getData().asClassInstance(MemePSPMCollection.class);
 		} catch (TokenFormatException e) {
-			finishJobWithError(jobId, e.getMessage(), "Query motif collection download error", token);
+			if (jobId != null)
+				finishJobWithError(jobId, e.getMessage(),
+						"Query motif collection download error", token);
 			e.printStackTrace();
-			throw new Exception ("Query motif collection download error");
+			throw new Exception("Query motif collection download error");
 		} catch (UnauthorizedException e) {
-			finishJobWithError(jobId, e.getMessage(), "Query motif collection download error", token);
+			if (jobId != null)
+				finishJobWithError(jobId, e.getMessage(),
+						"Query motif collection download error", token);
 			e.printStackTrace();
-			throw new Exception ("Query motif collection download error");
+			throw new Exception("Query motif collection download error");
 		} catch (IOException e) {
-			finishJobWithError(jobId, e.getMessage(), "Query motif collection download error", token);
+			if (jobId != null)
+				finishJobWithError(jobId, e.getMessage(),
+						"Query motif collection download error", token);
 			e.printStackTrace();
-			throw new Exception ("Query motif collection download error");
+			throw new Exception("Query motif collection download error");
 		} catch (JsonClientException e) {
-			finishJobWithError(jobId, e.getMessage(), "Query motif collection download error", token);
+			if (jobId != null)
+				finishJobWithError(jobId, e.getMessage(),
+						"Query motif collection download error", token);
 			e.printStackTrace();
-			throw new Exception ("Query motif collection download error");
+			throw new Exception("Query motif collection download error");
 		}
 		SequenceSet target;
 		try {
 			target = WsDeluxeUtil
-					.getObjectFromWsByRef(params.getTargetRef(), token).getData()
-					.asClassInstance(SequenceSet.class);
+					.getObjectFromWsByRef(params.getTargetRef(), token)
+					.getData().asClassInstance(SequenceSet.class);
 		} catch (TokenFormatException e) {
-			finishJobWithError(jobId, e.getMessage(), "Target sequences download error", token);
+			if (jobId != null)
+				finishJobWithError(jobId, e.getMessage(),
+						"Target sequences download error", token);
 			e.printStackTrace();
-			throw new Exception ("Target sequences download error");
+			throw new Exception("Target sequences download error");
 		} catch (UnauthorizedException e) {
-			finishJobWithError(jobId, e.getMessage(), "Target sequences download error", token);
+			if (jobId != null)
+				finishJobWithError(jobId, e.getMessage(),
+						"Target sequences download error", token);
 			e.printStackTrace();
-			throw new Exception ("Target sequences download error");
+			throw new Exception("Target sequences download error");
 		} catch (IOException e) {
-			finishJobWithError(jobId, e.getMessage(), "Target sequences download error", token);
+			if (jobId != null)
+				finishJobWithError(jobId, e.getMessage(),
+						"Target sequences download error", token);
 			e.printStackTrace();
-			throw new Exception ("Target sequences download error");
+			throw new Exception("Target sequences download error");
 		} catch (JsonClientException e) {
-			finishJobWithError(jobId, e.getMessage(), "Target sequences download error", token);
+			if (jobId != null)
+				finishJobWithError(jobId, e.getMessage(),
+						"Target sequences download error", token);
 			e.printStackTrace();
-			throw new Exception ("Target sequences download error");
+			throw new Exception("Target sequences download error");
 		}
 
 		MastRunResult result;
 		try {
-			result = findSitesWithMastByCollection(query, target,
-					params, jobId, token);
+			result = findSitesWithMastByCollection(query, target, params,
+					jobId, token);
 		} catch (Exception e) {
-			finishJobWithError(jobId, e.getMessage(), "MAST execution error", token);
+			if (jobId != null)
+				finishJobWithError(jobId, e.getMessage(),
+						"MAST execution error", token);
 			e.printStackTrace();
-			throw new Exception ("MAST execution error");
+			throw new Exception("MAST execution error");
 		}
 		String returnVal = result.getId();
 		try {
@@ -1337,21 +1437,29 @@ public class MemeServerImpl {
 					UObject.transformObjectToObject(result, UObject.class),
 					MAST_RUN_RESULT_TYPE, wsName, returnVal, token);
 		} catch (TokenFormatException e) {
-			finishJobWithError(jobId, e.getMessage(), "MastRunResult upload error", token);
+			if (jobId != null)
+				finishJobWithError(jobId, e.getMessage(),
+						"MastRunResult upload error", token);
 			e.printStackTrace();
-			throw new Exception ("MastRunResult upload error");
+			throw new Exception("MastRunResult upload error");
 		} catch (UnauthorizedException e) {
-			finishJobWithError(jobId, e.getMessage(), "MastRunResult upload error", token);
+			if (jobId != null)
+				finishJobWithError(jobId, e.getMessage(),
+						"MastRunResult upload error", token);
 			e.printStackTrace();
-			throw new Exception ("MastRunResult upload error");
+			throw new Exception("MastRunResult upload error");
 		} catch (IOException e) {
-			finishJobWithError(jobId, e.getMessage(), "MastRunResult upload error", token);
+			if (jobId != null)
+				finishJobWithError(jobId, e.getMessage(),
+						"MastRunResult upload error", token);
 			e.printStackTrace();
-			throw new Exception ("MastRunResult upload error");
+			throw new Exception("MastRunResult upload error");
 		} catch (JsonClientException e) {
-			finishJobWithError(jobId, e.getMessage(), "MastRunResult upload error", token);
+			if (jobId != null)
+				finishJobWithError(jobId, e.getMessage(),
+						"MastRunResult upload error", token);
 			e.printStackTrace();
-			throw new Exception ("MastRunResult upload error");
+			throw new Exception("MastRunResult upload error");
 		}
 
 		// Finish job
