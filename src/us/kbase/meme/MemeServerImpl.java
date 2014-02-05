@@ -3,10 +3,12 @@ package us.kbase.meme;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
@@ -16,6 +18,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Properties;
 import java.util.regex.Pattern;
 
 import us.kbase.auth.AuthException;
@@ -34,28 +37,56 @@ import us.kbase.userandjobstate.UserAndJobStateClient;
 import us.kbase.util.WsDeluxeUtil;
 
 public class MemeServerImpl {
-	private static final String MAST_RUN_RESULT_TYPE = MemeServerConfig.MAST_RUN_RESULT_TYPE;
-	private static final String MEME_PSPM_COLLECTION_TYPE = MemeServerConfig.MEME_PSPM_COLLECTION_TYPE;
-	private static final String TOMTOM_RUN_RESULT_TYPE = MemeServerConfig.TOMTOM_RUN_RESULT_TYPE;
-	private static final String MEME_RUN_RESULT_TYPE = MemeServerConfig.MEME_RUN_RESULT_TYPE;
 
 	private static Integer temporaryFileId = 0;
-	private static final String WORK_DIRECTORY = MemeServerConfig.WORK_DIRECTORY;
-	private static final String ID_SERVICE_URL = MemeServerConfig.ID_SERVICE_URL;
-	private static final String JOB_SERVICE_URL = MemeServerConfig.JOB_SERVICE;
-	private static final boolean DEPLOY_AWE = MemeServerConfig.DEPLOY_AWE;
-
 	private static Pattern spacePattern = Pattern.compile("[\\n\\t ]");
-	// private static Date date = new Date();
 	private static SimpleDateFormat dateFormat = new SimpleDateFormat(
 			"yyyy-MM-dd'T'HH:mm:ssZ");
 
+	protected static void startUp() throws IOException {
+		cleanUpOnStart();
+		
+		File propertiesFile;
+		String kbTop = System.getenv("KB_TOP");
+		if (!kbTop.substring(kbTop.length() - 1).equals("/")) {
+			kbTop = kbTop + "/";
+		}
+		propertiesFile = new File (kbTop + "/services/meme/meme.properties");
+		Properties prop = new Properties();
+		InputStream input = null;
+		 
+		try {
+	 
+			input = new FileInputStream(propertiesFile);
+			// load a properties file
+			prop.load(input);
+			// set service configs
+			MemeServerConfig.JOB_SERVICE_URL = prop.getProperty("ujs_url");
+			MemeServerConfig.AWE_SERVICE_URL = prop.getProperty("awe_url");
+			MemeServerConfig.ID_SERVICE_URL = prop.getProperty("id_url");
+			MemeServerConfig.WS_SERVICE_URL = prop.getProperty("ws_url");
+			MemeServerConfig.AWF_CONFIG_FILE = prop.getProperty("awf_config");
+	 
+		} catch (IOException ex) {
+			ex.printStackTrace();
+		} finally {
+			if (input != null) {
+				try {
+					input.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+
+	}
+
 	protected static void cleanUpOnStart() throws IOException {
-		deleteFile(WORK_DIRECTORY, ".*.fasta");
-		deleteFile(WORK_DIRECTORY, ".*.meme");
-		deleteFile(WORK_DIRECTORY, ".*.out");
-		deleteFile(WORK_DIRECTORY, ".*._tomtom.txt");
-		deleteFile(WORK_DIRECTORY, ".*._mast.txt");
+		deleteFile(MemeServerConfig.WORK_DIRECTORY, ".*.fasta");
+		deleteFile(MemeServerConfig.WORK_DIRECTORY, ".*.meme");
+		deleteFile(MemeServerConfig.WORK_DIRECTORY, ".*.out");
+		deleteFile(MemeServerConfig.WORK_DIRECTORY, ".*._tomtom.txt");
+		deleteFile(MemeServerConfig.WORK_DIRECTORY, ".*._mast.txt");
 	}
 
 	protected static void startJob(String jobId, String desc, Long tasks,
@@ -70,7 +101,7 @@ public class MemeServerImpl {
 		date.setTime(date.getTime() + 1000000L);
 
 		UserAndJobStateClient jobClient = new UserAndJobStateClient(new URL(
-				JOB_SERVICE_URL), new AuthToken(token));
+				MemeServerConfig.JOB_SERVICE_URL), new AuthToken(token));
 		// jobClient.setAuthAllowedForHttp(true);
 		jobClient.startJob(
 				jobId,
@@ -88,7 +119,7 @@ public class MemeServerImpl {
 		Date date = new Date();
 		date.setTime(date.getTime() + 10000L);
 		UserAndJobStateClient jobClient = new UserAndJobStateClient(new URL(
-				JOB_SERVICE_URL), new AuthToken(token));
+				MemeServerConfig.JOB_SERVICE_URL), new AuthToken(token));
 		// jobClient.setAuthAllowedForHttp(true);
 		jobClient.updateJobProgress(
 				jobId,
@@ -111,7 +142,7 @@ public class MemeServerImpl {
 		workspaceIds.add(wsId + "/" + objectId);
 		res.setWorkspaceids(workspaceIds);
 		UserAndJobStateClient jobClient = new UserAndJobStateClient(new URL(
-				JOB_SERVICE_URL), new AuthToken(token));
+				MemeServerConfig.JOB_SERVICE_URL), new AuthToken(token));
 		// jobClient.setAuthAllowedForHttp(true);
 		jobClient.completeJob(
 				jobId,
@@ -126,9 +157,8 @@ public class MemeServerImpl {
 			String status, String token) throws UnauthorizedException,
 			IOException, JsonClientException, AuthException {
 		Results res = new Results();
-		URL jobServiceUrl = new URL(JOB_SERVICE_URL);
 		UserAndJobStateClient jobClient = new UserAndJobStateClient(
-				jobServiceUrl, new AuthToken(token));
+				new URL(MemeServerConfig.JOB_SERVICE_URL), new AuthToken(token));
 		jobClient.completeJob(
 				jobId,
 				AuthService
@@ -536,13 +566,13 @@ public class MemeServerImpl {
 		// Generate unique jobId for the MEME run
 		String inputFileName = null;
 		String outputFileName = null;
-		if (DEPLOY_AWE) {
+		if (MemeServerConfig.DEPLOY_AWE) {
 			String currentDir = System.getProperty("user.dir");
 			inputFileName = currentDir + "/" + jobId + ".fasta";
 			outputFileName = currentDir + "/" + jobId + ".out";
 		} else {
-			inputFileName = WORK_DIRECTORY + "/" + jobId + ".fasta";
-			outputFileName = WORK_DIRECTORY + "/" + jobId + ".out";
+			inputFileName = MemeServerConfig.WORK_DIRECTORY + "/" + jobId + ".fasta";
+			outputFileName = MemeServerConfig.WORK_DIRECTORY + "/" + jobId + ".out";
 		}
 
 		// Generate MEME command line
@@ -566,7 +596,7 @@ public class MemeServerImpl {
 			returnVal.setId(getKbaseId(MemeRunResult.class.getSimpleName()));
 		} finally {
 			// Clean up
-			if (!DEPLOY_AWE) {
+			if (!MemeServerConfig.DEPLOY_AWE) {
 				File fileDelete = new File(inputFileName);
 				fileDelete.delete();
 				fileDelete = new File(outputFileName);
@@ -642,7 +672,7 @@ public class MemeServerImpl {
 		// Save to workspace
 		try {
 			WsDeluxeUtil.saveObjectToWorkspace(UObject.transformObjectToObject(
-					memeRunResult, UObject.class), MEME_RUN_RESULT_TYPE,
+					memeRunResult, UObject.class), MemeServerConfig.MEME_RUN_RESULT_TYPE,
 					wsName, returnVal, token);
 		} catch (TokenFormatException e) {
 			if (jobId != null)
@@ -747,16 +777,16 @@ public class MemeServerImpl {
 		String secondInputFile = null;
 		String outputFileName = null;
 
-		if (DEPLOY_AWE) {
+		if (MemeServerConfig.DEPLOY_AWE) {
 			String currentDir = System.getProperty("user.dir");
 			firstInputFile = currentDir + "/" + tempFileId + "_query.meme";
 			secondInputFile = currentDir + "/" + tempFileId + "_target.meme";
 			outputFileName = currentDir + "/" + tempFileId + "_tomtom.txt";
 		} else {
-			firstInputFile = WORK_DIRECTORY + "/" + tempFileId + "_query.meme";
-			secondInputFile = WORK_DIRECTORY + "/" + tempFileId
+			firstInputFile = MemeServerConfig.WORK_DIRECTORY + "/" + tempFileId + "_query.meme";
+			secondInputFile = MemeServerConfig.WORK_DIRECTORY + "/" + tempFileId
 					+ "_target.meme";
-			outputFileName = WORK_DIRECTORY + "/" + tempFileId + "_tomtom.txt";
+			outputFileName = MemeServerConfig.WORK_DIRECTORY + "/" + tempFileId + "_tomtom.txt";
 		}
 		// Generate command line
 		String commandLineTomtom = generateTomtomCommandLine(firstInputFile,
@@ -777,7 +807,7 @@ public class MemeServerImpl {
 				updateJobProgress(jobId, status, 1L, token);
 			result = parseTomtomOutput(outputFileName, params);
 		} finally {
-			if (!DEPLOY_AWE) {
+			if (!MemeServerConfig.DEPLOY_AWE) {
 				File fileDelete = new File(firstInputFile);
 				fileDelete.delete();
 				fileDelete = new File(secondInputFile);
@@ -889,7 +919,7 @@ public class MemeServerImpl {
 		try {
 			WsDeluxeUtil.saveObjectToWorkspace(
 					UObject.transformObjectToObject(result, UObject.class),
-					TOMTOM_RUN_RESULT_TYPE, wsName, returnVal, token);
+					MemeServerConfig.TOMTOM_RUN_RESULT_TYPE, wsName, returnVal, token);
 		} catch (TokenFormatException e) {
 			if (jobId != null)
 				finishJobWithError(jobId, e.getMessage(),
@@ -1012,7 +1042,7 @@ public class MemeServerImpl {
 		try {
 			WsDeluxeUtil.saveObjectToWorkspace(
 					UObject.transformObjectToObject(collection, UObject.class),
-					MEME_PSPM_COLLECTION_TYPE, wsName, returnVal, token);
+					MemeServerConfig.MEME_PSPM_COLLECTION_TYPE, wsName, returnVal, token);
 		} catch (TokenFormatException e) {
 			if (jobId != null)
 				finishJobWithError(jobId, e.getMessage(),
@@ -1285,16 +1315,16 @@ public class MemeServerImpl {
 		String motifFileName = null;
 		String sequenceFileName = null;
 		String outputFileName = null;
-		if (DEPLOY_AWE) {
+		if (MemeServerConfig.DEPLOY_AWE) {
 			String currentDir = System.getProperty("user.dir");
 			motifFileName = currentDir + "/" + tempFileId + "_query.meme";
 			sequenceFileName = currentDir + "/" + tempFileId + "_target.fasta";
 			outputFileName = currentDir + "/" + tempFileId + "_mast.txt";
 		} else {
-			motifFileName = WORK_DIRECTORY + "/" + tempFileId + "_query.meme";
-			sequenceFileName = WORK_DIRECTORY + "/" + tempFileId
+			motifFileName = MemeServerConfig.WORK_DIRECTORY + "/" + tempFileId + "_query.meme";
+			sequenceFileName = MemeServerConfig.WORK_DIRECTORY + "/" + tempFileId
 					+ "_target.fasta";
-			outputFileName = WORK_DIRECTORY + "/" + tempFileId + "_mast.txt";
+			outputFileName = MemeServerConfig.WORK_DIRECTORY + "/" + tempFileId + "_mast.txt";
 		}
 		Integer pspmNumber = -1;
 		if (params.getPspmId() != null) {
@@ -1322,7 +1352,7 @@ public class MemeServerImpl {
 				updateJobProgress(jobId, status, 1L, token);
 			hitList = parseMastOutput(outputFileName);
 		} finally {
-			if (!DEPLOY_AWE) {
+			if (!MemeServerConfig.DEPLOY_AWE) {
 				File fileDelete = new File(motifFileName);
 				fileDelete.delete();
 				fileDelete = new File(sequenceFileName);
@@ -1435,7 +1465,7 @@ public class MemeServerImpl {
 		try {
 			WsDeluxeUtil.saveObjectToWorkspace(
 					UObject.transformObjectToObject(result, UObject.class),
-					MAST_RUN_RESULT_TYPE, wsName, returnVal, token);
+					MemeServerConfig.MAST_RUN_RESULT_TYPE, wsName, returnVal, token);
 		} catch (TokenFormatException e) {
 			if (jobId != null)
 				finishJobWithError(jobId, e.getMessage(),
@@ -1587,10 +1617,10 @@ public class MemeServerImpl {
 		String returnVal = null;
 		URL idServerUrl = null;
 		try {
-			idServerUrl = new URL(ID_SERVICE_URL);
+			idServerUrl = new URL(MemeServerConfig.ID_SERVICE_URL);
 		} catch (MalformedURLException e) {
 			System.err.println("Unable to connect to ID service at "
-					+ ID_SERVICE_URL);
+					+ MemeServerConfig.ID_SERVICE_URL);
 			e.printStackTrace();
 		}
 		IDServerAPIClient idClient = new IDServerAPIClient(idServerUrl);
@@ -1637,11 +1667,11 @@ public class MemeServerImpl {
 			}
 		} catch (IOException e) {
 			System.err.println("Unable to get ID for " + entityType + " at "
-					+ ID_SERVICE_URL + " : IO Exception");
+					+ MemeServerConfig.ID_SERVICE_URL + " : IO Exception");
 			e.printStackTrace();
 		} catch (JsonClientException e) {
 			System.err.println("Unable to get ID for " + entityType + " at "
-					+ ID_SERVICE_URL + " : JSON Client Exception");
+					+ MemeServerConfig.ID_SERVICE_URL + " : JSON Client Exception");
 			e.printStackTrace();
 		}
 		return returnVal;

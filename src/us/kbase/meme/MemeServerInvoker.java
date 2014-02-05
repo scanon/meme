@@ -541,9 +541,7 @@ public class MemeServerInvoker {
 
 	public static void main(String[] args) throws Exception {
 		
-		//AuthToken authToken = AuthService.login("aktest", "1475rokegi").getToken();
-		//System.out.println(authToken.toString());
-		
+		MemeServerImpl.startUp();
 		MemeServerInvoker tug = new MemeServerInvoker();
 		tug.run(args);
 
