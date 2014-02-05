@@ -564,15 +564,22 @@ public class MemeServerImpl {
 
 		MemeRunResult returnVal = null;
 		// Generate unique jobId for the MEME run
+		String tempFileId;
+		 if (jobId == null) {
+			 tempFileId = getTemporaryFileId();
+		 } else {
+			 tempFileId = jobId;
+		 };
+
 		String inputFileName = null;
 		String outputFileName = null;
 		if (MemeServerConfig.DEPLOY_AWE) {
 			String currentDir = System.getProperty("user.dir");
-			inputFileName = currentDir + "/" + jobId + ".fasta";
-			outputFileName = currentDir + "/" + jobId + ".out";
+			inputFileName = currentDir + "/" + tempFileId + ".fasta";
+			outputFileName = currentDir + "/" + tempFileId + ".out";
 		} else {
-			inputFileName = MemeServerConfig.WORK_DIRECTORY + "/" + jobId + ".fasta";
-			outputFileName = MemeServerConfig.WORK_DIRECTORY + "/" + jobId + ".out";
+			inputFileName = MemeServerConfig.WORK_DIRECTORY + "/" + tempFileId + ".fasta";
+			outputFileName = MemeServerConfig.WORK_DIRECTORY + "/" + tempFileId + ".out";
 		}
 
 		// Generate MEME command line
@@ -771,7 +778,7 @@ public class MemeServerImpl {
 			tempFileId = getTemporaryFileId();
 		} else {
 			tempFileId = jobId;
-		}
+		};
 
 		String firstInputFile = null;
 		String secondInputFile = null;
@@ -1310,7 +1317,7 @@ public class MemeServerImpl {
 			tempFileId = getTemporaryFileId();
 		} else {
 			tempFileId = jobId;
-		}
+		};
 
 		String motifFileName = null;
 		String sequenceFileName = null;

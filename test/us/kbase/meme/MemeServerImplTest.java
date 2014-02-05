@@ -32,8 +32,8 @@ import java.net.URL;
 
 public class MemeServerImplTest {
 	
-	private final String USER_NAME = "aktest";
-	private final String PASSWORD = "1475rokegi";
+	private final String USER_NAME = "";
+	private final String PASSWORD = "";
 	private final String TEST_WORKSPACE = "AKtest";
 
 	private SequenceSet testSequenceSet = new SequenceSet();
