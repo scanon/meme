@@ -20,6 +20,8 @@ TPAGE_ARGS = --define kb_top=$(TARGET) --define kb_runtime=$(DEPLOY_RUNTIME) --d
 JOB_DIR = /var/tmp/meme
 DEPLOY_JAR = $(KB_TOP)/lib/jars/meme
 DEPLOY_CLUSTER = /kb/deployment/meme
+
+DIR = $(shell pwd)
 	
 default: compile
 
@@ -65,8 +67,19 @@ build-docs: compile-docs
 
 compile-docs: build-libs
 
+init:
+	git submodule init
+	git submodule update
+	mkdir -p bin
+	mkdir -p classes
+	echo "export PATH=$(DEPLOY_RUNTIME)/bin" > bin/compile_typespec
+	echo "export PERL5LIB=$(DIR)/typecomp/lib" >> bin/compile_typespec
+	echo "perl $(DIR)/typecomp/scripts/compile_typespec.pl \"\$$@\"" >> bin/compile_typespec 
+	echo $(DIR) > classes/kidlinit
+	chmod a+x bin/compile_typespec
+
 build-libs:
-	compile_typespec \
+	./bin/compile_typespec \
 		--psgi $(SERVICE_PSGI)  \
 		--impl Bio::KBase::$(SERVICE_NAME)::$(SERVICE_NAME)Impl \
 		--service Bio::KBase::$(SERVICE_NAME)::Service \
