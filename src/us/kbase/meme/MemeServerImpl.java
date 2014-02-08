@@ -61,6 +61,7 @@ public class MemeServerImpl {
 			// load a properties file
 			prop.load(input);
 			// set service configs
+			MemeServerConfig.WORK_DIRECTORY = prop.getProperty("tmp_dir");
 			MemeServerConfig.JOB_SERVICE_URL = prop.getProperty("ujs_url");
 			MemeServerConfig.AWE_SERVICE_URL = prop.getProperty("awe_url");
 			MemeServerConfig.ID_SERVICE_URL = prop.getProperty("id_url");

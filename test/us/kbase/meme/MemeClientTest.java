@@ -28,9 +28,9 @@ public class MemeClientTest {
 	
 	private SequenceSet testSequenceSet = new SequenceSet();
 	private MemeRunResult memeRunResult = new MemeRunResult();
-//	private String serverUrl = "http://140.221.85.173:7077";
+	private String serverUrl = "http://140.221.85.173:7077";
 //	private String serverUrl = "http://kbase.us/services/meme/";
-	private String serverUrl = "http://127.0.0.1:7108";
+//	private String serverUrl = "http://127.0.0.1:7108";
 
 	private static final String USER_NAME = "";
 	private static final String PASSWORD = "";
@@ -58,7 +58,12 @@ public class MemeClientTest {
 			e.printStackTrace();
 		}
 
-		//testSequenceSet = WsDeluxeUtil.getObjectFromWsByRef(TEST_WORKSPACE + "/" + testSequenceSetId, token.toString()).getData().asClassInstance(SequenceSet.class);
+		WorkspaceClient wsClient = new WorkspaceClient(new URL (WS_SERVICE), new AuthToken(token.toString()));
+		wsClient.setAuthAllowedForHttp(true);
+		List<ObjectIdentity> objectsIdentity = new ArrayList<ObjectIdentity>();
+		ObjectIdentity objectIdentity = new ObjectIdentity().withName(testSequenceSetId).withWorkspace(TEST_WORKSPACE);
+		objectsIdentity.add(objectIdentity);
+		testSequenceSet = wsClient.getObjects(objectsIdentity).get(0).getData().asClassInstance(SequenceSet.class);
 
 	}
 
@@ -159,18 +164,19 @@ public class MemeClientTest {
 		MemeRunParameters params = new MemeRunParameters();
 		params.setMod("oops");
 		params.setNmotifs(2L);
-		params.setMinw(12L);
+		params.setMinw(14L);
 		params.setMaxw(24L);
 		params.setNsites(0L);
 		params.setMinsites(0L);
 		params.setMaxsites(0L);
-		params.setPal(0L);
+		params.setPal(1L);
 		params.setRevcomp(0L);
 		params.setSourceId(testSequenceSetId);
 		params.setSourceRef(TEST_WORKSPACE + "/" + testSequenceSetId);
 
 		
 		String resultId = client.findMotifsWithMemeFromWs(TEST_WORKSPACE, params);
+		System.out.println(resultId);
 //Read result from WS
 		
 //		List<ObjectIdentity> objectIds = new ArrayList<ObjectIdentity>();
