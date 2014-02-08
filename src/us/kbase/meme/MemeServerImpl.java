@@ -44,14 +44,13 @@ public class MemeServerImpl {
 			"yyyy-MM-dd'T'HH:mm:ssZ");
 
 	protected static void startUp() throws IOException {
-		cleanUpOnStart();
 		
 		File propertiesFile;
 		String kbTop = System.getenv("KB_TOP");
 		if (!kbTop.substring(kbTop.length() - 1).equals("/")) {
 			kbTop = kbTop + "/";
 		}
-		propertiesFile = new File (kbTop + "/services/meme/meme.properties");
+		propertiesFile = new File (kbTop + "services/meme/meme.properties");
 		Properties prop = new Properties();
 		InputStream input = null;
 		 
@@ -79,6 +78,8 @@ public class MemeServerImpl {
 				}
 			}
 		}
+		cleanUpOnStart();
+
 
 	}
 
