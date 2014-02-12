@@ -1,2 +1,2 @@
-#group-name	meme	MEME
+#group-name	meme	MEME Motif Discovery
 #command-set	scripts/(.*).pl	meme
