@@ -59,7 +59,7 @@ public class MEMEServer extends JsonServerServlet {
     public MEMEServer() throws Exception {
         super("MEME");
         //BEGIN_CONSTRUCTOR
-        MemeServerImpl.cleanUpOnStart();
+        MemeServerImpl.startUp();
         //END_CONSTRUCTOR
     }
 

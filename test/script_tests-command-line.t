@@ -2,7 +2,6 @@
 
 #This is a command line testing script
 
-
 use strict;
 use warnings;
 
@@ -10,13 +9,72 @@ use Test::More tests => 24;
 use Test::Cmd;
 use JSON;
 
+use Bio::KBase::AuthToken;
+use Bio::KBase::AuthUser;
+use Bio::KBase::workspace::Client;
 
-my $url = "http://140.221.85.173:7077/";
+
+my $url = "http://localhost:7108/";
 my $bin  = "scripts";
 
 my $ws = "AKtest";
 my $user = "aktest";
 my $pw = "1475rokegi";
+
+
+my $auth_user = Bio::KBase::AuthUser->new();
+my $token = Bio::KBase::AuthToken->new( user_id => $user, password => $pw);
+$auth_user->get( token => $token->token );
+
+if ($token->error_message){
+	print $token->error_message."\n\n";
+	exit(1);
+};
+
+my $ws_client = Bio::KBase::workspace::Client->new("https://kbase.us/services/ws", "user_id", $user, "password", $pw);
+#my $ws_info = $ws_client->create_worjspace({workspace => "AKtest", globalread => "r", description => "test workspace"});
+
+my $test_sequence_set = {
+						sequence_set_id => "mod_desulfovibrio",
+						description => "mod genes from Desulfovibrio spp.",
+						sequences =>[
+										{
+										sequence_id => "kb|sequence.112",
+										description => ">209110 upstream".
+										sequence => "GCCGGGCACGGGCCACCTCATCATCCGAGACTGCGACGTCTTTCATGGGGTCTCCGGTTGCTCAAGTATGAGGGTACGATGCCTCCACTCCTGCCCCAAGTCCAGCCGTGCGTGAATGCGGTCACGTTCGTCACCATGAGGGTGACCGGGTTGCCGGGTGCGATACGCAGGGCTAACGCTGCCATAATCGGGAGAGGAGTATCCACGCTTCCGGTCATGCATCATCCACCCGCATCCGCAAGGAGGCCCC"
+										},
+										{
+										sequence_id => "kb|sequence.113",
+										description => ">209112 upstream".
+										sequence => "AGAGTGTGAAGCGGCGGAGGAAGGCGAAGCGTGATGACATGGACATGGGGCCTCCTTGCGGATGCGGGTGGATGATGCATGACCGGAAGCGTGGATACTCCTCTCCCGATTATGGCAGCGTTAGCCCTGCGTATCGCACCCGGCAACCCGGTCACCCTCATGGTGACGAACGTGACCGCATTCACGCACGGCTGGACTTGGGGCAGGAGTGGAGGCATCGTACCCTCATACTTGAGCAACCGGAGACCCC"
+										},
+										{
+										sequence_id => "kb|sequence.114",
+										description => ">209114 upstream".
+										sequence => "AGGGCAGCCTCTCCCCGCGCATGCCCCTTTCCGGTCACCACCCGGCAACATTCCGTGACCATGTTGCCCCGGCACCGCCACTCTCCGCATAGTCGCACATGCTCCCGTGCCCGCGGGCGCAAACCGGGACAACGGGGCGGCTGAGGCTGACGCCCGCCCAACGCACCACCGCCACACAGGCACTCCCCATGGGACGACGGGCAAGGGGCGTACGCCACGCATCCACATGACACCATAACCGGGAAGACCC"
+										},
+										{
+										sequence_id => "kb|sequence.115",
+										description => ">393587 upstream".
+										sequence => "GCTCCGCATCCAGCAGCTTGACCCCCTCCGGCACCACAAAAAGTGCATGCGGCGCTATTCTGCCGCCCGCCGGACGGCCGGACCGTACTGTTGTGCCGGTTGTCGTCATGGCTGCTCCCGTAAACTGGTTTTGTCACGATTTTCAGGACATTCGTGACCGCGTTGGCAGACGATACACAACTTCGTAAGTGCGTACATGCAGTAAATACATACTCGCACTTCTGCACACGCATCAAGGAGGATTCATCCC"
+										},
+										{
+										sequence_id => "kb|sequence.116",
+										description => ">7532041 upstream".
+										sequence => "TATCCTGCTGCAAATATGTAGAAACCCACATCGTAGTCCGTCCGAAAAGGAGCGGATATCATCGCGGCTACCGGTCACGCTTTTCCGCGCTACCGTGACCGGCTTGAGCTCAACGGACCGGAAAGCTTATAGGATATGAACGTCGGAATCTGCGGTTTCGAGAACACCTTCCTGCGGCCCGGTTGTTGCTTGAGAGCCTGTAAACACCCTCGGCGGAACACCGCCCAACCTTCGCCAACGGACAATGCGA"
+										},
+										{
+										sequence_id => "kb|sequence.117",
+										description => ">8501762 upstream".
+										sequence => "GGGGCACCCTCCCCCAAAAACCTTTATTCGTATTGTCCTATTGTTGCGCAGGGGAAGGGCCACACGGCCCTTCCCCTTTTTCTTTGGCGAATCGGGGCATTCCTGTGGGCGCCACGCCCGCAGGCATCACGCCGGGGGCCTTTTCCGACAGCATGCCGCTGGCCGTGTCACTGCCCCGTGCCACGGTCACCAAGACGAAAGTTTTCGTGCCTCTGTTGCGGCCCCCCGGCCTTTTCGCCACAGTCGGGCC"
+										}
+									]	
+						};
+
+#my $ws_save_info = $ws_client->save_objects({workspace => "AKtest", objects => [{type => "KBaseSequences.SequenceSet", data => $test_sequence_set, name => "mod_desulfovibrio2", objid => undef, meta => {}, provenance => [], hidden => 0}]});
+
+exit(0);
+
 my $sequence_set_ref = "\"AKtest/mod_desulfovibrio\"";
 my $meme_pspm_collection_ref = "\"AKtest/kb|memepspmcollection.57\"";
 my $meme_pspm_id = "\"kb|memepspm.115\"";

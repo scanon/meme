@@ -5,6 +5,8 @@ import static org.junit.Assert.*;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.Test;
 
@@ -15,14 +17,16 @@ import us.kbase.common.service.Tuple7;
 import us.kbase.common.service.UnauthorizedException;
 import us.kbase.userandjobstate.Results;
 import us.kbase.userandjobstate.UserAndJobStateClient;
-import us.kbase.util.WsDeluxeUtil;
+import us.kbase.workspace.ObjectIdentity;
+import us.kbase.workspace.WorkspaceClient;
 
 public class MemeServerCallerTest {
 
 	private static final String USER_NAME = "";
 	private static final String PASSWORD = "";
 	private static final String TEST_WORKSPACE = "AKtest";
-	private static final String JOB_SERVICE = MemeServerConfig.JOB_SERVICE;
+	private static final String JOB_SERVICE = "https://kbase.us/services/userandjobstate";
+	private final String WS_SERVICE = "https://kbase.us/services/ws";
 	private String sequenceSetId = "kb|sequenceset.8";
 
 	@Test
@@ -116,7 +120,13 @@ public class MemeServerCallerTest {
 		String[] resultIdParts = resultId.split("/");
 		resultId = resultIdParts[1];
 //Read result from WS
-		MemeRunResult result = WsDeluxeUtil.getObjectFromWsByRef(TEST_WORKSPACE + "/" +resultId, token.toString()).getData().asClassInstance(MemeRunResult.class);
+		
+		WorkspaceClient wsClient = new WorkspaceClient(new URL (WS_SERVICE), new AuthToken(token.toString()));
+		wsClient.setAuthAllowedForHttp(true);
+		List<ObjectIdentity> objectsIdentity = new ArrayList<ObjectIdentity>();
+		ObjectIdentity objectIdentity = new ObjectIdentity().withName(resultId).withWorkspace(TEST_WORKSPACE);
+		objectsIdentity.add(objectIdentity);
+		MemeRunResult result = wsClient.getObjects(objectsIdentity).get(0).getData().asClassInstance(MemeRunResult.class);
 
 		assertEquals(Long.valueOf("0"),result.getSeed());
 		assertEquals(Long.valueOf("1"),result.getSeqfrac());

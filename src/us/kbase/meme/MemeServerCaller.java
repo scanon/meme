@@ -38,11 +38,6 @@ import us.kbase.userandjobstate.UserAndJobStateClient;
 
 public class MemeServerCaller {
 
-	private static final String JOB_SERVICE = MemeServerConfig.JOB_SERVICE;
-	private static final String AWE_SERVICE = MemeServerConfig.CLUSTER_SERVICE;
-	private static boolean deployAwe = MemeServerConfig.DEPLOY_AWE;
-	private static final String AWF_CONFIG_FILE = MemeServerConfig.AWF_CONFIG_FILE;
-
 	private static SimpleDateFormat dateFormat = new SimpleDateFormat(
 			"yyyy-MM-dd'T'HH:mm:ssZ");
 
@@ -70,7 +65,7 @@ public class MemeServerCaller {
 		date.setTime(date.getTime() + 10000L);
 		// Obtain job id
 
-		URL jobServiceUrl = new URL(JOB_SERVICE);
+		URL jobServiceUrl = new URL(MemeServerConfig.JOB_SERVICE_URL);
 		UserAndJobStateClient jobClient = new UserAndJobStateClient(
 				jobServiceUrl, authPart);
 		// jobClient.setAuthAllowedForHttp(true);
@@ -83,7 +78,7 @@ public class MemeServerCaller {
 		jobClient = null;
 		System.out.println(returnVal);
 
-		if (deployAwe == false) {
+		if (!MemeServerConfig.DEPLOY_AWE) {
 			String result = MemeServerImpl.findMotifsWithMemeJobFromWs(wsName,
 					params, returnVal, authPart.toString());
 			System.out.println(result);
@@ -188,7 +183,7 @@ public class MemeServerCaller {
 		date.setTime(date.getTime() + 10000L);
 
 		// Ask for job id
-		URL jobServiceUrl = new URL(JOB_SERVICE);
+		URL jobServiceUrl = new URL(MemeServerConfig.JOB_SERVICE_URL);
 		UserAndJobStateClient jobClient = new UserAndJobStateClient(
 				jobServiceUrl, authPart);
 		// jobClient.setAuthAllowedForHttp(true);
@@ -199,7 +194,7 @@ public class MemeServerCaller {
 				+ ". Workspace: " + wsName + ".", new Long(5), authPart.toString());
 		jobClient = null;
 
-		if (deployAwe == false) {
+		if (!MemeServerConfig.DEPLOY_AWE) {
 			String result = MemeServerImpl
 					.compareMotifsWithTomtomJobByCollectionFromWs(wsName,
 							params, returnVal, authPart.toString());
@@ -295,7 +290,7 @@ public class MemeServerCaller {
 		Date date = new Date();
 		date.setTime(date.getTime() + 10000L);
 
-		URL jobServiceUrl = new URL(JOB_SERVICE);
+		URL jobServiceUrl = new URL(MemeServerConfig.JOB_SERVICE_URL);
 		UserAndJobStateClient jobClient = new UserAndJobStateClient(
 				jobServiceUrl, authPart);
 		// jobClient.setAuthAllowedForHttp(true);
@@ -306,7 +301,7 @@ public class MemeServerCaller {
 				+ ". Workspace: " + wsName + ".", new Long(5), authPart.toString());
 		jobClient = null;
 
-		if (deployAwe == false) {
+		if (!MemeServerConfig.DEPLOY_AWE) {
 			String result = MemeServerImpl
 					.findSitesWithMastJobByCollectionFromWs(wsName, params,
 							returnVal, authPart.toString());
@@ -350,7 +345,7 @@ public class MemeServerCaller {
 		try {
 			CloseableHttpClient httpClient = HttpClients.createDefault();
 			HttpPost httpPost = new HttpPost(
-					AWE_SERVICE);
+					MemeServerConfig.AWE_SERVICE_URL);
 			MultipartEntityBuilder builder = MultipartEntityBuilder.create();
 			InputStream stream = new ByteArrayInputStream(
 					aweConfig.getBytes("UTF-8"));
@@ -373,7 +368,7 @@ public class MemeServerCaller {
 		String formattedConfig;
 		try {
 			String config = FileUtils.readFileToString(new File(
-					AWF_CONFIG_FILE));
+					MemeServerConfig.AWF_CONFIG_FILE));
 			String args = " --job "
 					+ jobId + " --method find_motifs_with_meme_job_from_ws"
 					+ " --ws '" + wsName
@@ -392,7 +387,7 @@ public class MemeServerCaller {
 			formattedConfig = String.format(config, jobId, args, jobId);
 		} catch (IOException e) {
 			throw new Exception("Can not load AWE config file: "
-					+ AWF_CONFIG_FILE);
+					+ MemeServerConfig.AWF_CONFIG_FILE);
 		}
 		return formattedConfig;
 	}
@@ -404,7 +399,7 @@ public class MemeServerCaller {
 		String formattedConfig;
 		try {
 			String config = FileUtils.readFileToString(new File(
-					AWF_CONFIG_FILE));
+					MemeServerConfig.AWF_CONFIG_FILE));
 			String args = " --job " + jobId
 					+ " --method compare_motifs_with_tomtom_job_by_collection_from_ws"
 					+ " --ws '" + wsName
@@ -421,7 +416,7 @@ public class MemeServerCaller {
 			formattedConfig = String.format(config, jobId, args, jobId);
 		} catch (IOException e) {
 			throw new Exception("Can not load AWE config file: "
-					+ AWF_CONFIG_FILE);
+					+ MemeServerConfig.AWF_CONFIG_FILE);
 		}
 		return formattedConfig;
 	}
@@ -433,7 +428,7 @@ public class MemeServerCaller {
 		String formattedConfig;
 		try {
 			String config = FileUtils.readFileToString(new File(
-					AWF_CONFIG_FILE));
+					MemeServerConfig.AWF_CONFIG_FILE));
 			String args = " --job " + jobId
 					+ " --method find_sites_with_mast_job_by_collection_from_ws"
 					+ " --ws '" + wsName
@@ -446,7 +441,7 @@ public class MemeServerCaller {
 			formattedConfig = String.format(config, jobId, args, jobId);
 		} catch (IOException e) {
 			throw new Exception("Can not load AWE config file: "
-					+ AWF_CONFIG_FILE);
+					+ MemeServerConfig.AWF_CONFIG_FILE);
 		}
 		return formattedConfig;
 	}
@@ -460,7 +455,7 @@ public class MemeServerCaller {
 		if (rootNode.has("data")){
 			JsonNode dataNode = rootNode.get("data");
 			if (dataNode.has("id")){
-				aweId = AWE_SERVICE + "/" + dataNode.get("id").textValue();
+				aweId = MemeServerConfig.AWE_SERVICE_URL + "/" + dataNode.get("id").textValue();
 				System.out.println(aweId);
 				updateJobProgress(returnVal, "AWE job submitted: " + aweId, 1L, authPart.toString());
 			}
@@ -493,7 +488,7 @@ public class MemeServerCaller {
 	public static String getPspmCollectionFromMemeResultJobFromWs(String wsId,
 			String memeRunResultRef, AuthToken authPart) throws Exception {
 		String returnVal = null;
-		URL jobServiceUrl = new URL(JOB_SERVICE);
+		URL jobServiceUrl = new URL(MemeServerConfig.JOB_SERVICE_URL);
 		UserAndJobStateClient jobClient = new UserAndJobStateClient(
 				jobServiceUrl, authPart);
 		//jobClient.setAuthAllowedForHttp(true);
@@ -511,7 +506,7 @@ public class MemeServerCaller {
 		Date date = new Date();
 		date.setTime(date.getTime() + 100000L);
 		UserAndJobStateClient jobClient = new UserAndJobStateClient(new URL(
-				JOB_SERVICE), new AuthToken(token));
+				MemeServerConfig.JOB_SERVICE_URL), new AuthToken(token));
 		// jobClient.setAuthAllowedForHttp(true);
 		jobClient.updateJobProgress(jobId, AuthService.login(MemeServerConfig.SERVICE_LOGIN, new String(MemeServerConfig.SERVICE_PASSWORD)).getToken().toString(), status, tasks,
 				dateFormat.format(date));
@@ -530,7 +525,7 @@ public class MemeServerCaller {
 		date.setTime(date.getTime() + 100000L);
 
 		UserAndJobStateClient jobClient = new UserAndJobStateClient(new URL(
-				JOB_SERVICE), new AuthToken(token));
+				MemeServerConfig.JOB_SERVICE_URL), new AuthToken(token));
 		// jobClient.setAuthAllowedForHttp(true);
 		jobClient.startJob(jobId, AuthService.login(MemeServerConfig.SERVICE_LOGIN, new String(MemeServerConfig.SERVICE_PASSWORD)).getToken().toString(), status, desc, initProgress,
 				dateFormat.format(date));
