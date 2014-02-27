@@ -115,7 +115,7 @@ print "--version         Print version information. \n";
 print "\n";
 print " \n";
 print "EXAMPLES \n";
-print "get_pspm_collection_from_meme_result_from_ws --url=http://140.221.85.173:7077/ --ws=AKtest --input=\"AKtest/kb|memerunresult.15\"\n";
+print "get_pspm_collection_from_meme_result_from_ws --url=http://140.221.85.173:7077/ --ws=AKtest --input=\"AKtest/kb|memerunresult.15\" --user=<username> --pw=<password>\n";
 print "\n";
 print " \n";
 print "Report bugs to aekazakov\@lbl.gov\n";

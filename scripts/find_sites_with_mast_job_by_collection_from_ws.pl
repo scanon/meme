@@ -138,7 +138,7 @@ print "--version         Print version information. \n";
 print "\n";
 print " \n";
 print "EXAMPLES \n";
-print "find_sites_with_mast_job_by_collection_from_ws --url=http://140.221.85.173:7077/ --ws=AKtest --query=\"AKtest/kb|memepspmcollection.2\" --target=\"AKtest/kb|sequenceset.8\" --mt=0.001\n";
+print "find_sites_with_mast_job_by_collection_from_ws --url=http://140.221.85.173:7077/ --ws=AKtest --query=\"AKtest/kb|memepspmcollection.2\" --target=\"AKtest/kb|sequenceset.8\" --mt=0.001 --user=<username> --pw=<password>\n";
 print "\n";
 print "This command will return a Job object ID.\n";
 print "\n";

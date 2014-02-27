@@ -163,7 +163,7 @@ print "--version         Print version information. \n";
 print "\n";
 print " \n";
 print "EXAMPLES \n";
-print "compare_motifs_with_tomtom_by_collection_from_ws --url=http://140.221.85.173:7077/ --ws=AKtest --query=\"AKtest/kb|memepspmcollection.1\" --target=\"AKtest/kb|memepspmcollection.1\" --thresh=0.0000001 --evalue --dist=pearson --internal --min_overlap=12\n";
+print "compare_motifs_with_tomtom_by_collection_from_ws --url=http://140.221.85.173:7077/ --ws=AKtest --query=\"AKtest/kb|memepspmcollection.1\" --target=\"AKtest/kb|memepspmcollection.1\" --thresh=0.0000001 --evalue --dist=pearson --internal --min_overlap=12 --user=<username> --pw=<password>\n";
 print "\n";
 print "This command will return an ID of list of TOMTOM hits.\n";
 print "\n";

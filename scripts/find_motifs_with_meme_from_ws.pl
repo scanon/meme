@@ -177,7 +177,7 @@ print "--version         Print version information. \n";
 print "\n";
 print " \n";
 print "EXAMPLES \n";
-print "find_motifs_with_meme_from_ws --url=http://140.221.85.173:7077/ --ws=AKtest --input=\"AKtest/kb|sequenceset.8\" --mod=oops --nmotifs=2 --minw=14 --maxw=28 \n";
+print "find_motifs_with_meme_from_ws --url=http://140.221.85.173:7077/ --ws=AKtest --input=\"AKtest/kb|sequenceset.8\" --mod=oops --nmotifs=2 --minw=14 --maxw=28 --user=<username> --pw=<password>\n";
 print "\n";
 print "This command will return a collection of two motifs with length between 14 and 28 bp.\n";
 print "\n";

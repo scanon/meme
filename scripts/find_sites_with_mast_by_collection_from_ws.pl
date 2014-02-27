@@ -138,7 +138,7 @@ print "--version         Print version information. \n";
 print "\n";
 print " \n";
 print "EXAMPLES \n";
-print "find_sites_with_mast_by_collection_from_ws --url=http://140.221.85.173:7077/ --ws=AKtest --query=\"AKtest/kb|memepspmcollection.1\" --target=\"AKtest/kb|sequenceset.8\" --mt=0.001\n";
+print "find_sites_with_mast_by_collection_from_ws --url=http://140.221.85.173:7077/ --ws=AKtest --query=\"AKtest/kb|memepspmcollection.1\" --target=\"AKtest/kb|sequenceset.8\" --mt=0.001 --user=<username> --pw=<password>\n";
 print "\n";
 print "This command will return name of a list of occurences of motifs from the collection in the set of sequences with p-value below 0.001.\n";
 print "\n";
