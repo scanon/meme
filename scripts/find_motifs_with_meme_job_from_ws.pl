@@ -8,7 +8,7 @@ use Carp;
 
 =head1 SYNOPSIS
 
-    find_motifs_with_meme_job_from_ws [--url=http://140.221.85.173:7077/ --ws=<workspace name> --input=<sequence set reference> --mod=<oops|zoops|anr> --nmotifs=<nmotifs> --minw=<minw> --maxw=<maxw> --nsites=<nsites> --minsites=<minsites> --maxsites=<maxsites> --pal --revcomp --user=<username> --pw=<password>]
+    find_motifs_with_meme_job_from_ws [--url=http://140.221.85.173:7077/ --ws=<workspace name> --input=<sequence set reference> --mod=<oops|zoops|anr> --nmotifs=<nmotifs> --minw=<minw> --maxw=<maxw> --nsites=<nsites> --minsites=<minsites> --maxsites=<maxsites> --pal --revcomp]
 
 =head1 DESCRIPTION
 
@@ -64,12 +64,6 @@ use Carp;
 =item B<--revcomp>
     allow sites on + or - DNA strands. Default: look for DNA motifs only on the strand given in the training set.
 
-=item B<--user>
-    User name for access to workspace
-
-=item B<--pw>
-    Password for access to workspace
-
 =back
 
 =head1 EXAMPLE
@@ -86,10 +80,12 @@ use Carp;
 
 use Getopt::Long;
 use Bio::KBase::meme::Client;
+use Config::Simple;
+use Bio::KBase::Auth;
 use Bio::KBase::AuthToken;
 use Bio::KBase::AuthUser;
 
-my $usage = "Usage: find_motifs_with_meme_job_from_ws [--url=http://140.221.85.173:7077/ --ws=<workspace name> --input=<sequence set reference> --mod=<oops|zoops|anr> --nmotifs=<nmotifs> --minw=<minw> --maxw=<maxw> --nsites=<nsites> --minsites=<minsites> --maxsites=<maxsites> --pal --revcomp --user=<username> --pw=<password>]\n";
+my $usage = "Usage: find_motifs_with_meme_job_from_ws [--url=http://140.221.85.173:7077/ --ws=<workspace name> --input=<sequence set reference> --mod=<oops|zoops|anr> --nmotifs=<nmotifs> --minw=<minw> --maxw=<maxw> --nsites=<nsites> --minsites=<minsites> --maxsites=<maxsites> --pal --revcomp]\n";
 
 my $url        = "http://140.221.85.173:7077/";
 my $input      = "";
@@ -103,8 +99,6 @@ my $minsites   = 0;
 my $maxsites   = 0;
 my $pal        = 0;
 my $revcomp    = 0;
-my $user       = "";
-my $pw         = "";
 my $help       = 0;
 my $version    = 0;
 
@@ -121,8 +115,6 @@ GetOptions("help"       => \$help,
            "maxsites:i"    => \$maxsites,
            "pal:i"    => \$pal,
            "revcomp:i"    => \$revcomp,
-           "user=s"    => \$user,
-           "pw=s"    => \$pw,
            "url=s"     => \$url) 
            or exit(1);
 
@@ -135,7 +127,7 @@ print "VERSION\n";
 print "1.0\n";
 print "\n";
 print "SYNOPSIS\n";
-print "find_motifs_with_meme_job_from_ws [--url=http://140.221.85.173:7077/ --ws=<workspace name> --input=<sequence set reference> --mod=<oops|zoops|anr> --nmotifs=<nmotifs> --minw=<minw> --maxw=<maxw> --nsites=<nsites> --minsites=<minsites> --maxsites=<maxsites> --pal --revcomp --user=<username> --pw=<password>]\n";
+print "find_motifs_with_meme_job_from_ws [--url=http://140.221.85.173:7077/ --ws=<workspace name> --input=<sequence set reference> --mod=<oops|zoops|anr> --nmotifs=<nmotifs> --minw=<minw> --maxw=<maxw> --nsites=<nsites> --minsites=<minsites> --maxsites=<maxsites> --pal --revcomp]\n";
 print "\n";
 print "DESCRIPTION\n";
 print "INPUT:            This command requires the URL of the service, ID of a sequence set and parameters.\n";
@@ -167,17 +159,13 @@ print "--pal             Force palindromes.\n";
 print "\n";
 print "--revcomp         Allow sites on + or - DNA strands. Default: look for DNA motifs only on the strand given in the training set.\n";
 print "\n";
-print "--user            User name for access to workspace.\n";
-print "\n";
-print "--pw              Password for access to workspace.\n";
-print "\n";
 print "--help            Display help message to standard out and exit with error code zero; \n";
 print "                  ignore all other command-line arguments.  \n";
 print "--version         Print version information. \n";
 print "\n";
 print " \n";
 print "EXAMPLES \n";
-print "find_motifs_with_meme_job_from_ws --url=http://140.221.85.173:7077/ --ws=AKtest --input=\"AKtest/kb|sequenceset.8\" --mod=oops --nmotifs=2 --minw=14 --maxw=28 --user=<username> --pw=<password>\n";
+print "find_motifs_with_meme_job_from_ws --url=http://140.221.85.173:7077/ --ws=AKtest --input=\"AKtest/kb|sequenceset.8\" --mod=oops --nmotifs=2 --minw=14 --maxw=28\n";
 print "\n";
 print "This command will return a Job object ID.\n";
 print "\n";
@@ -203,9 +191,22 @@ unless (@ARGV == 0){
     exit(1);
 };
 
+my $token='';
+my $user="";
+my $pw="";
 my $auth_user = Bio::KBase::AuthUser->new();
-my $token = Bio::KBase::AuthToken->new( user_id => $user, password => $pw);
-$auth_user->get( token => $token->token );
+my $kbConfPath = $Bio::KBase::Auth::ConfPath;
+
+if (defined($ENV{KB_RUNNING_IN_IRIS})) {
+        $token = $ENV{KB_AUTH_TOKEN};
+} elsif ( -e $kbConfPath ) {
+        my $cfg = new Config::Simple($kbConfPath);
+        $user = $cfg->param("authentication.user_id");
+        $pw = $cfg->param("authentication.password");
+        $cfg->close();
+        $token = Bio::KBase::AuthToken->new( user_id => $user, password => $pw);
+        $auth_user->get( token => $token->token );
+}
 
 if ($token->error_message){
 	print $token->error_message."\n\n";

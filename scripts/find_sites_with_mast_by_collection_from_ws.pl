@@ -8,7 +8,7 @@ find_sites_with_mast_by_collection_from_ws - search a sequence database for occu
 
 =head1 SYNOPSIS
 
-find_sites_with_mast_by_collection_from_ws [--url=http://140.221.85.173:7077/ --ws=<workspace name> --query=<MemePSPMCollection reference> --target=<sequence set reference> --matrix=<PSPM ID> --mt=<mt> --user=<username> --pw=<password>]
+find_sites_with_mast_by_collection_from_ws [--url=http://140.221.85.173:7077/ --ws=<workspace name> --query=<MemePSPMCollection reference> --target=<sequence set reference> --matrix=<PSPM ID> --mt=<mt>]
 
 =head1 DESCRIPTION
 
@@ -48,12 +48,6 @@ KBase ID of a MemePSPM from the query collection that will be used. If omitted, 
 =item B<--mt>
 show motif matches with p-value < <mt>
 
-=item B<--user>
-User name for access to workspace
-
-=item B<--pw>
-Password for access to workspace
-
 =back
 
 =head1 EXAMPLE
@@ -70,11 +64,13 @@ find_sites_with_mast_by_collection_from_ws --version
 
 use Getopt::Long;
 use Bio::KBase::meme::Client;
+use Config::Simple;
+use Bio::KBase::Auth;
 use Bio::KBase::AuthToken;
 use Bio::KBase::AuthUser;
 
 
-my $usage = "Usage: find_sites_with_mast_by_collection_from_ws [--url=http://140.221.85.173:7077/ --ws=<workspace name> --query=<MemePSPMCollection reference> --target=<sequence set reference> --matrix=<PSPM ID> --mt=<mt> --user=<username> --pw=<password>]\n";
+my $usage = "Usage: find_sites_with_mast_by_collection_from_ws [--url=http://140.221.85.173:7077/ --ws=<workspace name> --query=<MemePSPMCollection reference> --target=<sequence set reference> --matrix=<PSPM ID> --mt=<mt>]\n";
 
 my $url       = "http://140.221.85.173:7077/";
 my $ws   	  = "";
@@ -82,8 +78,6 @@ my $query     = "";
 my $target    = "";
 my $pspm_id   = "";
 my $mt        = 0;
-my $user       = "";
-my $pw         = "";
 my $help      = 0;
 my $version   = 0;
 
@@ -94,8 +88,6 @@ GetOptions("help"       	=> \$help,
            "target=s"       => \$target,
            "matrix:s"       => \$pspm_id,
            "mt=f"    		=> \$mt,
-           "user=s"         => \$user,
-           "pw=s"           => \$pw,
            "url=s"     		=> \$url) or 
                exit(1);
            
@@ -108,7 +100,7 @@ print "VERSION\n";
 print "1.0\n";
 print "\n";
 print "SYNOPSIS\n";
-print "find_sites_with_mast_by_collection_from_ws [--url=http://140.221.85.173:7077/ --ws=<workspace ID> --query=<MemePSPMCollection ID> --target=<sequence set ID> --matrix=<PSPM ID> --mt=<mt> --user=<username> --pw=<password>]\n";
+print "find_sites_with_mast_by_collection_from_ws [--url=http://140.221.85.173:7077/ --ws=<workspace ID> --query=<MemePSPMCollection ID> --target=<sequence set ID> --matrix=<PSPM ID> --mt=<mt>]\n";
 print "\n";
 print "DESCRIPTION\n";
 print "INPUT:            This command requires the URL of the service, ID of query PSPM collection, ID of target sequence set, p-value threshold .\n";
@@ -128,17 +120,13 @@ print "--matrix          KBase ID of a MemePSPM from the query collection that w
 print "\n";
 print "--mt              Show motif matches with p-value < <mt>, required.\n";
 print "\n";
-print "--user            User name for access to workspace.\n";
-print "\n";
-print "--pw              Password for access to workspace.\n";
-print "\n";
 print "--help            Display help message to standard out and exit with error code zero; \n";
 print "                  ignore all other command-line arguments.  \n";
 print "--version         Print version information. \n";
 print "\n";
 print " \n";
 print "EXAMPLES \n";
-print "find_sites_with_mast_by_collection_from_ws --url=http://140.221.85.173:7077/ --ws=AKtest --query=\"AKtest/kb|memepspmcollection.1\" --target=\"AKtest/kb|sequenceset.8\" --mt=0.001 --user=<username> --pw=<password>\n";
+print "find_sites_with_mast_by_collection_from_ws --url=http://140.221.85.173:7077/ --ws=AKtest --query=\"AKtest/kb|memepspmcollection.1\" --target=\"AKtest/kb|sequenceset.8\" --mt=0.001\n";
 print "\n";
 print "This command will return name of a list of occurences of motifs from the collection in the set of sequences with p-value below 0.001.\n";
 print "\n";
@@ -164,9 +152,22 @@ unless (@ARGV == 0){
     exit(1);
 };
 
+my $token='';
+my $user="";
+my $pw="";
 my $auth_user = Bio::KBase::AuthUser->new();
-my $token = Bio::KBase::AuthToken->new( user_id => $user, password => $pw);
-$auth_user->get( token => $token->token );
+my $kbConfPath = $Bio::KBase::Auth::ConfPath;
+
+if (defined($ENV{KB_RUNNING_IN_IRIS})) {
+        $token = $ENV{KB_AUTH_TOKEN};
+} elsif ( -e $kbConfPath ) {
+        my $cfg = new Config::Simple($kbConfPath);
+        $user = $cfg->param("authentication.user_id");
+        $pw = $cfg->param("authentication.password");
+        $cfg->close();
+        $token = Bio::KBase::AuthToken->new( user_id => $user, password => $pw);
+        $auth_user->get( token => $token->token );
+}
 
 if ($token->error_message){
 	print $token->error_message."\n\n";

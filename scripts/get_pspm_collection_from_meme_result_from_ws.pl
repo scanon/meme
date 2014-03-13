@@ -8,7 +8,7 @@ get_pspm_collection_from_meme_result_from_ws - converts MEME run result into col
 
 =head1 SYNOPSIS
 
-get_pspm_collection_from_meme_result_from_ws [--url=http://140.221.85.173:7077/ --ws=<workspace name> --input=<MemeRunResult reference> --user=<username> --pw=<password>]
+get_pspm_collection_from_meme_result_from_ws [--url=http://140.221.85.173:7077/ --ws=<workspace name> --input=<MemeRunResult reference>]
 
 =head1 DESCRIPTION
 
@@ -37,12 +37,6 @@ workspace name where result will be stored
 =item B<--input>
 workspace reference of the MemeRunResult
 
-=item B<--user>
-User name for access to workspace
-
-=item B<--pw>
-Password for access to workspace
-
 =back
 
 =head1 EXAMPLE
@@ -59,17 +53,17 @@ get_pspm_collection_from_meme_result_from_ws --version
 
 use Getopt::Long;
 use Bio::KBase::meme::Client;
+use Config::Simple;
+use Bio::KBase::Auth;
 use Bio::KBase::AuthToken;
 use Bio::KBase::AuthUser;
 
 
-my $usage = "Usage: get_pspm_collection_from_meme_result_from_ws [--url=http://140.221.85.173:7077/ --ws=<workspace name> --input=<MemeRunResult reference> --user=<username> --pw=<password>]\n";
+my $usage = "Usage: get_pspm_collection_from_meme_result_from_ws [--url=http://140.221.85.173:7077/ --ws=<workspace name> --input=<MemeRunResult reference>]\n";
 
 my $url       = "http://140.221.85.173:7077/";
 my $ws   	  = "";
 my $input     = "";
-my $user       = "";
-my $pw         = "";
 my $help      = 0;
 my $version   = 0;
 
@@ -77,8 +71,6 @@ GetOptions("help"       	=> \$help,
            "version"    	=> \$version,
            "ws=s"           => \$ws,
            "input=s"        => \$input,
-           "user=s"         => \$user,
-           "pw=s"           => \$pw,
            "url=s"     		=> \$url) or 
                exit(1);
            
@@ -91,7 +83,7 @@ print "VERSION\n";
 print "1.0\n";
 print "\n";
 print "SYNOPSIS\n";
-print "get_pspm_collection_from_meme_result_from_ws [--url=http://140.221.85.173:7077/ --ws=<workspace name> --input=<MemeRunResult reference> --user=<username> --pw=<password>]\n";
+print "get_pspm_collection_from_meme_result_from_ws [--url=http://140.221.85.173:7077/ --ws=<workspace name> --input=<MemeRunResult reference>]\n";
 print "\n";
 print "DESCRIPTION\n";
 print "INPUT:            This command requires the URL of the service, workspace name, workspace reference of MemeRunresult, .\n";
@@ -105,17 +97,13 @@ print "--ws              Workspace name, required.\n";
 print "\n";
 print "--input           Workspace reference of the MemeRunResult , required.\n";
 print "\n";
-print "--user            User name for access to workspace.\n";
-print "\n";
-print "--pw              Password for access to workspace.\n";
-print "\n";
 print "--help            Display help message to standard out and exit with error code zero; \n";
 print "                  ignore all other command-line arguments.  \n";
 print "--version         Print version information. \n";
 print "\n";
 print " \n";
 print "EXAMPLES \n";
-print "get_pspm_collection_from_meme_result_from_ws --url=http://140.221.85.173:7077/ --ws=AKtest --input=\"AKtest/kb|memerunresult.15\" --user=<username> --pw=<password>\n";
+print "get_pspm_collection_from_meme_result_from_ws --url=http://140.221.85.173:7077/ --ws=AKtest --input=\"AKtest/kb|memerunresult.15\"\n";
 print "\n";
 print " \n";
 print "Report bugs to aekazakov\@lbl.gov\n";
@@ -139,9 +127,22 @@ unless (@ARGV == 0){
     exit(1);
 };
 
+my $token='';
+my $user="";
+my $pw="";
 my $auth_user = Bio::KBase::AuthUser->new();
-my $token = Bio::KBase::AuthToken->new( user_id => $user, password => $pw);
-$auth_user->get( token => $token->token );
+my $kbConfPath = $Bio::KBase::Auth::ConfPath;
+
+if (defined($ENV{KB_RUNNING_IN_IRIS})) {
+        $token = $ENV{KB_AUTH_TOKEN};
+} elsif ( -e $kbConfPath ) {
+        my $cfg = new Config::Simple($kbConfPath);
+        $user = $cfg->param("authentication.user_id");
+        $pw = $cfg->param("authentication.password");
+        $cfg->close();
+        $token = Bio::KBase::AuthToken->new( user_id => $user, password => $pw);
+        $auth_user->get( token => $token->token );
+}
 
 if ($token->error_message){
 	print $token->error_message."\n\n";

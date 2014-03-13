@@ -11,7 +11,7 @@ public class MemeServerConfig {
 
 	//Service URLs
 	public static String JOB_SERVICE_URL = "https://kbase.us/services/userandjobstate";//dev:"http://140.221.84.180:7083";
-	public static String AWE_SERVICE_URL = "http://140.221.85.171:7080/job";
+	public static String AWE_SERVICE_URL = "http://140.221.85.54:7080/job";
 	public static String ID_SERVICE_URL = "http://kbase.us/services/idserver";
 	public static String WS_SERVICE_URL = "https://kbase.us/services/ws";//dev: "http://140.221.84.209:7058";
 
@@ -26,7 +26,7 @@ public class MemeServerConfig {
 	//Writes all JSON calls to AWE client and all AWE responses to /var/tmp/meme/meme-awe.log
 	//This is a serious security threat because log will contain all auth tokens
 	//SET IT TO FALSE ON PRODUCTION  
-	public static final boolean LOG_AWE_CALLS = false;
+	public static final boolean LOG_AWE_CALLS = true;
 
 	protected static final String MAST_RUN_RESULT_TYPE = "MEME.MastRunResult";
 	protected static final String MEME_PSPM_COLLECTION_TYPE = "MEME.MemePSPMCollection";

@@ -5,7 +5,7 @@
 		"project": "default",
 		"user": "default",
 		"clientgroups":"",
-		"sessionId":"%s" 
+		"sessionId":"%s"
 	},
 	
 	"tasks": [
@@ -15,16 +15,10 @@
 				"description": "running MEME service", 
 				"name": "run_meme"
 			}, 
-			"dependsOn": [], 
-			"outputs": {
-				"%s.tgz": {
-					"host": "http://140.221.84.236:8000"
-				}
-			},
-			
+			"dependsOn": [],
 			"taskid": "0",
 			"skip": 0,
 			"totalwork": 1
 		}
 	]
-}	
+}

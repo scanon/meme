@@ -8,7 +8,7 @@ compare_motifs_with_tomtom_by_collection_from_ws - find motifs that are similar 
 
 =head1 SYNOPSIS
 
-compare_motifs_with_tomtom_by_collection_from_ws [--url=http://140.221.85.173:7077/ --ws=<workspace name> --query=<MemePSPMCollection reference> --target=<MemePSPMCollection reference> --matrix=<PSPM ID> --thresh=<threshold> --evalue --dist=<allr|ed|kullback|pearson|sandelin> --internal --min_overlap=<value> --user=<username> --pw=<password>] 
+compare_motifs_with_tomtom_by_collection_from_ws [--url=http://140.221.85.173:7077/ --ws=<workspace name> --query=<MemePSPMCollection reference> --target=<MemePSPMCollection reference> --matrix=<PSPM ID> --thresh=<threshold> --evalue --dist=<allr|ed|kullback|pearson|sandelin> --internal --min_overlap=<value> 
 
 =head1 DESCRIPTION
 
@@ -58,12 +58,6 @@ This parameter forces the shorter motif to be completely contained in the longer
 =item B<--min_overlap>
 Only report motif matches that overlap by min overlap positions or more.
 
-=item B<--user>
-    User name for access to workspace
-
-=item B<--pw>
-    Password for access to workspace
-
 =back
 
 =head1 EXAMPLE
@@ -80,10 +74,12 @@ Only report motif matches that overlap by min overlap positions or more.
 
 use Getopt::Long;
 use Bio::KBase::meme::Client;
+use Config::Simple;
+use Bio::KBase::Auth;
 use Bio::KBase::AuthToken;
 use Bio::KBase::AuthUser;
 
-my $usage = "Usage: compare_motifs_with_tomtom_by_collection_from_ws [--url=http://140.221.85.173:7077/ --ws=<workspace ID> --query=<MemePSPMCollection reference> --target=<MemePSPMCollection reference> --matrix=<PSPM ID> --thresh=<threshold> --evalue --dist=<allr|ed|kullback|pearson|sandelin> --internal --min_overlap=<value> --user=<username> --pw=<password>]\n";
+my $usage = "Usage: compare_motifs_with_tomtom_by_collection_from_ws [--url=http://140.221.85.173:7077/ --ws=<workspace ID> --query=<MemePSPMCollection reference> --target=<MemePSPMCollection reference> --matrix=<PSPM ID> --thresh=<threshold> --evalue --dist=<allr|ed|kullback|pearson|sandelin> --internal --min_overlap=<value>]\n";
 
 my $url        = "http://140.221.85.173:7077/";
 my $ws		   = "";
@@ -95,8 +91,6 @@ my $evalue     =  0;
 my $dist       = "";
 my $internal   = 0;
 my $min_overlap= 0;
-my $user       = "";
-my $pw         = "";
 my $help       = 0;
 my $version    = 0;
 
@@ -111,8 +105,6 @@ GetOptions("help"           => \$help,
            "dist=s"         => \$dist,
            "internal"       => \$internal,
            "min_overlap:i"  => \$min_overlap,
-           "user=s"         => \$user,
-           "pw=s"           => \$pw,
            "url=s"          => \$url) or 
            		exit(1);
            
@@ -125,7 +117,7 @@ print "VERSION\n";
 print "1.0\n";
 print "\n";
 print "SYNOPSIS\n";
-print "compare_motifs_with_tomtom_by_collection_from_ws [--url=http://140.221.85.173:7077/ --ws=<workspace ID> --query=<MemePSPMCollection reference> --target=<MemePSPMCollection reference> --matrix=<PSPM ID> --thresh=<threshold> --evalue --dist=<allr|ed|kullback|pearson|sandelin> --internal --min_overlap=<value> --user=<username> --pw=<password>] \n";
+print "compare_motifs_with_tomtom_by_collection_from_ws [--url=http://140.221.85.173:7077/ --ws=<workspace ID> --query=<MemePSPMCollection reference> --target=<MemePSPMCollection reference> --matrix=<PSPM ID> --thresh=<threshold> --evalue --dist=<allr|ed|kullback|pearson|sandelin> --internal --min_overlap=<value>] \n";
 print "\n";
 print "DESCRIPTION\n";
 print "INPUT:            This command requires the URL of the service, IDs of two PSPM collections and parameters.\n";
@@ -153,17 +145,13 @@ print "--internal        This parameter forces the shorter motif to be completel
 print "\n";
 print "--min_overlap     Only report motif matches that overlap by min overlap positions or more.\n";
 print "\n";
-print "--user            User name for access to workspace.\n";
-print "\n";
-print "--pw              Password for access to workspace.\n";
-print "\n";
 print "--help            Display help message to standard out and exit with error code zero; \n";
 print "                  ignore all other command-line arguments.  \n";
 print "--version         Print version information. \n";
 print "\n";
 print " \n";
 print "EXAMPLES \n";
-print "compare_motifs_with_tomtom_by_collection_from_ws --url=http://140.221.85.173:7077/ --ws=AKtest --query=\"AKtest/kb|memepspmcollection.1\" --target=\"AKtest/kb|memepspmcollection.1\" --thresh=0.0000001 --evalue --dist=pearson --internal --min_overlap=12 --user=<username> --pw=<password>\n";
+print "compare_motifs_with_tomtom_by_collection_from_ws --url=http://140.221.85.173:7077/ --ws=AKtest --query=\"AKtest/kb|memepspmcollection.1\" --target=\"AKtest/kb|memepspmcollection.1\" --thresh=0.0000001 --evalue --dist=pearson --internal --min_overlap=12\n";
 print "\n";
 print "This command will return an ID of list of TOMTOM hits.\n";
 print "\n";
@@ -189,9 +177,22 @@ unless (@ARGV == 0){
     exit(1);
 };
 
+my $token='';
+my $user="";
+my $pw="";
 my $auth_user = Bio::KBase::AuthUser->new();
-my $token = Bio::KBase::AuthToken->new( user_id => $user, password => $pw);
-$auth_user->get( token => $token->token );
+my $kbConfPath = $Bio::KBase::Auth::ConfPath;
+
+if (defined($ENV{KB_RUNNING_IN_IRIS})) {
+        $token = $ENV{KB_AUTH_TOKEN};
+} elsif ( -e $kbConfPath ) {
+        my $cfg = new Config::Simple($kbConfPath);
+        $user = $cfg->param("authentication.user_id");
+        $pw = $cfg->param("authentication.password");
+        $cfg->close();
+        $token = Bio::KBase::AuthToken->new( user_id => $user, password => $pw);
+        $auth_user->get( token => $token->token );
+}
 
 if ($token->error_message){
 	print $token->error_message."\n\n";
