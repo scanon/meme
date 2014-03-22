@@ -19,7 +19,7 @@ SERVICE_PSGI = $(SERVICE_NAME).psgi
 TPAGE_ARGS = --define kb_top=$(TARGET) --define kb_runtime=$(DEPLOY_RUNTIME) --define kb_service_name=$(SERVICE_NAME) --define kb_service_dir=$(SERVICE_DIR) --define kb_service_port=$(SERVICE_PORT) --define kb_psgi=$(SERVICE_PSGI)
 DEPLOY_JAR = $(KB_TOP)/lib/jars/meme
 UJS_SERVICE_URL ?= https://kbase.us/services/userandjobstate
-AWE_CLIENT_URL ?= http://140.221.85.171:7080/job
+AWE_CLIENT_URL ?= http://140.221.85.54:7080/job
 ID_SERVICE_URL ?= https://kbase.us/services/idserver
 WS_SERVICE_URL ?= https://kbase.us/services/ws
 
