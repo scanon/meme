@@ -44,7 +44,7 @@ deploy-all: distrib deploy-client
 
 deploy-client: deploy-libs deploy-scripts deploy-docs
 
-deploy-libs: build-libs
+deploy-libs:
 	rsync --exclude '*.bak*' -arv lib/. $(TARGET)/lib/.
 
 deploy-scripts:
@@ -66,7 +66,7 @@ deploy-docs: build-docs
 build-docs: compile-docs
 	pod2html --infile=lib/Bio/KBase/$(SERVICE_NAME)/Client.pm --outfile=docs/$(SERVICE_NAME).html
 
-compile-docs: build-libs
+compile-docs:
 
 build-libs:
 	compile_typespec \
