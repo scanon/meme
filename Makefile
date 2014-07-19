@@ -107,9 +107,9 @@ distrib:
 	cp -f ./glassfish_stop_service.sh $(TARGET_DIR)
 	cp -f ./meme.awf $(TARGET_DIR)
 	echo "tmp_dir=$(WORK_DIR)\nujs_url=$(UJS_SERVICE_URL)\nawe_url=$(AWE_CLIENT_URL)\nid_url=$(ID_SERVICE_URL)\nws_url=$(WS_SERVICE_URL)\nawf_config=$(TARGET_DIR)/meme.awf" > $(TARGET_DIR)/meme.properties
-	echo "./glassfish_start_service.sh $(TARGET_DIR)/service.war $(TARGET_PORT) $(THREADPOOL_SIZE)" > $(TARGET_DIR)/start_service
+	echo "$(TARGET_DIR)/glassfish_start_service.sh $(TARGET_DIR)/service.war $(TARGET_PORT) $(THREADPOOL_SIZE)" > $(TARGET_DIR)/start_service
 	chmod +x $(TARGET_DIR)/start_service
-	echo "./glassfish_stop_service.sh $(TARGET_PORT)" > $(TARGET_DIR)/stop_service
+	echo "$(TARGET_DIR)/glassfish_stop_service.sh $(TARGET_PORT)" > $(TARGET_DIR)/stop_service
 	chmod +x $(TARGET_DIR)/stop_service
 
 test: test-scripts
