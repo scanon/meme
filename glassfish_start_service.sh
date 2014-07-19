@@ -9,6 +9,7 @@ fi
 TARGET_PORT=$2
 SOURCE_PATH=$1
 THREADPOOL_SIZE=$3
+DOMAIN=meme
 
 DOMAINDIR=$(dirname $0)/glassfish
 
@@ -25,14 +26,14 @@ fi
 asadmin=$GLASSFISH_HOME/glassfish/bin/asadmin
 
 if [ ! -e $DOMAINDIR ] ; then
-    $asadmin create-domain --domaindir $DOMAINDIR --nopassword=true domain1
+    $asadmin create-domain --domaindir $DOMAINDIR --nopassword=true $DOMAIN
 fi
 
-$asadmin list-domains --domaindir $DOMAINDIR | grep domain1|grep running > /dev/null
+$asadmin list-domains --domaindir $DOMAINDIR | grep '$DOMAIN running' > /dev/null
 if [ $? -eq 0 ]; then
     echo "Glassfish is already running."
 else
-    $asadmin start-domain --domaindir $DOMAINDIR domain1
+    $asadmin start-domain --domaindir $DOMAINDIR $DOMAIN
 fi
 
 $asadmin list-virtual-servers | grep server-${TARGET_PORT} > /dev/null

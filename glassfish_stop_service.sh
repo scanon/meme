@@ -7,6 +7,7 @@ then
 fi
 
 TARGET_PORT=$1
+DOMAIN=meme
 DOMAINDIR=$(dirname $0)/glassfish
 
 
@@ -22,7 +23,7 @@ fi
 
 asadmin=$GLASSFISH_HOME/glassfish/bin/asadmin
 
-$asadmin list-domains --domaindir $DOMAINDIR | grep domain1|grep running > /dev/null
+$asadmin list-domains --domaindir $DOMAINDIR | grep '$DOMAIN running' > /dev/null
 if [ $? -eq 0 ]; then
     echo "Glassfish is already running."
 else
