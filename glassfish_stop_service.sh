@@ -7,7 +7,7 @@ then
 fi
 
 TARGET_PORT=$1
-DOMAIN=meme
+DOMAIN=domain1
 DOMAINDIR=$(dirname $0)/glassfish
 
 

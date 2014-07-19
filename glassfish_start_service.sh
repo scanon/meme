@@ -9,7 +9,7 @@ fi
 TARGET_PORT=$2
 SOURCE_PATH=$1
 THREADPOOL_SIZE=$3
-DOMAIN=meme
+DOMAIN=domain1
 
 DOMAINDIR=$(dirname $0)/glassfish
 
