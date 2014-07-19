@@ -10,6 +10,8 @@ TARGET_PORT=$2
 SOURCE_PATH=$1
 THREADPOOL_SIZE=$3
 
+DOMAINDIR=$(dirname $0)/glassfish
+
 if [ -z "$KB_RUNTIME" ]
 then
    export KB_RUNTIME=/kb/runtime
@@ -22,11 +24,15 @@ fi
 
 asadmin=$GLASSFISH_HOME/glassfish/bin/asadmin
 
-ps ax | grep "\-Dcom.sun.aas.installRoot=\/kb/runtime/glassfish3/glassfish " > /dev/null
+if [ ! -e $DOMAINDIR ] ; then
+    $asadmin create-domain --domaindir $DOMAINDIR --nopassword=true domain1
+fi
+
+$asadmin list-domains --domaindir $DOMAINDIR | grep domain1|grep running > /dev/null
 if [ $? -eq 0 ]; then
     echo "Glassfish is already running."
 else
-    $asadmin start-domain domain1
+    $asadmin start-domain --domaindir $DOMAINDIR domain1
 fi
 
 $asadmin list-virtual-servers | grep server-${TARGET_PORT} > /dev/null
